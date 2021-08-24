@@ -491,7 +491,7 @@ Kicker.DashboardWindow {
 
                         radius: width / 2
                         color: theme.textColor
-                        visible: (index != 0)
+                        visible: (index != 0) // favorites is hidden
                         opacity: 0.5
                         Behavior on width { SmoothedAnimation { duration: units.longDuration; velocity: 0.005 } }
                         Behavior on opacity { SmoothedAnimation { duration: units.longDuration; velocity: 0.005 } }
@@ -507,7 +507,12 @@ Kicker.DashboardWindow {
 
                     MouseArea {
                         anchors.fill: parent
-                        onClicked: pageList.currentIndex = index;
+                        onClicked: {
+                            // avoid hidden favorites from being selected (TODO - this should be done in a much more elegant fashion from configuration)
+                            if (index != 0) {
+                                pageList.currentIndex = index;
+                            }
+                        }
 
                         property int wheelDelta: 0
 

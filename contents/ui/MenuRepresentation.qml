@@ -295,7 +295,7 @@ Kicker.DashboardWindow {
                     width: parent.width
                     height: parent.height
                     focus: true;
-                    frameVisible: false;
+                    frameVisible: false; // debugging area -> set to true
                     horizontalScrollBarPolicy: Qt.ScrollBarAlwaysOff
                     verticalScrollBarPolicy: Qt.ScrollBarAlwaysOff
 
@@ -304,6 +304,7 @@ Kicker.DashboardWindow {
                         anchors.fill: parent
                         snapMode: ListView.SnapOneItem
                         orientation: Qt.Horizontal
+
                         onCurrentIndexChanged: {
                             positionViewAtIndex(currentIndex, ListView.Contain);
                         }
@@ -334,7 +335,7 @@ Kicker.DashboardWindow {
                             enabled = true;
                         }
 
-                        function activateNextPrev(next) {
+                        function activateNextPrev(next) { // determines whether or not we want to go to the next page or the previous one
                             if (next) {
                                 var newIndex = pageList.currentIndex + 1;
 
@@ -359,7 +360,7 @@ Kicker.DashboardWindow {
 
                             property Item itemGrid: gridView
 
-                            ItemGridView {
+                            ItemGridView { // defined in ItemGridView.qml
                                 id: gridView
 
                                 visible: model.count > 0
@@ -459,7 +460,7 @@ Kicker.DashboardWindow {
                 }
 
             }
-            ListView {
+            ListView { // buttons to select your page lie here
                 id: paginationBar
 
                 anchors {
@@ -492,14 +493,13 @@ Kicker.DashboardWindow {
                         color: theme.textColor
                         visible: (index != 0)
                         opacity: 0.5
-                        Behavior on width { SmoothedAnimation { duration: units.longDuration; velocity: 0.01 } }
-                        Behavior on opacity { SmoothedAnimation { duration: units.longDuration; velocity: 0.01 } }
+                        Behavior on width { SmoothedAnimation { duration: units.longDuration; velocity: 0.005 } }
+                        Behavior on opacity { SmoothedAnimation { duration: units.longDuration; velocity: 0.005 } }
 
                         states: [
                             State {
                                 when: pageDelegate.isCurrent
                                 PropertyChanges { target: pageDelegate; width: 0.75 * parent.width }
-//                                 PropertyChanges { target: pageDelegate; width: parent.width - (units.smallSpacing * 1.75) }
                                 PropertyChanges { target: pageDelegate; opacity: 1 }
                             }
                         ]

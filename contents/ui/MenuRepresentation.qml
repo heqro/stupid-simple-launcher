@@ -460,6 +460,49 @@ Kicker.DashboardWindow {
                 }
 
             }
+
+            ListView { // shutdown, reboot, logout
+                id: sessionControlBar
+                anchors {
+                    bottom: parent.bottom
+                    bottomMargin: units.iconSizes.medium
+                    horizontalCenter: parent.left
+                }
+                model: systemFavorites
+                usesPlasmaTheme: true
+                visible: width > 0
+                width: systemFavorites.count * units.iconSizes.medium
+                height: units.largeSpacing
+                orientation: Qt.Horizontal
+
+                //delegate: Item {
+
+                    //width: units.iconSizes.medium
+                    //height: width
+
+                    //Rectangle {
+                        //id: pageDelegate
+                        //anchors {
+                            //horizontalCenter: parent.horizontalCenter
+                            //verticalCenter: parent.verticalCenter
+                            //margins: 10
+                        //}
+                        //width: parent.width * 0.5
+                        //height: width
+
+
+                    //}
+
+                    //MouseArea {
+                        //anchors.fill: parent
+                        //onClicked: { // do the cool session thing
+
+                        //}
+                    //}
+                //}
+
+            }
+
             ListView { // buttons to select your page lie here
                 id: paginationBar
 

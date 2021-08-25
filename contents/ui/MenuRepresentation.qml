@@ -284,11 +284,13 @@ Kicker.DashboardWindow {
 
             Rectangle{
                 width:   widthScreen
-                height:  heightScreen
+                height:  Math.floor(heightScreen * 3 / 5) // mess up with this
                 color: "transparent"
                 anchors {
                     verticalCenter: parent.verticalCenter
                     horizontalCenter: parent.horizontalCenter
+                    top: nepomunk.bottom
+                    bottom: sessionControlBar.top
                 }
                 PlasmaExtras.ScrollArea {
                     id: pageListScrollArea
@@ -298,6 +300,7 @@ Kicker.DashboardWindow {
                     frameVisible: false; // debugging area -> set to true
                     horizontalScrollBarPolicy: Qt.ScrollBarAlwaysOff
                     verticalScrollBarPolicy: Qt.ScrollBarAlwaysOff
+
 
                     ListView {
                         id: pageList
@@ -461,46 +464,26 @@ Kicker.DashboardWindow {
 
             }
 
-            ListView { // shutdown, reboot, logout
+            ItemGridView { // shutdown, reboot, logout, lock
                 id: sessionControlBar
+
+                cellWidth: Math.floor(cellSizeWidth   * 6 / 7)
+                cellHeight: Math.floor(cellSizeHeight * 6 / 7)
+                iconSize:   Math.floor(plasmoid.configuration.iconSize * 7 / 8)
+
+                height: cellHeight
+                width: systemFavorites.count * cellSizeWidth
+
+                model: systemFavorites
+
+//                 usesPlasmaTheme: true // for using Plasma Style icons should you want inconsistency
+
                 anchors {
                     bottom: parent.bottom
-                    bottomMargin: units.iconSizes.medium
-                    horizontalCenter: parent.left
+                    bottomMargin: units.iconSizes.smallMedium
+                    left: parent.left
+                    leftMargin: cellSizeWidth
                 }
-                model: systemFavorites
-                usesPlasmaTheme: true
-                visible: width > 0
-                width: systemFavorites.count * units.iconSizes.medium
-                height: units.largeSpacing
-                orientation: Qt.Horizontal
-
-                //delegate: Item {
-
-                    //width: units.iconSizes.medium
-                    //height: width
-
-                    //Rectangle {
-                        //id: pageDelegate
-                        //anchors {
-                            //horizontalCenter: parent.horizontalCenter
-                            //verticalCenter: parent.verticalCenter
-                            //margins: 10
-                        //}
-                        //width: parent.width * 0.5
-                        //height: width
-
-
-                    //}
-
-                    //MouseArea {
-                        //anchors.fill: parent
-                        //onClicked: { // do the cool session thing
-
-                        //}
-                    //}
-                //}
-
             }
 
             ListView { // buttons to select your page lie here

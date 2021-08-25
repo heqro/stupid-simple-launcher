@@ -35,18 +35,15 @@ Kicker.DashboardWindow {
     
     id: root
 
-    property int iconSize:    plasmoid.configuration.iconSize
-    property int spaceWidth:  plasmoid.configuration.spaceWidth
-    property int spaceHeight: plasmoid.configuration.spaceHeight
-    property int cellSizeWidth: spaceWidth + iconSize + theme.mSize(theme.defaultFont).height
-                                + (2 * units.smallSpacing)
-                                + (2 * Math.max(highlightItemSvg.margins.top + highlightItemSvg.margins.bottom,
-                                                highlightItemSvg.margins.left + highlightItemSvg.margins.right))
+    property int iconSize:    plasmoid.configuration.iconSize // if iconSize == 48 then the icons' size will be 48x48
 
-    property int cellSizeHeight: spaceHeight + iconSize + theme.mSize(theme.defaultFont).height
-                                 + (2 * units.smallSpacing)
-                                 + (2 * Math.max(highlightItemSvg.margins.top + highlightItemSvg.margins.bottom,
-                                                 highlightItemSvg.margins.left + highlightItemSvg.margins.right))
+    //property int iconSize: PlasmaCore.Units.iconSizes.enormous
+//     property int iconSize: Math.floor(1.5 * PlasmaCore.Units.iconSizes.huge)
+
+    property int cellSize: iconSize + 1.5 * PlasmaCore.Theme.mSize(PlasmaCore.Theme.defaultFont).height
+        + (2 * PlasmaCore.Units.smallSpacing)
+        + (2 * Math.max(highlightItemSvg.margins.top + highlightItemSvg.margins.bottom,
+                        highlightItemSvg.margins.left + highlightItemSvg.margins.right))
 
 
     property bool searching: (searchField.text != "")
@@ -55,10 +52,13 @@ Kicker.DashboardWindow {
     backgroundColor: "transparent"
 
     property bool linkUseCustomSizeGrid: plasmoid.configuration.useCustomSizeGrid
-    property int gridNumCols:  plasmoid.configuration.useCustomSizeGrid ? plasmoid.configuration.numberColumns : Math.floor(width  * 0.85  / cellSizeWidth) // TODO: set from settings
-    property int gridNumRows:  plasmoid.configuration.useCustomSizeGrid ? plasmoid.configuration.numberRows : Math.floor(height * 0.8  /  cellSizeHeight)  // TODO: set from settings
-    property int widthScreen:  gridNumCols * cellSizeWidth
-    property int heightScreen: gridNumRows * cellSizeHeight
+
+    property int columns: Math.floor(0.8 * Math.ceil(width / cellSize))
+    property int rows: Math.floor(0.75 * Math.ceil(height / cellSize))
+
+
+    property int widthScreen:  columns * cellSize
+    property int heightScreen: rows    * cellSize
 
     function colorWithAlpha(color, alpha) {
         return Qt.rgba(color.r, color.g, color.b, alpha)
@@ -76,7 +76,7 @@ Kicker.DashboardWindow {
         animationSearch.start()
 
         reset();
-        rootModel.pageSize = gridNumCols*gridNumRows
+        rootModel.pageSize = rows * columns
         pageList.currentIndex = 1;
     }
 
@@ -178,19 +178,19 @@ Kicker.DashboardWindow {
                 }
             }
 
-            Rectangle{
-                anchors.horizontalCenter: searchField.horizontalCenter
-                y: searchField.y + searchField.height
-                width: searchField.width * 0.8
-                height: 1
-                border.width: 1
-                border.color: theme.highlightColor//theme.textColor
-                color: "transparent"
-                radius: searchField.height*0.5
-                z: 2
-            }
+            //Rectangle{
+                //anchors.horizontalCenter: searchField.horizontalCenter
+                //y: searchField.y + searchField.height
+                //width: searchField.width * 0.8
+                //height: 1
+                //border.width: 1
+                //border.color: theme.highlightColor//theme.textColor
+                //color: "transparent" // "red" to debug
+                //radius: searchField.height*0.5
+                //z: 2
+            //}
 
-            PlasmaComponents.TextField {
+            PlasmaComponents.TextField { // searchbar
                 id: searchField
                 z: 1
                 anchors.top: parent.top
@@ -199,7 +199,8 @@ Kicker.DashboardWindow {
                 width: parent.width * 0.2
                 //font.pointSize: 14// units.largeSpacing // fixme: QTBUG font size in plasmaComponent3
                 font.pointSize: units.gridUnit * 0.6
-                placeholderText: "<font color='"+colorWithAlpha(theme.textColor,0.7) +"'>Type to search...</font>"
+                //placeholderText: "<font color='"+colorWithAlpha(theme.textColor,0.7) +"'>Type to search...</font>"
+                placeholderText: "Type to search..."
                 horizontalAlignment: TextInput.AlignHCenter
                 onTextChanged: {
                     runnerModel.query = text;
@@ -267,10 +268,10 @@ Kicker.DashboardWindow {
                 }
             }
 
-            PlasmaCore.IconItem {
+            PlasmaCore.IconItem { // searchbar icon
                 id: nepomunk
                 source: "nepomuk"
-                visible: true
+                visible: !searchField.focus && searchField.text == "" // TODO: find a more elegant way to avoid nepomuk overlapping our query
                 width:  searchField.height - 2
                 height: width
                 anchors {
@@ -282,25 +283,25 @@ Kicker.DashboardWindow {
             }
 
 
-            Rectangle{
+            Rectangle { // applications will be inside this
                 width:   widthScreen
-                height:  Math.floor(heightScreen * 3 / 5) // mess up with this
-                color: "transparent"
+//                 height:  heightScreen // mess up with this
+                color: "transparent" // use "red" to see real dimensions and limits
                 anchors {
-                    verticalCenter: parent.verticalCenter
+                    //verticalCenter: parent.verticalCenter
                     horizontalCenter: parent.horizontalCenter
                     top: nepomunk.bottom
                     bottom: sessionControlBar.top
+//                     right: paginationBar.left
                 }
-                PlasmaExtras.ScrollArea {
+
+                PlasmaExtras.ScrollArea { // structure for storing applications
                     id: pageListScrollArea
-                    width: parent.width
-                    height: parent.height
+                    anchors.fill: parent
                     focus: true;
                     frameVisible: false; // debugging area -> set to true
                     horizontalScrollBarPolicy: Qt.ScrollBarAlwaysOff
                     verticalScrollBarPolicy: Qt.ScrollBarAlwaysOff
-
 
                     ListView {
                         id: pageList
@@ -358,8 +359,8 @@ Kicker.DashboardWindow {
 
                         delegate: Item {
 
-                            width:   gridNumCols * cellSizeWidth
-                            height:  gridNumRows * cellSizeHeight
+                            width:   columns * cellSize
+                            height:  rows * cellSize
 
                             property Item itemGrid: gridView
 
@@ -369,8 +370,8 @@ Kicker.DashboardWindow {
                                 visible: model.count > 0
                                 anchors.fill: parent
 
-                                cellWidth:  cellSizeWidth
-                                cellHeight: cellSizeHeight
+                                cellWidth:  cellSize
+                                cellHeight: cellSize
 
                                 horizontalScrollBarPolicy: Qt.ScrollBarAlwaysOff
                                 verticalScrollBarPolicy: Qt.ScrollBarAlwaysOff
@@ -456,6 +457,13 @@ Kicker.DashboardWindow {
                                     // determine predominant direction should you have a touchpad
                                     var predominantDelta = (Math.abs(delta.x) > Math.abs(delta.y)) ? delta.x : delta.y
                                     wheelDelta = scrollByWheel(wheelDelta, predominantDelta)
+
+                                    // debugging
+//                                     console.log("cellsize is ", cellSize)
+//                                     console.log("cellsizew is ", cellSizeWidth)
+//                                     console.log("cellsizeh is ", cellSizeHeight)
+//                                     console.log("number of columns is ", columns)
+//                                     console.log("number of rows is ", rows)
                                 }
                             }
                         }
@@ -466,13 +474,26 @@ Kicker.DashboardWindow {
 
             ItemGridView { // shutdown, reboot, logout, lock
                 id: sessionControlBar
+                showLabels: false
 
-                cellWidth: Math.floor(cellSizeWidth   * 6 / 7)
-                cellHeight: Math.floor(cellSizeHeight * 6 / 7)
-                iconSize:   Math.floor(plasmoid.configuration.iconSize * 7 / 8)
+//                 cellWidth: Math.floor(cellSize   * 6 / 7)
+                //PlasmaCore.Units.iconSizes.enormous
+                //cellHeight: cellSize
+//                 cellHeight: Math.floor(cellSize * 6 / 7)
+
+
+                iconSize:   PlasmaCore.Units.iconSizes.large
+                cellHeight: iconSize + (2 * PlasmaCore.Units.smallSpacing) + (2 * Math.max(highlightItemSvg.margins.top + highlightItemSvg.margins.bottom, highlightItemSvg.margins.left + highlightItemSvg.margins.right))
+                cellWidth: iconSize + (2 * PlasmaCore.Units.smallSpacing) + (2 * Math.max(highlightItemSvg.margins.top + highlightItemSvg.margins.bottom, highlightItemSvg.margins.left + highlightItemSvg.margins.right))
+                //cellHeight: iconSize + PlasmaCore.Theme.mSize(PlasmaCore.Theme.defaultFont).height+ (2 * PlasmaCore.Units.smallSpacing) + (2 * Math.max(highlightItemSvg.margins.top + highlightItemSvg.margins.bottom, highlightItemSvg.margins.left + highlightItemSvg.margins.right))
+
+//                 height: cellHeight
+
+
+                //cellWidth: iconSize + PlasmaCore.Theme.mSize(PlasmaCore.Theme.defaultFont).height + (2 * PlasmaCore.Units.smallSpacing) + (2 * Math.max(highlightItemSvg.margins.top + highlightItemSvg.margins.bottom, highlightItemSvg.margins.left + highlightItemSvg.margins.right))
 
                 height: cellHeight
-                width: systemFavorites.count * cellSizeWidth
+                width: systemFavorites.count * cellWidth
 
                 model: systemFavorites
 
@@ -480,9 +501,9 @@ Kicker.DashboardWindow {
 
                 anchors {
                     bottom: parent.bottom
-                    bottomMargin: units.iconSizes.smallMedium
-                    left: parent.left
-                    leftMargin: cellSizeWidth
+//                     top: pageListScrollArea.bottom
+                    //bottomMargin: PlasmaCore.Units.iconSizes.small
+                    horizontalCenter: parent.horizontalCenter
                 }
             }
 
@@ -490,13 +511,16 @@ Kicker.DashboardWindow {
                 id: paginationBar
 
                 anchors {
-                    bottom: parent.bottom
-                    bottomMargin: units.iconSizes.medium
-                    horizontalCenter: parent.horizontalCenter
+                    //bottom: parent.bottom
+                    right: parent.right
+                    //rightMargin: units.iconSizes.medium
+                    verticalCenter: parent.verticalCenter
                 }
                 width: model.count * units.iconSizes.huge
                 height:  units.largeSpacing
+
                 orientation: Qt.Horizontal
+                rotation: 90 // for some reason I cannot use Qt.Vertical
 
                 delegate: Item {
                     width: units.iconSizes.medium
@@ -609,7 +633,7 @@ Kicker.DashboardWindow {
 
     }
     Component.onCompleted: {
-        rootModel.pageSize = gridNumCols*gridNumRows
+        rootModel.pageSize = columns*rows
         pageList.model = rootModel.modelForRow(0);
         paginationBar.model = rootModel.modelForRow(0);
         searchField.text = "";

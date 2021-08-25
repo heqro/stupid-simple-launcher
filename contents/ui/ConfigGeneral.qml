@@ -49,7 +49,7 @@ Item {
     property alias cfg_spaceHeight:   spaceHeight.value
 
     ColumnLayout {
-        anchors.left: parent.left
+        anchors.horizontalCenter: parent.horizontalCenter
 
         RowLayout {
             spacing: units.smallSpacing
@@ -171,7 +171,8 @@ Item {
         }
 
         RowLayout{
-            ColumnLayout {
+            ColumnLayout { // troublesome setting (TODO - try to see what can be done with it)
+                enabled: false
                 RowLayout{
                     Layout.fillWidth: true
                     SpinBox{
@@ -203,7 +204,8 @@ Item {
             }
         }
 
-        RowLayout{
+        RowLayout{ // troublesome setting (TODO - see what can be done with it)
+            enabled: false
             spacing: units.smallSpacing
             CheckBox{
                 id: useCustomSizeGrid

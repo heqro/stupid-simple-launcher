@@ -190,7 +190,7 @@ Item {
     }
 
     Component.onCompleted: {
-        plasmoid.setAction("menuedit", i18n("Edit applications..."));
+        plasmoid.setAction("menuedit", i18n("Edit applications..."), "kmenuedit");
         rootModel.refreshed.connect(reset);
         dragHelper.dropped.connect(resetDragSource);
     }

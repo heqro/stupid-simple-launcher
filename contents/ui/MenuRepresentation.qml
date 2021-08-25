@@ -35,12 +35,16 @@ Kicker.DashboardWindow {
     
     id: root
 
+    property bool smallScreen: ((Math.floor(width / PlasmaCore.Units.iconSizes.huge) <= 22) || (Math.floor(height / PlasmaCore.Units.iconSizes.huge) <= 14))
+
+//     property int iconSize: smallScreen ? PlasmaCore.Units.iconSizes.large : PlasmaCore.Units.iconSizes.huge
+
     property int iconSize:    plasmoid.configuration.iconSize // if iconSize == 48 then the icons' size will be 48x48
 
     //property int iconSize: PlasmaCore.Units.iconSizes.enormous
 //     property int iconSize: Math.floor(1.5 * PlasmaCore.Units.iconSizes.huge)
 
-    property int cellSize: iconSize + 1.5 * PlasmaCore.Theme.mSize(PlasmaCore.Theme.defaultFont).height
+    property int cellSize: iconSize + Math.floor(1.5 * PlasmaCore.Theme.mSize(PlasmaCore.Theme.defaultFont).height)
         + (2 * PlasmaCore.Units.smallSpacing)
         + (2 * Math.max(highlightItemSvg.margins.top + highlightItemSvg.margins.bottom,
                         highlightItemSvg.margins.left + highlightItemSvg.margins.right))
@@ -195,6 +199,7 @@ Kicker.DashboardWindow {
                 z: 1
                 anchors.top: parent.top
                 anchors.topMargin: units.iconSizes.large
+
                 anchors.horizontalCenter: parent.horizontalCenter
                 width: parent.width * 0.2
                 //font.pointSize: 14// units.largeSpacing // fixme: QTBUG font size in plasmaComponent3
@@ -288,11 +293,11 @@ Kicker.DashboardWindow {
 //                 height:  heightScreen // mess up with this
                 color: "transparent" // use "red" to see real dimensions and limits
                 anchors {
-                    //verticalCenter: parent.verticalCenter
                     horizontalCenter: parent.horizontalCenter
                     top: nepomunk.bottom
+                    topMargin: units.iconSizes.medium
                     bottom: sessionControlBar.top
-//                     right: paginationBar.left
+//                     bottomMargin: units.iconSizes.medium
                 }
 
                 PlasmaExtras.ScrollArea { // structure for storing applications
@@ -306,6 +311,7 @@ Kicker.DashboardWindow {
                     ListView {
                         id: pageList
                         anchors.fill: parent
+
                         snapMode: ListView.SnapOneItem
                         orientation: Qt.Horizontal
 
@@ -459,6 +465,7 @@ Kicker.DashboardWindow {
                                     wheelDelta = scrollByWheel(wheelDelta, predominantDelta)
 
                                     // debugging
+                                    //console.log("El valor de PlasmaCore.Theme.mSize(PlasmaCore.Theme.defaultFont).height es ", PlasmaCore.Theme.mSize(PlasmaCore.Theme.defaultFont).height)
 //                                     console.log("cellsize is ", cellSize)
 //                                     console.log("cellsizew is ", cellSizeWidth)
 //                                     console.log("cellsizeh is ", cellSizeHeight)

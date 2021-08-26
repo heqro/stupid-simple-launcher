@@ -61,6 +61,8 @@ Kicker.DashboardWindow {
     property int rows: Math.floor(0.75 * Math.ceil(height / cellSize))
 
 
+    property QtObject allApplications: rootModel.modelForRow(0).modelForRow(1) // two days spent to come up with this combination -- no documentation to be found!
+
     property int widthScreen:  columns * cellSize
     property int heightScreen: rows    * cellSize
 
@@ -86,21 +88,21 @@ Kicker.DashboardWindow {
 
     onSearchingChanged: {
         if (searching) {
-            appsGrid.model = runnerModel.modelForRow(0);
+            appsGrid.model = runnerModel.modelForRow(runnerModel.query);
+
             //paginationBar.model = runnerModel;
         } else {
             reset();
         }
+        console.log("El runnermodelcount es ",runnerModel.currentQuery)
     }
 
     function reset() {
         if (!searching) {
-            // vas por aqui appsGrid.model = rootModel.modelForRow(0);
             //appsGrid.model = rootModel.systemFavorites;
-            appsGrid.model = rootModel.modelForRow(0).modelForRow(1); // EUREKA
+            appsGrid.model = rootModel.modelForRow(0).modelForRow(1); // I don't know why or how the fuck this works and why something so important like this is criminally undocumented.
         }
         searchField.text = "";
-        //appsGridScrollArea.focus = true;
         // visual tweaks: when we stop searching for something, we highlight the first - "Hey! There's your focus!"
         appsGrid.focus = true
         appsGrid.currentIndex = 0;
@@ -207,7 +209,6 @@ Kicker.DashboardWindow {
                 width: parent.width * 0.2
                 //font.pointSize: 14// units.largeSpacing // fixme: QTBUG font size in plasmaComponent3
                 font.pointSize: units.gridUnit * 0.6
-                //placeholderText: "<font color='"+colorWithAlpha(theme.textColor,0.7) +"'>Type to search...</font>"
                 placeholderText: "Type to search..."
                 horizontalAlignment: TextInput.AlignHCenter
                 onTextChanged: {
@@ -303,9 +304,7 @@ Kicker.DashboardWindow {
 //                     bottomMargin: units.iconSizes.medium
                 }
 
-
-                //property Item itemGrid: gridView
-                ItemGridView {
+                ItemGridView { // no model needed to set in this block of code - it's set somewhere else
                     id: appsGrid
                     visible: model.count > 0
                     anchors.fill: parent
@@ -317,9 +316,9 @@ Kicker.DashboardWindow {
 
                     dragEnabled: (currentIndex == 0)
 
-//                     model: searching ? runnerModel.modelForRow(0) : rootModel.modelForRow(0).modelForRow(currentIndex)
+                    model: searching && runnerModel.count > 0 ? runnerModel : rootModel.modelForRow(0).modelForRow(1)
 
-                    model: globalFavorites // equivalent
+                    //model: globalFavorites // equivalent
                     //model: rootModel.systemFavorites // equivalent
 
 
@@ -369,96 +368,6 @@ Kicker.DashboardWindow {
                 }
             }
 
-            /*ListView { // buttons to select your page lie here
-                id: paginationBar
-
-                anchors {
-                    bottom: parent.bottom
-                    right: parent.right
-                    rightMargin: units.iconSizes.medium
-                    verticalCenter: parent.verticalCenter
-                }
-                width: model.count * units.iconSizes.huge
-                height:  units.largeSpacing
-
-                orientation: Qt.Horizontal
-                rotation: 90 // for some reason I cannot use Qt.Vertical
-
-                delegate: Item {
-                    width: units.iconSizes.medium
-                    height: width
-
-                    Rectangle {
-                        id: pageDelegate
-                        anchors {
-                            horizontalCenter: parent.horizontalCenter
-                            verticalCenter: parent.verticalCenter
-                            margins: 10
-                        }
-                        width: parent.width * 0.5
-                        height: width
-
-                        property bool isCurrent: (appsGrid.currentIndex == index)
-
-                        radius: width / 2
-                        color: theme.textColor
-                        visible: (index != 0) // favorites section is hidden
-                        opacity: 0.5
-                        Behavior on width { SmoothedAnimation { duration: units.longDuration; velocity: 0.005 } }
-                        Behavior on opacity { SmoothedAnimation { duration: units.longDuration; velocity: 0.005 } }
-
-                        states: [
-                            State {
-                                when: pageDelegate.isCurrent
-                                PropertyChanges { target: pageDelegate; width: 0.75 * parent.width }
-                                PropertyChanges { target: pageDelegate; opacity: 1 }
-                            }
-                        ]
-                    }
-
-                    MouseArea {
-                        anchors.fill: parent
-                        onClicked: {
-                            if (index != 0) {
-                                avoid hidden favorites from being selected (TODO - this should be done in a much more elegant fashion from configuration)
-                                appsGrid.currentIndex = index;
-                            }
-                        }
-
-                        property int wheelDelta: 0
-
-                        function scrollByWheel(wheelDelta, eventDelta) {
-                            magic number 120 for common "one click"
-                            See: http://qt-project.org/doc/qt-5/qml-qtquick-wheelevent.html#angleDelta-prop
-                            wheelDelta += eventDelta;
-
-                            var increment = 0;
-
-                            while (wheelDelta >= 120) {
-                                wheelDelta -= 120;
-                                increment++;
-                            }
-
-                            while (wheelDelta <= -120) {
-                                wheelDelta += 120;
-                                increment--;
-                            }
-
-                            while (increment != 0) {
-                                appsGrid.activateNextPrev(increment < 0);
-                                increment += (increment < 0) ? 1 : -1;
-                            }
-
-                            return wheelDelta;
-                        }
-
-                        onWheel: {
-                            wheelDelta = scrollByWheel(wheelDelta, wheel.angleDelta.y);
-                        }
-                    }
-                }
-            }*/
-
             Keys.onPressed: {
                 if (event.key == Qt.Key_Escape) {
                     event.accepted = true;
@@ -495,9 +404,8 @@ Kicker.DashboardWindow {
 
     }
     Component.onCompleted: {
-        rootModel.pageSize = columns*rows
-        appsGrid.model = rootModel.modelForRow(0);
-        //paginationBar.model = rootModel.modelForRow(0);
+        rootModel.pageSize = -1 // this will, somehow, make it show everything -- again, don't ask me!
+//         appsGrid.model = rootModel.modelForRow(0).modelForRow(1);
         searchField.text = "";
         //appsGridScrollArea.focus = true;
         //appsGrid.currentIndex = 1; // doesn't do much

@@ -80,14 +80,14 @@ Kicker.DashboardWindow {
         animationSearch.start()
 
         reset();
-        rootModel.pageSize = rows * columns
-        pageList.currentIndex = 1;
+        //rootModel.pageSize = rows * columns
+        // appsGrid.currentIndex = -1;
     }
 
     onSearchingChanged: {
         if (searching) {
-            pageList.model = runnerModel;
-            paginationBar.model = runnerModel;
+            appsGrid.model = runnerModel.modelForRow(0);
+            //paginationBar.model = runnerModel;
         } else {
             reset();
         }
@@ -95,12 +95,15 @@ Kicker.DashboardWindow {
 
     function reset() {
         if (!searching) {
-            pageList.model = rootModel.modelForRow(0);
-            paginationBar.model = rootModel.modelForRow(0);
+            // vas por aqui appsGrid.model = rootModel.modelForRow(0);
+            //appsGrid.model = rootModel.systemFavorites;
+            appsGrid.model = rootModel.modelForRow(0).modelForRow(1); // EUREKA
         }
         searchField.text = "";
-        pageListScrollArea.focus = true;
-        pageList.currentIndex = 1;
+        //appsGridScrollArea.focus = true;
+        // visual tweaks: when we stop searching for something, we highlight the first - "Hey! There's your focus!"
+        appsGrid.focus = true
+        appsGrid.currentIndex = 0;
     }
 
 
@@ -176,8 +179,8 @@ Kicker.DashboardWindow {
                 id: actionMenu
                 onActionClicked: visualParent.actionTriggered(actionId, actionArgument)
                 onClosed: {
-                    if (pageList.currentItem) {
-                        pageList.currentItem.itemGrid.currentIndex = -1;
+                    if (appsGrid.currentItem) {
+                        appsGrid.currentItem.itemGrid.currentIndex = -1;
                     }
                 }
             }
@@ -222,22 +225,22 @@ Kicker.DashboardWindow {
                 Keys.onPressed: {
                     if (event.key == Qt.Key_Down) {
                         event.accepted = true;
-                        pageList.currentItem.itemGrid.tryActivate(0, 0);
+                        appsGrid.currentItem.itemGrid.tryActivate(0, 0);
                     } else if (event.key == Qt.Key_Right) {
                         if (cursorPosition == length) {
                             event.accepted = true;
 
-                            if (pageList.currentItem.itemGrid.currentIndex == -1) {
-                                pageList.currentItem.itemGrid.tryActivate(0, 0);
+                            if (appsGrid.currentItem.itemGrid.currentIndex == -1) {
+                                appsGrid.currentItem.itemGrid.tryActivate(0, 0);
                             } else {
-                                pageList.currentItem.itemGrid.tryActivate(0, 1);
+                                appsGrid.currentItem.itemGrid.tryActivate(0, 1);
                             }
                         }
                     } else if (event.key == Qt.Key_Return || event.key == Qt.Key_Enter) {
-                        if (text != "" && pageList.currentItem.itemGrid.count > 0) {
+                        if (text != "" && appsGrid.currentItem.itemGrid.count > 0) {
                             event.accepted = true;
-                            pageList.currentItem.itemGrid.tryActivate(0, 0);
-                            pageList.currentItem.itemGrid.model.trigger(0, "", null);
+                            appsGrid.currentItem.itemGrid.tryActivate(0, 0);
+                            appsGrid.currentItem.itemGrid.model.trigger(0, "", null);
                             root.toggle();
                         }
                     } else if (event.key == Qt.Key_Tab) {
@@ -247,7 +250,7 @@ Kicker.DashboardWindow {
                         event.accepted = true;
 
                         if (!searching) {
-                            pageList.currentIndex = 1;
+                            appsGrid.currentIndex = 1;
                             filterList.forceActiveFocus();
                         } else {
                             //systemFavoritesGrid.tryActivate(0, 0);
@@ -300,183 +303,43 @@ Kicker.DashboardWindow {
 //                     bottomMargin: units.iconSizes.medium
                 }
 
-                PlasmaExtras.ScrollArea { // structure for storing applications
-                    id: pageListScrollArea
+
+                //property Item itemGrid: gridView
+                ItemGridView {
+                    id: appsGrid
+                    visible: model.count > 0
                     anchors.fill: parent
-                    focus: true;
-                    frameVisible: false; // debugging area -> set to true
+                    cellWidth:  cellSize
+                    cellHeight: cellSize
+
                     horizontalScrollBarPolicy: Qt.ScrollBarAlwaysOff
                     verticalScrollBarPolicy: Qt.ScrollBarAlwaysOff
 
-                    ListView {
-                        id: pageList
-                        anchors.fill: parent
+                    dragEnabled: (currentIndex == 0)
 
-                        snapMode: ListView.SnapOneItem
-                        orientation: Qt.Horizontal
+//                     model: searching ? runnerModel.modelForRow(0) : rootModel.modelForRow(0).modelForRow(currentIndex)
 
-                        onCurrentIndexChanged: {
-                            positionViewAtIndex(currentIndex, ListView.Contain);
+                    model: globalFavorites // equivalent
+                    //model: rootModel.systemFavorites // equivalent
+
+
+
+                    onCurrentIndexChanged: {
+                        if (currentIndex != -1 && !searching) {
+                            //appsGridScrollArea.focus = true;
+                            focus = true;
                         }
-                        onCurrentItemChanged: {
-                            if (!currentItem) {
-                                return;
-                            }
-                            currentItem.itemGrid.focus = true;
-                        }
-                        onModelChanged: {
-                            if(searching)  {
-                                currentIndex = 0;
-                            }
-                            else{
-                                currentIndex = 1;
-                            }
-                        }
-                        onFlickingChanged: {
-                            if (!flicking) {
-                                var pos = mapToItem(contentItem, root.width / 2, root.height / 2);
-                                var itemIndex = indexAt(pos.x, pos.y);
-                                currentIndex = itemIndex;
-                            }
-                        }
+                        //if(!visible && (currentIndex + 1) < appsGrid.count ){
+                        //    currentIndex = currentIndex + 1
+                        //}
+                    }
 
-                        function cycle() {
-                            enabled = false;
-                            enabled = true;
-                        }
-
-                        function activateNextPrev(next) { // determines whether or not we want to go to the next page or the previous one
-                            if (next) {
-                                var newIndex = pageList.currentIndex + 1;
-
-                                if (newIndex < pageList.count) {
-                                    pageList.currentIndex = newIndex;
-                                }
-
-                            } else {
-                                var newIndex = pageList.currentIndex - 1;
-
-                                if (newIndex >= 1) {
-                                    pageList.currentIndex = newIndex;
-                                }
-
-                            }
-                        }
-
-                        delegate: Item {
-
-                            width:   columns * cellSize
-                            height:  rows * cellSize
-
-                            property Item itemGrid: gridView
-
-                            ItemGridView { // defined in ItemGridView.qml
-                                id: gridView
-
-                                visible: model.count > 0
-                                anchors.fill: parent
-
-                                cellWidth:  cellSize
-                                cellHeight: cellSize
-
-                                horizontalScrollBarPolicy: Qt.ScrollBarAlwaysOff
-                                verticalScrollBarPolicy: Qt.ScrollBarAlwaysOff
-
-                                dragEnabled: (index == 0)
-
-                                model: searching ? runnerModel.modelForRow(index) : rootModel.modelForRow(0).modelForRow(index)
-                                onCurrentIndexChanged: {
-                                    if (currentIndex != -1 && !searching) {
-                                        pageListScrollArea.focus = true;
-                                        focus = true;
-                                    }
-                                    //if(!visible && (currentIndex + 1) < pageList.count ){
-                                    //    currentIndex = currentIndex + 1
-                                    //}
-                                }
-
-                                onCountChanged: {
-                                    if (searching && index == 0) {
-                                        currentIndex = 0;
-                                    }
-                                }
-
-                                //signal handlers emitted from ItemGridView.qml
-
-                                onKeyNavUp: {
-                                    currentIndex = -1;
-                                    searchField.focus = true;
-                                }
-
-                                onKeyNavDown: {
-
-                                }
-                                onKeyNavRight: {
-                                    var newIndex = pageList.currentIndex + 1;
-                                    if (newIndex < pageList.count) {
-                                        pageList.currentIndex = newIndex;
-                                        pageList.currentItem.itemGrid.tryActivate(0, 0);
-                                    }
-                                }
-
-                                onKeyNavLeft: {
-                                    var newIndex = pageList.currentIndex - 1;
-                                    if (newIndex > 0) {
-                                        pageList.currentIndex = newIndex;
-                                        pageList.currentItem.itemGrid.tryActivate(0, 0);
-                                    }
-                                }
-                            }
-
-                            Kicker.WheelInterceptor {
-                                anchors.fill: parent
-                                z: 1
-
-                                property int wheelDelta: 0
-
-                                function scrollByWheel(wheelDelta, eventDelta) {
-                                    // magic number 120 for common "one click"
-                                    // See: http://qt-project.org/doc/qt-5/qml-qtquick-wheelevent.html#angleDelta-prop
-                                    wheelDelta += eventDelta;
-
-                                    var increment = 0;
-
-                                    while (wheelDelta >= 120) {
-                                        wheelDelta -= 120;
-                                        increment++;
-                                    }
-
-                                    while (wheelDelta <= -120) {
-                                        wheelDelta += 120;
-                                        increment--;
-                                    }
-
-                                    while (increment != 0) {
-                                        pageList.activateNextPrev(increment < 0);
-                                        increment += (increment < 0) ? 1 : -1;
-                                    }
-
-                                    return wheelDelta;
-                                }
-
-                                onWheelMoved: {
-                                    // determine predominant direction should you have a touchpad
-                                    var predominantDelta = (Math.abs(delta.x) > Math.abs(delta.y)) ? delta.x : delta.y
-                                    wheelDelta = scrollByWheel(wheelDelta, predominantDelta)
-
-                                    // debugging
-                                    //console.log("El valor de PlasmaCore.Theme.mSize(PlasmaCore.Theme.defaultFont).height es ", PlasmaCore.Theme.mSize(PlasmaCore.Theme.defaultFont).height)
-//                                     console.log("cellsize is ", cellSize)
-//                                     console.log("cellsizew is ", cellSizeWidth)
-//                                     console.log("cellsizeh is ", cellSizeHeight)
-//                                     console.log("number of columns is ", columns)
-//                                     console.log("number of rows is ", rows)
-                                }
-                            }
+                    onCountChanged: {
+                        if (searching && currentIndex == 0) {
+                            currentIndex = 0;
                         }
                     }
                 }
-
             }
 
             ItemGridView { // shutdown, reboot, logout, lock
@@ -492,12 +355,6 @@ Kicker.DashboardWindow {
                 iconSize:   PlasmaCore.Units.iconSizes.large
                 cellHeight: iconSize + (2 * PlasmaCore.Units.smallSpacing) + (2 * Math.max(highlightItemSvg.margins.top + highlightItemSvg.margins.bottom, highlightItemSvg.margins.left + highlightItemSvg.margins.right))
                 cellWidth: iconSize + (2 * PlasmaCore.Units.smallSpacing) + (2 * Math.max(highlightItemSvg.margins.top + highlightItemSvg.margins.bottom, highlightItemSvg.margins.left + highlightItemSvg.margins.right))
-                //cellHeight: iconSize + PlasmaCore.Theme.mSize(PlasmaCore.Theme.defaultFont).height+ (2 * PlasmaCore.Units.smallSpacing) + (2 * Math.max(highlightItemSvg.margins.top + highlightItemSvg.margins.bottom, highlightItemSvg.margins.left + highlightItemSvg.margins.right))
-
-//                 height: cellHeight
-
-
-                //cellWidth: iconSize + PlasmaCore.Theme.mSize(PlasmaCore.Theme.defaultFont).height + (2 * PlasmaCore.Units.smallSpacing) + (2 * Math.max(highlightItemSvg.margins.top + highlightItemSvg.margins.bottom, highlightItemSvg.margins.left + highlightItemSvg.margins.right))
 
                 height: cellHeight
                 width: systemFavorites.count * cellWidth
@@ -508,19 +365,17 @@ Kicker.DashboardWindow {
 
                 anchors {
                     bottom: parent.bottom
-//                     top: pageListScrollArea.bottom
-                    //bottomMargin: PlasmaCore.Units.iconSizes.small
                     horizontalCenter: parent.horizontalCenter
                 }
             }
 
-            ListView { // buttons to select your page lie here
+            /*ListView { // buttons to select your page lie here
                 id: paginationBar
 
                 anchors {
-                    //bottom: parent.bottom
+                    bottom: parent.bottom
                     right: parent.right
-                    //rightMargin: units.iconSizes.medium
+                    rightMargin: units.iconSizes.medium
                     verticalCenter: parent.verticalCenter
                 }
                 width: model.count * units.iconSizes.huge
@@ -543,7 +398,7 @@ Kicker.DashboardWindow {
                         width: parent.width * 0.5
                         height: width
 
-                        property bool isCurrent: (pageList.currentIndex == index)
+                        property bool isCurrent: (appsGrid.currentIndex == index)
 
                         radius: width / 2
                         color: theme.textColor
@@ -565,16 +420,16 @@ Kicker.DashboardWindow {
                         anchors.fill: parent
                         onClicked: {
                             if (index != 0) {
-                                // avoid hidden favorites from being selected (TODO - this should be done in a much more elegant fashion from configuration)
-                                pageList.currentIndex = index;
+                                avoid hidden favorites from being selected (TODO - this should be done in a much more elegant fashion from configuration)
+                                appsGrid.currentIndex = index;
                             }
                         }
 
                         property int wheelDelta: 0
 
                         function scrollByWheel(wheelDelta, eventDelta) {
-                            // magic number 120 for common "one click"
-                            // See: http://qt-project.org/doc/qt-5/qml-qtquick-wheelevent.html#angleDelta-prop
+                            magic number 120 for common "one click"
+                            See: http://qt-project.org/doc/qt-5/qml-qtquick-wheelevent.html#angleDelta-prop
                             wheelDelta += eventDelta;
 
                             var increment = 0;
@@ -590,7 +445,7 @@ Kicker.DashboardWindow {
                             }
 
                             while (increment != 0) {
-                                pageList.activateNextPrev(increment < 0);
+                                appsGrid.activateNextPrev(increment < 0);
                                 increment += (increment < 0) ? 1 : -1;
                             }
 
@@ -602,7 +457,7 @@ Kicker.DashboardWindow {
                         }
                     }
                 }
-            }
+            }*/
 
             Keys.onPressed: {
                 if (event.key == Qt.Key_Escape) {
@@ -625,9 +480,9 @@ Kicker.DashboardWindow {
                     event.accepted = true;
                     searchField.backspace();
                 } else if (event.key == Qt.Key_Tab || event.key == Qt.Key_Backtab) {
-                    if (pageListScrollArea.focus == true && pageList.currentItem.itemGrid.currentIndex == -1) {
+                    if (appsGridScrollArea.focus == true && appsGrid.currentItem.itemGrid.currentIndex == -1) {
                         event.accepted = true;
-                        pageList.currentItem.itemGrid.tryActivate(0, 0);
+                        appsGrid.currentItem.itemGrid.tryActivate(0, 0);
                     }
                 } else if (event.text != "") {
                     event.accepted = true;
@@ -641,11 +496,11 @@ Kicker.DashboardWindow {
     }
     Component.onCompleted: {
         rootModel.pageSize = columns*rows
-        pageList.model = rootModel.modelForRow(0);
-        paginationBar.model = rootModel.modelForRow(0);
+        appsGrid.model = rootModel.modelForRow(0);
+        //paginationBar.model = rootModel.modelForRow(0);
         searchField.text = "";
-        pageListScrollArea.focus = true;
-        pageList.currentIndex = 1;
+        //appsGridScrollArea.focus = true;
+        //appsGrid.currentIndex = 1; // doesn't do much
         kicker.reset.connect(reset);
         
     }

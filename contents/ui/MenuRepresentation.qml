@@ -60,9 +60,6 @@ Kicker.DashboardWindow {
     property int columns: Math.floor(0.8 * Math.ceil(width / cellSize))
     property int rows: Math.floor(0.75 * Math.ceil(height / cellSize))
 
-
-    property QtObject allApplications: rootModel.modelForRow(0).modelForRow(1) // two days spent to come up with this combination -- no documentation to be found!
-
     property int widthScreen:  columns * cellSize
     property int heightScreen: rows    * cellSize
 
@@ -100,7 +97,11 @@ Kicker.DashboardWindow {
     function reset() {
         if (!searching) {
             //appsGrid.model = rootModel.systemFavorites;
-            appsGrid.model = rootModel.modelForRow(0).modelForRow(1); // I don't know why or how the fuck this works and why something so important like this is criminally undocumented.
+            //appsGrid.model = rootModel.modelForRow(0).modelForRow(1); // I don't know why or how the fuck this works and why something so important like this is criminally undocumented.
+
+//             rootModel.showRecentApps = true
+            //rootModel.showAllApps = true
+            appsGrid.model = rootModel.modelForRow(0).modelForRow(1)
         }
         searchField.text = "";
         // visual tweaks: when we stop searching for something, we highlight the first - "Hey! There's your focus!"
@@ -187,21 +188,10 @@ Kicker.DashboardWindow {
                 }
             }
 
-            //Rectangle{
-                //anchors.horizontalCenter: searchField.horizontalCenter
-                //y: searchField.y + searchField.height
-                //width: searchField.width * 0.8
-                //height: 1
-                //border.width: 1
-                //border.color: theme.highlightColor//theme.textColor
-                //color: "transparent" // "red" to debug
-                //radius: searchField.height*0.5
-                //z: 2
-            //}
-
             PlasmaComponents.TextField { // searchbar
                 id: searchField
                 z: 1
+                visible: false // it doesn't work anyway
                 anchors.top: parent.top
                 anchors.topMargin: units.iconSizes.large
 
@@ -280,7 +270,8 @@ Kicker.DashboardWindow {
             PlasmaCore.IconItem { // searchbar icon
                 id: nepomunk
                 source: "nepomuk"
-                visible: !searchField.focus && searchField.text == "" // TODO: find a more elegant way to avoid nepomuk overlapping our query
+//                 visible: !searchField.focus && searchField.text == "" // TODO: find a more elegant way to avoid nepomuk overlapping our query
+                visible: false // it doesn't work anyway
                 width:  searchField.height - 2
                 height: width
                 anchors {
@@ -410,6 +401,5 @@ Kicker.DashboardWindow {
         //appsGridScrollArea.focus = true;
         //appsGrid.currentIndex = 1; // doesn't do much
         kicker.reset.connect(reset);
-        
     }
 }

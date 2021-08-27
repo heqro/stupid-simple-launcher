@@ -22,7 +22,7 @@ import QtQuick 2.4
 import QtQuick.Layouts 1.1
 import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
-import org.kde.plasma.components 2.0 as PlasmaComponents
+import org.kde.plasma.components 3.0 as PlasmaComponents
 import org.kde.plasma.extras 2.0 as PlasmaExtras
 import org.kde.plasma.private.kicker 0.1 as Kicker
 
@@ -30,6 +30,8 @@ import "../code/tools.js" as Tools
 import QtQuick.Window 2.0
 import QtQuick.Controls.Styles 1.4
 
+import org.kde.kirigami 2.16 as Kirigami
+import org.kde.kcoreaddons 1.0 as KCoreAddons
 
 Kicker.DashboardWindow {
     
@@ -39,7 +41,8 @@ Kicker.DashboardWindow {
 
 //     property int iconSize: smallScreen ? PlasmaCore.Units.iconSizes.large : PlasmaCore.Units.iconSizes.huge
 
-    property int iconSize:    plasmoid.configuration.iconSize // if iconSize == 48 then the icons' size will be 48x48
+    //property int iconSize:    PlasmaCore.Units.iconSizes.enormous //
+    property int iconSize:    plasmoid.configuration.iconSize // if iconSize == 48 then the icons' size will be 48x48. Enormous will make them look decent (in my screen, that is! :-) )
 
     //property int iconSize: PlasmaCore.Units.iconSizes.enormous
 //     property int iconSize: Math.floor(1.5 * PlasmaCore.Units.iconSizes.huge)
@@ -49,10 +52,7 @@ Kicker.DashboardWindow {
         + (2 * Math.max(highlightItemSvg.margins.top + highlightItemSvg.margins.bottom,
                         highlightItemSvg.margins.left + highlightItemSvg.margins.right))
 
-
-    property bool searching: (searchField.text != "")
-
-    keyEventProxy: searchField
+//     keyEventProxy: searchField
     backgroundColor: "transparent"
 
     property bool linkUseCustomSizeGrid: plasmoid.configuration.useCustomSizeGrid
@@ -67,12 +67,9 @@ Kicker.DashboardWindow {
         return Qt.rgba(color.r, color.g, color.b, alpha)
     }
 
+
     onKeyEscapePressed: {
-        if (searching) {
-            searchField.text = ""
-        } else {
-            root.toggle();
-        }
+        root.toggle()
     }
 
     onVisibleChanged: {
@@ -83,39 +80,21 @@ Kicker.DashboardWindow {
         // appsGrid.currentIndex = -1;
     }
 
-    onSearchingChanged: {
-        if (searching) {
-            appsGrid.model = runnerModel.modelForRow(runnerModel.query);
-
-            //paginationBar.model = runnerModel;
-        } else {
-            reset();
-        }
-        console.log("El runnermodelcount es ",runnerModel.currentQuery)
-    }
-
     function reset() {
-        if (!searching) {
             //appsGrid.model = rootModel.systemFavorites;
-            //appsGrid.model = rootModel.modelForRow(0).modelForRow(1); // I don't know why or how the fuck this works and why something so important like this is criminally undocumented.
-
-//             rootModel.showRecentApps = true
-            //rootModel.showAllApps = true
-            appsGrid.model = rootModel.modelForRow(0).modelForRow(1)
-        }
-        searchField.text = "";
-        // visual tweaks: when we stop searching for something, we highlight the first - "Hey! There's your focus!"
+        appsGrid.model = rootModel.modelForRow(0).modelForRow(1)
         appsGrid.focus = true
         appsGrid.currentIndex = 0;
+
     }
 
 
-    mainItem:
+    //mainItem:
         Rectangle{
 
             anchors.fill: parent
             color: 'transparent'
-
+/*
             Image {
                 source: "br.png"
                 anchors.right: parent.right
@@ -139,7 +118,7 @@ Kicker.DashboardWindow {
                 anchors.left: parent.left
                 anchors.top: parent.top
                 z:2
-            }
+            }*/
 
         MouseArea {
 
@@ -188,111 +167,43 @@ Kicker.DashboardWindow {
                 }
             }
 
-            PlasmaComponents.TextField { // searchbar
-                id: searchField
-                z: 1
-                visible: false // it doesn't work anyway
-                anchors.top: parent.top
-                anchors.topMargin: units.iconSizes.large
 
-                anchors.horizontalCenter: parent.horizontalCenter
-                width: parent.width * 0.2
-                //font.pointSize: 14// units.largeSpacing // fixme: QTBUG font size in plasmaComponent3
-                font.pointSize: units.gridUnit * 0.6
-                placeholderText: "Type to search..."
-                horizontalAlignment: TextInput.AlignHCenter
-                onTextChanged: {
-                    runnerModel.query = text;
-                }
-
-                style: TextFieldStyle {
-                    textColor: theme.textColor
-                    background: Rectangle {
-                        radius: height*0.5
-                        color: theme.textColor
-                        opacity: 0.2
-                    }
-                }
-                Keys.onPressed: {
-                    if (event.key == Qt.Key_Down) {
-                        event.accepted = true;
-                        appsGrid.currentItem.itemGrid.tryActivate(0, 0);
-                    } else if (event.key == Qt.Key_Right) {
-                        if (cursorPosition == length) {
-                            event.accepted = true;
-
-                            if (appsGrid.currentItem.itemGrid.currentIndex == -1) {
-                                appsGrid.currentItem.itemGrid.tryActivate(0, 0);
-                            } else {
-                                appsGrid.currentItem.itemGrid.tryActivate(0, 1);
-                            }
-                        }
-                    } else if (event.key == Qt.Key_Return || event.key == Qt.Key_Enter) {
-                        if (text != "" && appsGrid.currentItem.itemGrid.count > 0) {
-                            event.accepted = true;
-                            appsGrid.currentItem.itemGrid.tryActivate(0, 0);
-                            appsGrid.currentItem.itemGrid.model.trigger(0, "", null);
-                            root.toggle();
-                        }
-                    } else if (event.key == Qt.Key_Tab) {
-                        event.accepted = true;
-                        //systemFavoritesGrid.tryActivate(0, 0);
-                    } else if (event.key == Qt.Key_Backtab) {
-                        event.accepted = true;
-
-                        if (!searching) {
-                            appsGrid.currentIndex = 1;
-                            filterList.forceActiveFocus();
-                        } else {
-                            //systemFavoritesGrid.tryActivate(0, 0);
-                        }
-                    }
-                }
-
-                function backspace() {
-                    if (!root.visible) {
-                        return;
-                    }
-                    focus = true;
-                    text = text.slice(0, -1);
-
-                }
-
-                function appendText(newText) {
-                    if (!root.visible) {
-                        return;
-                    }
-                    focus = true;
-                    text = text + newText;
-                }
+            KCoreAddons.KUser {
+                id: kuser
             }
 
-            PlasmaCore.IconItem { // searchbar icon
-                id: nepomunk
-                source: "nepomuk"
-//                 visible: !searchField.focus && searchField.text == "" // TODO: find a more elegant way to avoid nepomuk overlapping our query
-                visible: false // it doesn't work anyway
-                width:  searchField.height - 2
-                height: width
+            PlasmaComponents.TextField {
+                id: testLabel
+
                 anchors {
-                    left: searchField.left
-                    leftMargin: 10
-                    verticalCenter: searchField.verticalCenter
+                    top: parent.top
+                    topMargin: units.iconSizes.large
+                    horizontalCenter: parent.horizontalCenter
+                }
+
+                font.pointSize: 20
+
+                //type: Kirigami.Heading.Type.Primary
+                placeholderText: "What will you do today, " + kuser.loginName + "?"
+
+                placeholderTextColor: colorWithAlpha(PlasmaCore.Theme.headerTextColor, 0.8)
+
+                background: Rectangle {
+                        color: "transparent"
                 }
 
             }
-
 
             Rectangle { // applications will be inside this
-                width:   widthScreen
-//                 height:  heightScreen // mess up with this
+                width: widthScreen
+//                 height: heightScreen
                 color: "transparent" // use "red" to see real dimensions and limits
                 anchors {
                     horizontalCenter: parent.horizontalCenter
-                    top: nepomunk.bottom
+                    top: testLabel.bottom
                     topMargin: units.iconSizes.medium
                     bottom: sessionControlBar.top
-//                     bottomMargin: units.iconSizes.medium
+                    bottomMargin: units.iconSizes.medium
                 }
 
                 ItemGridView { // no model needed to set in this block of code - it's set somewhere else
@@ -302,33 +213,27 @@ Kicker.DashboardWindow {
                     cellWidth:  cellSize
                     cellHeight: cellSize
 
-                    horizontalScrollBarPolicy: Qt.ScrollBarAlwaysOff
                     verticalScrollBarPolicy: Qt.ScrollBarAlwaysOff
 
-                    dragEnabled: (currentIndex == 0)
-
-                    model: searching && runnerModel.count > 0 ? runnerModel : rootModel.modelForRow(0).modelForRow(1)
+                    model:  rootModel.modelForRow(0).modelForRow(1)
 
                     //model: globalFavorites // equivalent
                     //model: rootModel.systemFavorites // equivalent
 
 
 
-                    onCurrentIndexChanged: {
-                        if (currentIndex != -1 && !searching) {
+                    //onCurrentIndexChanged: {
+                        //if (currentIndex != -1 && !searching) {
                             //appsGridScrollArea.focus = true;
-                            focus = true;
-                        }
-                        //if(!visible && (currentIndex + 1) < appsGrid.count ){
-                        //    currentIndex = currentIndex + 1
+                            //focus = true;
                         //}
-                    }
+                    //}
 
-                    onCountChanged: {
-                        if (searching && currentIndex == 0) {
-                            currentIndex = 0;
-                        }
-                    }
+                    //onCountChanged: {
+                        //if (searching && currentIndex == 0) {
+                            //currentIndex = 0;
+                        //}
+                    //}
                 }
             }
 
@@ -359,36 +264,37 @@ Kicker.DashboardWindow {
                 }
             }
 
-            Keys.onPressed: {
-                if (event.key == Qt.Key_Escape) {
-                    event.accepted = true;
+            //Keys.onPressed: {
+                //if (event.key == Qt.Key_Escape) {
+                    //event.accepted = true;
 
-                    if (searching) {
-                        reset();
-                    } else {
-                        root.toggle();
-                    }
+                    //if (searching) {
+                        //reset();
+                    //} else {
+                        //root.toggle();
+                    //}
 
-                    return;
-                }
+                    //root.toggle()
+                    //return;
+                //}
 
-                if (searchField.focus) {
-                    return;
-                }
+                //if (searchField.focus) {
+                    //return;
+                //}
 
-                if (event.key == Qt.Key_Backspace) {
-                    event.accepted = true;
-                    searchField.backspace();
-                } else if (event.key == Qt.Key_Tab || event.key == Qt.Key_Backtab) {
-                    if (appsGridScrollArea.focus == true && appsGrid.currentItem.itemGrid.currentIndex == -1) {
-                        event.accepted = true;
-                        appsGrid.currentItem.itemGrid.tryActivate(0, 0);
-                    }
-                } else if (event.text != "") {
-                    event.accepted = true;
-                    searchField.appendText(event.text);
-                }
-            }
+                //if (event.key == Qt.Key_Backspace) {
+                    //event.accepted = true;
+                    //searchField.backspace();
+                //} else if (event.key == Qt.Key_Tab || event.key == Qt.Key_Backtab) {
+                    //if (appsGridScrollArea.focus == true && appsGrid.currentItem.itemGrid.currentIndex == -1) {
+                        //event.accepted = true;
+                        //appsGrid.currentItem.itemGrid.tryActivate(0, 0);
+                    //}
+                //} else if (event.text != "") {
+                    //event.accepted = true;
+                    //searchField.appendText(event.text);
+                //}
+            //}
 
 
         }
@@ -397,7 +303,6 @@ Kicker.DashboardWindow {
     Component.onCompleted: {
         rootModel.pageSize = -1 // this will, somehow, make it show everything -- again, don't ask me!
 //         appsGrid.model = rootModel.modelForRow(0).modelForRow(1);
-        searchField.text = "";
         //appsGridScrollArea.focus = true;
         //appsGrid.currentIndex = 1; // doesn't do much
         kicker.reset.connect(reset);

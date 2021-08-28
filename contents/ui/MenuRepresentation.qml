@@ -30,14 +30,13 @@ import "../code/tools.js" as Tools
 import QtQuick.Window 2.0
 import QtQuick.Controls.Styles 1.4
 
-import org.kde.kirigami 2.16 as Kirigami
 import org.kde.kcoreaddons 1.0 as KCoreAddons
 
 Kicker.DashboardWindow {
     
     id: root
 
-    property bool smallScreen: ((Math.floor(width / PlasmaCore.Units.iconSizes.huge) <= 22) || (Math.floor(height / PlasmaCore.Units.iconSizes.huge) <= 14))
+//     property bool smallScreen: ((Math.floor(width / PlasmaCore.Units.iconSizes.huge) <= 22) || (Math.floor(height / PlasmaCore.Units.iconSizes.huge) <= 14))
 
 //     property int iconSize: smallScreen ? PlasmaCore.Units.iconSizes.large : PlasmaCore.Units.iconSizes.huge
 
@@ -52,10 +51,9 @@ Kicker.DashboardWindow {
         + (2 * Math.max(highlightItemSvg.margins.top + highlightItemSvg.margins.bottom,
                         highlightItemSvg.margins.left + highlightItemSvg.margins.right))
 
-//     keyEventProxy: searchField
-    backgroundColor: "transparent"
+    keyEventProxy: searchField // Set "searchField" as our keybord input receiver
 
-    property bool linkUseCustomSizeGrid: plasmoid.configuration.useCustomSizeGrid
+    backgroundColor: "transparent"
 
     property int columns: Math.floor(0.8 * Math.ceil(width / cellSize))
     property int rows: Math.floor(0.75 * Math.ceil(height / cellSize))
@@ -63,10 +61,11 @@ Kicker.DashboardWindow {
     property int widthScreen:  columns * cellSize
     property int heightScreen: rows    * cellSize
 
+    property bool searching: searchField.text != ""
+
     function colorWithAlpha(color, alpha) {
         return Qt.rgba(color.r, color.g, color.b, alpha)
     }
-
 
     onKeyEscapePressed: {
         root.toggle()
@@ -74,10 +73,11 @@ Kicker.DashboardWindow {
 
     onVisibleChanged: {
         animationSearch.start()
-
         reset();
-        //rootModel.pageSize = rows * columns
-        // appsGrid.currentIndex = -1;
+    }
+
+    onSearchingChanged: {
+        //console.log("searching: ", searching)
     }
 
     function reset() {
@@ -85,7 +85,7 @@ Kicker.DashboardWindow {
         appsGrid.model = rootModel.modelForRow(0).modelForRow(1)
         appsGrid.focus = true
         appsGrid.currentIndex = 0;
-
+        searchField.text = ""
     }
 
 
@@ -173,7 +173,7 @@ Kicker.DashboardWindow {
             }
 
             PlasmaComponents.TextField {
-                id: testLabel
+                id: searchField
 
                 anchors {
                     top: parent.top
@@ -182,8 +182,6 @@ Kicker.DashboardWindow {
                 }
 
                 font.pointSize: 20
-
-                //type: Kirigami.Heading.Type.Primary
                 placeholderText: "What will you do today, " + kuser.loginName + "?"
 
                 placeholderTextColor: colorWithAlpha(PlasmaCore.Theme.headerTextColor, 0.8)
@@ -200,7 +198,7 @@ Kicker.DashboardWindow {
                 color: "transparent" // use "red" to see real dimensions and limits
                 anchors {
                     horizontalCenter: parent.horizontalCenter
-                    top: testLabel.bottom
+                    top: searchField.bottom
                     topMargin: units.iconSizes.medium
                     bottom: sessionControlBar.top
                     bottomMargin: units.iconSizes.medium
@@ -261,6 +259,18 @@ Kicker.DashboardWindow {
                 anchors {
                     bottom: parent.bottom
                     horizontalCenter: parent.horizontalCenter
+                }
+            }
+
+            Keys.onPressed: {
+                if (event.key == Qt.Key_Escape) {
+                    event.accepted = true;
+                    console.log("HOLA")
+                    if (searching) {
+                        searchField.text = ""
+                    } else {
+                        root.toggle();
+                    }
                 }
             }
 

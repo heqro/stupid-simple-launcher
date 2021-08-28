@@ -190,6 +190,25 @@ Kicker.DashboardWindow {
                         color: "transparent"
                 }
 
+                visible: false
+                //enabled: false
+            }
+
+            PlasmaExtras.Heading {
+                id: headerByNow // this heading will only exist for as long as I cannot get searchField working
+
+                anchors {
+                    top: parent.top
+                    topMargin: units.iconSizes.large
+                    horizontalCenter: parent.horizontalCenter
+                }
+
+                font.pointSize: 20
+                text: "What will you do today, " + kuser.loginName + "?"
+
+                background: Rectangle {
+                    color: "transparent"
+                }
             }
 
             Rectangle { // applications will be inside this
@@ -262,17 +281,19 @@ Kicker.DashboardWindow {
                 }
             }
 
-            Keys.onPressed: {
-                if (event.key == Qt.Key_Escape) {
-                    event.accepted = true;
-                    console.log("HOLA")
-                    if (searching) {
-                        searchField.text = ""
-                    } else {
-                        root.toggle();
-                    }
-                }
-            }
+            //Keys.onPressed: {
+                //console.log("HOLA")
+                //if (event.key == Qt.Key_Escape) {
+                    //event.accepted = true;
+
+                    //if (searching) {
+                        //searchField.text = ""
+                    //} else {
+                        //root.toggle();
+                    //}
+
+                //}
+            //}
 
             //Keys.onPressed: {
                 //if (event.key == Qt.Key_Escape) {

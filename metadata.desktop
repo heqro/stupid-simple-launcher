@@ -12,7 +12,7 @@ X-Plasma-Provides=org.kde.plasma.launchermenu
 
 X-KDE-PluginInfo-Author=heqro
 X-KDE-PluginInfo-Email=heqromancer[at]gmail.com
-X-KDE-PluginInfo-Name=launchpadPlasmaModHeqro
+X-KDE-PluginInfo-Name=stupidsimplelauncher
 X-KDE-PluginInfo-Version=1.0
 X-KDE-PluginInfo-Category=Application Launchers
 X-KDE-PluginInfo-Depends=

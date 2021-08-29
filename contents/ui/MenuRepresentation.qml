@@ -36,22 +36,12 @@ Kicker.DashboardWindow {
     
     id: root
 
-//     property bool smallScreen: ((Math.floor(width / PlasmaCore.Units.iconSizes.huge) <= 22) || (Math.floor(height / PlasmaCore.Units.iconSizes.huge) <= 14))
-
-//     property int iconSize: smallScreen ? PlasmaCore.Units.iconSizes.large : PlasmaCore.Units.iconSizes.huge
-
-    //property int iconSize:    PlasmaCore.Units.iconSizes.enormous //
     property int iconSize:    plasmoid.configuration.iconSize // if iconSize == 48 then the icons' size will be 48x48. Enormous will make them look decent (in my screen, that is! :-) )
-
-    //property int iconSize: PlasmaCore.Units.iconSizes.enormous
-//     property int iconSize: Math.floor(1.5 * PlasmaCore.Units.iconSizes.huge)
 
     property int cellSize: iconSize + Math.floor(1.5 * PlasmaCore.Theme.mSize(PlasmaCore.Theme.defaultFont).height)
         + (2 * PlasmaCore.Units.smallSpacing)
         + (2 * Math.max(highlightItemSvg.margins.top + highlightItemSvg.margins.bottom,
                         highlightItemSvg.margins.left + highlightItemSvg.margins.right))
-
-    keyEventProxy: searchField // Set "searchField" as our keybord input receiver
 
     backgroundColor: "transparent"
 
@@ -76,49 +66,17 @@ Kicker.DashboardWindow {
         reset();
     }
 
-    onSearchingChanged: {
-        //console.log("searching: ", searching)
-    }
-
     function reset() {
-            //appsGrid.model = rootModel.systemFavorites;
         appsGrid.model = rootModel.modelForRow(0).modelForRow(1)
         appsGrid.focus = true
         appsGrid.currentIndex = 0;
         searchField.text = ""
     }
 
-
-    //mainItem:
-        Rectangle{
+    Rectangle {
 
             anchors.fill: parent
             color: 'transparent'
-/*
-            Image {
-                source: "br.png"
-                anchors.right: parent.right
-                anchors.bottom: parent.bottom
-                z:2
-            }
-            Image {
-                source: "bl.png"
-                anchors.left: parent.left
-                anchors.bottom: parent.bottom
-                z:2
-            }
-            Image {
-                source: "tr.png"
-                anchors.right: parent.right
-                anchors.top: parent.top
-                z:2
-            }
-            Image {
-                source: "tl.png"
-                anchors.left: parent.left
-                anchors.top: parent.top
-                z:2
-            }*/
 
         MouseArea {
 
@@ -191,7 +149,7 @@ Kicker.DashboardWindow {
                 }
 
                 visible: false
-                //enabled: false
+                //enabled: false // this crashes plasmashell xdxd
             }
 
             PlasmaExtras.Heading {
@@ -223,7 +181,7 @@ Kicker.DashboardWindow {
                     bottomMargin: units.iconSizes.medium
                 }
 
-                ItemGridView { // no model needed to set in this block of code - it's set somewhere else
+                ItemGridView {
                     id: appsGrid
                     visible: model.count > 0
                     anchors.fill: parent
@@ -233,36 +191,12 @@ Kicker.DashboardWindow {
                     verticalScrollBarPolicy: Qt.ScrollBarAlwaysOff
 
                     model:  rootModel.modelForRow(0).modelForRow(1)
-
-                    //model: globalFavorites // equivalent
-                    //model: rootModel.systemFavorites // equivalent
-
-
-
-                    //onCurrentIndexChanged: {
-                        //if (currentIndex != -1 && !searching) {
-                            //appsGridScrollArea.focus = true;
-                            //focus = true;
-                        //}
-                    //}
-
-                    //onCountChanged: {
-                        //if (searching && currentIndex == 0) {
-                            //currentIndex = 0;
-                        //}
-                    //}
                 }
             }
 
             ItemGridView { // shutdown, reboot, logout, lock
                 id: sessionControlBar
                 showLabels: false
-
-//                 cellWidth: Math.floor(cellSize   * 6 / 7)
-                //PlasmaCore.Units.iconSizes.enormous
-                //cellHeight: cellSize
-//                 cellHeight: Math.floor(cellSize * 6 / 7)
-
 
                 iconSize:   PlasmaCore.Units.iconSizes.large
                 cellHeight: iconSize + (2 * PlasmaCore.Units.smallSpacing) + (2 * Math.max(highlightItemSvg.margins.top + highlightItemSvg.margins.bottom, highlightItemSvg.margins.left + highlightItemSvg.margins.right))
@@ -273,69 +207,19 @@ Kicker.DashboardWindow {
 
                 model: systemFavorites
 
-//                 usesPlasmaTheme: true // for using Plasma Style icons should you want inconsistency
+//                 usesPlasmaTheme: true // for using Plasma Style icons
 
                 anchors {
                     bottom: parent.bottom
                     horizontalCenter: parent.horizontalCenter
                 }
             }
-
-            //Keys.onPressed: {
-                //console.log("HOLA")
-                //if (event.key == Qt.Key_Escape) {
-                    //event.accepted = true;
-
-                    //if (searching) {
-                        //searchField.text = ""
-                    //} else {
-                        //root.toggle();
-                    //}
-
-                //}
-            //}
-
-            //Keys.onPressed: {
-                //if (event.key == Qt.Key_Escape) {
-                    //event.accepted = true;
-
-                    //if (searching) {
-                        //reset();
-                    //} else {
-                        //root.toggle();
-                    //}
-
-                    //root.toggle()
-                    //return;
-                //}
-
-                //if (searchField.focus) {
-                    //return;
-                //}
-
-                //if (event.key == Qt.Key_Backspace) {
-                    //event.accepted = true;
-                    //searchField.backspace();
-                //} else if (event.key == Qt.Key_Tab || event.key == Qt.Key_Backtab) {
-                    //if (appsGridScrollArea.focus == true && appsGrid.currentItem.itemGrid.currentIndex == -1) {
-                        //event.accepted = true;
-                        //appsGrid.currentItem.itemGrid.tryActivate(0, 0);
-                    //}
-                //} else if (event.text != "") {
-                    //event.accepted = true;
-                    //searchField.appendText(event.text);
-                //}
-            //}
-
-
         }
-
     }
+
+
     Component.onCompleted: {
         rootModel.pageSize = -1 // this will, somehow, make it show everything -- again, don't ask me!
-//         appsGrid.model = rootModel.modelForRow(0).modelForRow(1);
-        //appsGridScrollArea.focus = true;
-        //appsGrid.currentIndex = 1; // doesn't do much
         kicker.reset.connect(reset);
     }
 }

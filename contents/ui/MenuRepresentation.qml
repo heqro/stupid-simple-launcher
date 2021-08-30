@@ -165,7 +165,7 @@ Kicker.DashboardWindow {
                     }
 
                     font.pointSize: 20
-                    placeholderText: "What will you do today, " + kuser.loginName + "?"
+                    placeholderText: "Howdy, " + kuser.loginName + "! Type to start searching..."
                     placeholderTextColor: colorWithAlpha(PlasmaCore.Theme.headerTextColor, 0.8)
                     horizontalAlignment: TextInput.AlignHCenter
 
@@ -183,34 +183,25 @@ Kicker.DashboardWindow {
                         if (event.key == Qt.Key_Down) {
                             event.accepted = true;
                             pageList.currentIndex = 0 // "return to the grid"
-                            pageList.currentItem.itemGrid.tryActivate(0, 0); // highlight first item
+                            pageList.currentItem.itemGrid.tryActivate(1, 0); // highlight first item - second row
                         } else if (event.key == Qt.Key_Right) {
                             if (cursorPosition == length) {
                                 event.accepted = true;
                                 pageList.currentIndex = 0 // "return to the grid"
-                                pageList.currentItem.itemGrid.tryActivate(0, 0); // highlight first item
+                                pageList.currentItem.itemGrid.tryActivate(0, 1); // highlight second item - first row
+                            }
+                        } else if (event.key == Qt.Key_Return || event.key == Qt.Key_Enter) {
+                            pageList.currentIndex = 0 // "return to the grid"
+                            if (text != "" && pageList.currentItem.itemGrid.count > 0) {
+                                event.accepted = true;
+                                //pageList.currentIndex = 0 // "return to the grid"
+                                pageList.currentItem.itemGrid.tryActivate(0, 0);
+                                pageList.currentItem.itemGrid.model.trigger(0, "", null);
+                                root.toggle();
                             }
                         }
                     }
                     //enabled: false // this crashes plasmashell xdxd
-                }
-
-                PlasmaExtras.Heading {
-                    id: headerByNow // this heading will only exist for as long as I cannot get searchField working
-
-                    anchors {
-                        top: parent.top
-                        topMargin: units.iconSizes.large
-                        horizontalCenter: parent.horizontalCenter
-                    }
-
-                    font.pointSize: 20
-                    text: "What will you do today, " + kuser.loginName + "?"
-
-                    background: Rectangle {
-                        color: "transparent"
-                    }
-                    visible: false
                 }
 
                 Rectangle { // applications will be inside this
@@ -237,15 +228,17 @@ Kicker.DashboardWindow {
                         //onCurrentIndexChanged: {
                             //positionViewAtIndex(currentIndex, ListView.Contain);
                         //}
+
                         onCurrentItemChanged: {
                             if (!currentItem) {
                                 return;
                             }
-                            if (!searching) {
-                                currentItem.itemGrid.focus = true;
-                            } else {
-
-                            }
+//                             if (!searching) {
+//                                 currentItem.itemGrid.focus = true;
+//                             } else {
+//
+//                             }
+                            currentItem.itemGrid.focus = true;
                         }
                         //onModelChanged: {
                             //currentIndex = 0
@@ -277,13 +270,19 @@ Kicker.DashboardWindow {
 
                                 model: searching ? runnerModel.modelForRow(0) : rootModel.modelForRow(0).modelForRow(1)
 
-                                onCountChanged: { // whenever the list of icons has its cardinality modified, account for the change
-                                    currentIndex = searching ? -1 : 0
-                                }
+                                //onCountChanged: { // whenever the list of icons has its cardinality modified, account for the change
+                                    //currentIndex = 0
+                                    //itemGrid.tryActivate(0, 0);
+                                //}
 
                                 onKeyNavUp: {
                                     currentIndex = -1;
                                     searchField.focus = true;
+                                }
+
+                                onModelChanged: {
+                                    currentIndex = 0
+                                    itemGrid.tryActivate(0, 0);
                                 }
                             }
                         }

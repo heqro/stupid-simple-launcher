@@ -45,6 +45,9 @@ Kicker.DashboardWindow {
 
     backgroundColor: "transparent"
 
+    keyEventProxy: searchField
+
+
     property int columns: Math.floor(0.8 * Math.ceil(width / cellSize))
     property int rows: Math.floor(0.75 * Math.ceil(height / cellSize))
 
@@ -53,12 +56,28 @@ Kicker.DashboardWindow {
 
     property bool searching: searchField.text != ""
 
+    //property bool
+
     function colorWithAlpha(color, alpha) {
         return Qt.rgba(color.r, color.g, color.b, alpha)
     }
 
     onKeyEscapePressed: {
-        root.toggle()
+        if (searching) {
+            searchField.text = ""
+        } else {
+            root.toggle()
+        }
+    }
+
+    onSearchingChanged: {
+        if (searching) {
+            pageList.model = runnerModel;
+            //paginationBar.model = runnerModel;
+        } else {
+            reset();
+        }
+
     }
 
     onVisibleChanged: {
@@ -67,155 +86,233 @@ Kicker.DashboardWindow {
     }
 
     function reset() {
-        appsGrid.model = rootModel.modelForRow(0).modelForRow(1)
-        appsGrid.focus = true
-        appsGrid.currentIndex = 0;
+        if (!searching) {
+            pageList.model = rootModel.modelForRow(0).modelForRow(1)
+        }
+        //pageListScrollArea.focus = true
+
+//         appsGrid.currentIndex = 0
+        //pageList.currentIndex = 0;
+        pageList.focus = true
         searchField.text = ""
     }
 
-    Rectangle {
+    mainItem:
+        Rectangle {
 
             anchors.fill: parent
             color: 'transparent'
 
-        MouseArea {
+            MouseArea {
 
-            id: mainItemRoot
-            anchors.fill: parent
-            acceptedButtons: Qt.LeftButton | Qt.RightButton
-            LayoutMirroring.enabled: Qt.application.layoutDirection == Qt.RightToLeft
-            LayoutMirroring.childrenInherit: true
-            focus: true
-
-            ScaleAnimator{
-                id: animationSearch
-                from: 1.1
-                to: 1
-                target: mainItemRoot
-            }
-
-            onClicked: {
-                root.toggle();
-            }
-
-            Rectangle{
+                id: mainItemRoot
                 anchors.fill: parent
-                color: colorWithAlpha(theme.backgroundColor,0.6)
-            }
+                acceptedButtons: Qt.LeftButton | Qt.RightButton
+                LayoutMirroring.enabled: Qt.application.layoutDirection == Qt.RightToLeft
+                LayoutMirroring.childrenInherit: true
+//                 focus: true
 
-            PlasmaExtras.Heading {
-                id: dummyHeading
-                visible: false
-                width: 0
-                level: 5
-            }
+                ScaleAnimator{
+                    id: animationSearch
+                    from: 1.1
+                    to: 1
+                    target: mainItemRoot
+                }
 
-            TextMetrics {
-                id: headingMetrics
-                font: dummyHeading.font
-            }
+                onClicked: {
+                    root.toggle();
+                }
 
-            ActionMenu {
-                id: actionMenu
-                onActionClicked: visualParent.actionTriggered(actionId, actionArgument)
-                onClosed: {
-                    if (appsGrid.currentItem) {
-                        appsGrid.currentItem.itemGrid.currentIndex = -1;
+                Rectangle{
+                    anchors.fill: parent
+                    color: colorWithAlpha(theme.backgroundColor,0.6)
+                }
+
+                PlasmaExtras.Heading {
+                    id: dummyHeading
+                    visible: false
+                    width: 0
+                    level: 5
+                }
+
+                TextMetrics {
+                    id: headingMetrics
+                    font: dummyHeading.font
+                }
+
+                ActionMenu {
+                    id: actionMenu
+                    onActionClicked: visualParent.actionTriggered(actionId, actionArgument)
+                    onClosed: {
+                        if (pageList.currentItem) {
+                            pageList.currentItem.itemGrid.currentIndex = -1;
+                        }
+                    }
+                }
+
+
+                KCoreAddons.KUser {
+                    id: kuser
+                }
+
+                PlasmaComponents.TextField { //searchbar
+                    id: searchField
+
+                    anchors {
+                        top: parent.top
+                        topMargin: units.iconSizes.large
+                        horizontalCenter: parent.horizontalCenter
+                    }
+
+                    font.pointSize: 20
+                    placeholderText: "What will you do today, " + kuser.loginName + "?"
+                    placeholderTextColor: colorWithAlpha(PlasmaCore.Theme.headerTextColor, 0.8)
+                    horizontalAlignment: TextInput.AlignHCenter
+
+                    onTextChanged: {
+                        runnerModel.query = text
+                    }
+
+                    background: Rectangle {
+                        color: "transparent"
+                    }
+
+                    visible: true
+
+                    Keys.onPressed: {
+                        if (event.key == Qt.Key_Down) {
+                            event.accepted = true;
+                            pageList.currentIndex = 0 // "return to the grid"
+                            pageList.currentItem.itemGrid.tryActivate(0, 0); // highlight first item
+                        } else if (event.key == Qt.Key_Right) {
+                            if (cursorPosition == length) {
+                                event.accepted = true;
+                                pageList.currentIndex = 0 // "return to the grid"
+                                pageList.currentItem.itemGrid.tryActivate(0, 0); // highlight first item
+                            }
+                        }
+                    }
+                    //enabled: false // this crashes plasmashell xdxd
+                }
+
+                PlasmaExtras.Heading {
+                    id: headerByNow // this heading will only exist for as long as I cannot get searchField working
+
+                    anchors {
+                        top: parent.top
+                        topMargin: units.iconSizes.large
+                        horizontalCenter: parent.horizontalCenter
+                    }
+
+                    font.pointSize: 20
+                    text: "What will you do today, " + kuser.loginName + "?"
+
+                    background: Rectangle {
+                        color: "transparent"
+                    }
+                    visible: false
+                }
+
+                Rectangle { // applications will be inside this
+                    width: widthScreen
+    //                 height: heightScreen
+                    color: "transparent" // use "red" to see real dimensions and limits
+                    anchors {
+                        horizontalCenter: parent.horizontalCenter
+                        top: searchField.bottom
+                        topMargin: units.iconSizes.medium
+                        bottom: sessionControlBar.top
+                        bottomMargin: units.iconSizes.medium
+                    }
+
+                    ListView {
+                        id: pageList
+//                             anchors.fill: parent
+                        interactive: false
+//                         keyNavigationEnabled: true
+
+
+//                             model: rootModel
+
+                        //onCurrentIndexChanged: {
+                            //positionViewAtIndex(currentIndex, ListView.Contain);
+                        //}
+                        onCurrentItemChanged: {
+                            if (!currentItem) {
+                                return;
+                            }
+                            if (!searching) {
+                                currentItem.itemGrid.focus = true;
+                            } else {
+
+                            }
+                        }
+                        //onModelChanged: {
+                            //currentIndex = 0
+                            //currentItem.focus = false
+                            //if (searching) {
+                                //currentItem.itemGrid.focus = false;
+                            //}
+                            //console.log("Modelo cambiado")
+                        //}
+
+                        delegate: Item {
+                            width: columns * cellSize
+                            height: rows * cellSize
+
+                            property Item itemGrid: appsGrid
+                            focus: true
+
+                            ItemGridView {
+                                id: appsGrid
+                                visible: model.count > 0
+                                anchors.fill: parent
+                                cellWidth:  cellSize
+                                cellHeight: cellSize
+//                                 focus: true
+
+                                verticalScrollBarPolicy: Qt.ScrollBarAlwaysOff
+
+                                dragEnabled: (index == 0)
+
+                                model: searching ? runnerModel.modelForRow(0) : rootModel.modelForRow(0).modelForRow(1)
+
+                                onCountChanged: { // whenever the list of icons has its cardinality modified, account for the change
+                                    currentIndex = searching ? -1 : 0
+                                }
+
+                                onKeyNavUp: {
+                                    currentIndex = -1;
+                                    searchField.focus = true;
+                                }
+                            }
+                        }
+                    }
+
+                }
+
+                ItemGridView { // shutdown, reboot, logout, lock
+                    id: sessionControlBar
+                    showLabels: false
+
+                    iconSize:   PlasmaCore.Units.iconSizes.large
+                    cellHeight: iconSize + (2 * PlasmaCore.Units.smallSpacing) + (2 * Math.max(highlightItemSvg.margins.top + highlightItemSvg.margins.bottom, highlightItemSvg.margins.left + highlightItemSvg.margins.right))
+                    cellWidth: iconSize + (2 * PlasmaCore.Units.smallSpacing) + (2 * Math.max(highlightItemSvg.margins.top + highlightItemSvg.margins.bottom, highlightItemSvg.margins.left + highlightItemSvg.margins.right))
+
+                    height: cellHeight
+                    width: systemFavorites.count * cellWidth
+
+                    model: systemFavorites
+
+    //                 usesPlasmaTheme: true // for using Plasma Style icons
+
+                    anchors {
+                        bottom: parent.bottom
+                        horizontalCenter: parent.horizontalCenter
                     }
                 }
             }
-
-
-            KCoreAddons.KUser {
-                id: kuser
-            }
-
-            PlasmaComponents.TextField {
-                id: searchField
-
-                anchors {
-                    top: parent.top
-                    topMargin: units.iconSizes.large
-                    horizontalCenter: parent.horizontalCenter
-                }
-
-                font.pointSize: 20
-                placeholderText: "What will you do today, " + kuser.loginName + "?"
-
-                placeholderTextColor: colorWithAlpha(PlasmaCore.Theme.headerTextColor, 0.8)
-
-                background: Rectangle {
-                        color: "transparent"
-                }
-
-                visible: false
-                //enabled: false // this crashes plasmashell xdxd
-            }
-
-            PlasmaExtras.Heading {
-                id: headerByNow // this heading will only exist for as long as I cannot get searchField working
-
-                anchors {
-                    top: parent.top
-                    topMargin: units.iconSizes.large
-                    horizontalCenter: parent.horizontalCenter
-                }
-
-                font.pointSize: 20
-                text: "What will you do today, " + kuser.loginName + "?"
-
-                background: Rectangle {
-                    color: "transparent"
-                }
-            }
-
-            Rectangle { // applications will be inside this
-                width: widthScreen
-//                 height: heightScreen
-                color: "transparent" // use "red" to see real dimensions and limits
-                anchors {
-                    horizontalCenter: parent.horizontalCenter
-                    top: searchField.bottom
-                    topMargin: units.iconSizes.medium
-                    bottom: sessionControlBar.top
-                    bottomMargin: units.iconSizes.medium
-                }
-
-                ItemGridView {
-                    id: appsGrid
-                    visible: model.count > 0
-                    anchors.fill: parent
-                    cellWidth:  cellSize
-                    cellHeight: cellSize
-
-                    verticalScrollBarPolicy: Qt.ScrollBarAlwaysOff
-
-                    model:  rootModel.modelForRow(0).modelForRow(1)
-                }
-            }
-
-            ItemGridView { // shutdown, reboot, logout, lock
-                id: sessionControlBar
-                showLabels: false
-
-                iconSize:   PlasmaCore.Units.iconSizes.large
-                cellHeight: iconSize + (2 * PlasmaCore.Units.smallSpacing) + (2 * Math.max(highlightItemSvg.margins.top + highlightItemSvg.margins.bottom, highlightItemSvg.margins.left + highlightItemSvg.margins.right))
-                cellWidth: iconSize + (2 * PlasmaCore.Units.smallSpacing) + (2 * Math.max(highlightItemSvg.margins.top + highlightItemSvg.margins.bottom, highlightItemSvg.margins.left + highlightItemSvg.margins.right))
-
-                height: cellHeight
-                width: systemFavorites.count * cellWidth
-
-                model: systemFavorites
-
-//                 usesPlasmaTheme: true // for using Plasma Style icons
-
-                anchors {
-                    bottom: parent.bottom
-                    horizontalCenter: parent.horizontalCenter
-                }
-            }
         }
-    }
 
 
     Component.onCompleted: {

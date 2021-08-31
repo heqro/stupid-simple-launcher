@@ -140,15 +140,7 @@ Kicker.DashboardWindow {
                     font: dummyHeading.font
                 }
 
-                ActionMenu {
-                    id: actionMenu
-                    onActionClicked: visualParent.actionTriggered(actionId, actionArgument)
-                    onClosed: {
-                        if (pageList.currentItem) {
-                            pageList.currentItem.itemGrid.currentIndex = -1;
-                        }
-                    }
-                }
+
 
 
                 KCoreAddons.KUser {
@@ -216,10 +208,49 @@ Kicker.DashboardWindow {
                         bottomMargin: units.iconSizes.medium
                     }
 
+                    ItemGridView {
+                        id: myFavorites
+                        model: globalFavorites
+                        visible: model.count > 0 // TODO: this should be enabled from configuration
+                        height: cellSize
+                        width: columns * cellSize
+                        cellWidth:  cellSize
+                        cellHeight: cellSize
+                    }
+
+                    PlasmaCore.SvgItem {
+                        id: horizontalSeparator
+//                         opacity: applicationsView.listView.contentY !== 0
+                        height: PlasmaCore.Units.devicePixelRatio * 4
+                        elementId: "horizontal-line"
+                        z: 1
+
+                        anchors {
+                            left: parent.left
+                            leftMargin: PlasmaCore.Units.smallSpacing * 4
+                            right: parent.right
+                            rightMargin: PlasmaCore.Units.smallSpacing * 4
+                            top: myFavorites.bottom
+                            topMargin: units.iconSizes.medium
+                        }
+
+                        Behavior on opacity {
+                            NumberAnimation {
+                                duration: PlasmaCore.Units.shortDuration
+                                easing.type: Easing.InOutQuad
+                            }
+                        }
+
+                        svg: PlasmaCore.Svg {
+                            imagePath: "widgets/line"
+                        }
+                    }
+
                     ListView {
                         id: pageList
 //                             anchors.fill: parent
                         interactive: false
+                        anchors.top: horizontalSeparator.bottom
 //                         keyNavigationEnabled: true
 
 
@@ -251,7 +282,7 @@ Kicker.DashboardWindow {
 
                         delegate: Item {
                             width: columns * cellSize
-                            height: rows * cellSize
+                            height: !myFavorites.visible ? rows * cellSize : (rows - 1) * cellSize
 
                             property Item itemGrid: appsGrid
                             focus: true
@@ -260,6 +291,7 @@ Kicker.DashboardWindow {
                                 id: appsGrid
                                 visible: model.count > 0
                                 anchors.fill: parent
+
                                 cellWidth:  cellSize
                                 cellHeight: cellSize
 //                                 focus: true

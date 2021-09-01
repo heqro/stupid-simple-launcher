@@ -41,12 +41,13 @@ Item {
     property string cfg_customButtonImage: plasmoid.configuration.customButtonImage
 
 
-    property alias cfg_useCustomSizeGrid: useCustomSizeGrid.checked
+//     property alias cfg_useCustomSizeGrid: useCustomSizeGrid.checked
     property alias cfg_iconSize:      iconSize.value
-    property alias cfg_numberColumns: numberColumns.value
-    property alias cfg_numberRows:    numberRows.value
-    property alias cfg_spaceWidth:    spaceWidth.value
-    property alias cfg_spaceHeight:   spaceHeight.value
+//     property alias cfg_numberColumns: numberColumns.value
+    //property alias cfg_numberRows:    numberRows.value
+    //property alias cfg_spaceWidth:    spaceWidth.value
+    //property alias cfg_spaceHeight:   spaceHeight.value
+    property alias cfg_favoritesInGrid: favoritesInGrid.checked
 
     ColumnLayout {
         anchors.horizontalCenter: parent.horizontalCenter
@@ -170,80 +171,93 @@ Item {
             }
         }
 
-        RowLayout{
-            ColumnLayout { // troublesome setting (TODO - try to see what can be done with it)
-                enabled: false
-                RowLayout{
-                    Layout.fillWidth: true
-                    SpinBox{
-                        id: spaceWidth
-                        minimumValue: 10
-                        maximumValue: 128
-                        stepSize: 4
-                    }
-                    Label {
-                        Layout.leftMargin: units.smallSpacing
-                        text: i18n("Space between columns")
-                    }
-                }
-
-                RowLayout{
-                    Layout.fillWidth: true
-                    // /flat: true
-                    SpinBox{
-                        id: spaceHeight
-                        minimumValue: 10
-                        maximumValue: 128
-                        stepSize: 4
-                    }
-                    Label {
-                        Layout.leftMargin: units.smallSpacing
-                        text: i18n("Space between rows")
-                    }
-                }
-            }
-        }
-
-        RowLayout{ // troublesome setting (TODO - see what can be done with it)
-            enabled: false
+        RowLayout {
+            Layout.fillWidth: true
             spacing: units.smallSpacing
             CheckBox{
-                id: useCustomSizeGrid
-                text:  "Enable custom grid"
-            }
-
-        }
-        GroupBox {
-            title: i18n("Grid")
-            flat: true
-            enabled: useCustomSizeGrid.checked
-            ColumnLayout {
-                RowLayout{
-                    Layout.fillWidth: true
-                    SpinBox{
-                        id: numberColumns
-                        minimumValue: 4
-                        maximumValue: 20
-                    }
-                    Label {
-                        Layout.leftMargin: units.smallSpacing
-                        text: i18n("Number of columns")
-                    }
-                }
-
-                RowLayout{
-                    Layout.fillWidth: true
-                    SpinBox{
-                        id: numberRows
-                        minimumValue: 4
-                        maximumValue: 20
-                    }
-                    Label {
-                        Layout.leftMargin: units.smallSpacing
-                        text: i18n("Number of rows")
-                    }
-                }
+                id: favoritesInGrid
+                text: i18n("Show favorite applications at the top of the grid")
+                //onChecked: {
+                    //cfg_favoritesInGrid = favoritesInGrid.checked
+                    //console.log("El Checo Pérez ",cfg_favoritesInGrid)
+                //}
             }
         }
+
+//         RowLayout{
+//             ColumnLayout { // troublesome setting (TODO - try to see what can be done with it)
+//                 enabled: false
+//                 RowLayout{
+//                     Layout.fillWidth: true
+//                     SpinBox{
+//                         id: spaceWidth
+//                         minimumValue: 10
+//                         maximumValue: 128
+//                         stepSize: 4
+//                     }
+//                     Label {
+//                         Layout.leftMargin: units.smallSpacing
+//                         text: i18n("Space between columns")
+//                     }
+//                 }
+//
+//                 RowLayout{
+//                     Layout.fillWidth: true
+//                     /flat: true
+//                     SpinBox{
+//                         id: spaceHeight
+//                         minimumValue: 10
+//                         maximumValue: 128
+//                         stepSize: 4
+//                     }
+//                     Label {
+//                         Layout.leftMargin: units.smallSpacing
+//                         text: i18n("Space between rows")
+//                     }
+//                 }
+//             }
+//         }
+
+        //RowLayout{ // troublesome setting (TODO - see what can be done with it)
+            //enabled: false
+            //spacing: units.smallSpacing
+            //CheckBox{
+                //id: useCustomSizeGrid
+                //text:  "Enable custom grid"
+            //}
+
+        //}
+        //GroupBox {
+            //title: i18n("Grid")
+            //flat: true
+            //enabled: useCustomSizeGrid.checked
+            //ColumnLayout {
+                //RowLayout{
+                    //Layout.fillWidth: true
+                    //SpinBox{
+                        //id: numberColumns
+                        //minimumValue: 4
+                        //maximumValue: 20
+                    //}
+                    //Label {
+                        //Layout.leftMargin: units.smallSpacing
+                        //text: i18n("Number of columns")
+                    //}
+                //}
+
+                //RowLayout{
+                    //Layout.fillWidth: true
+                    //SpinBox{
+                        //id: numberRows
+                        //minimumValue: 4
+                        //maximumValue: 20
+                    //}
+                    //Label {
+                        //Layout.leftMargin: units.smallSpacing
+                        //text: i18n("Number of rows")
+                    //}
+                //}
+            //}
+        //}
     }
 }

@@ -15,6 +15,9 @@
     <entry name="useCustomSizeGrid" type="Bool">
       <default>false</default>
     </entry>
+    <entry name="favoritesInGrid" type="Bool">
+        <default>false</default>
+    </entry>
     <entry name="numberColumns" type="Int">
       <default>7</default>
     </entry>

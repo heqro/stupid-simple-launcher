@@ -1,8 +1,8 @@
 # Stupid Simple Launcher
 
-![alt text](./previews/menuDark.png)
+![alt text](./previews/AllAppsLightDark.png)
 
-Simple launcher for your applications as well as session management (logout, lock, shutdown, reboot).
+Simple launcher for your applications as well as session management (logout, lock, shutdown, reboot), search and favorite applications support.
 
 ## Installation
 

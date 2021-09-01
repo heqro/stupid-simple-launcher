@@ -261,7 +261,7 @@ Kicker.DashboardWindow {
 //                             rightMargin: PlasmaCore.Units.smallSpacing * 4
                             horizontalCenter: parent.horizontalCenter
                             top: myFavorites.bottom
-                            topMargin: (showFavoritesInGrid && !searching) ?units.iconSizes.medium : undefined
+                            topMargin: (showFavoritesInGrid && !searching) ?units.iconSizes.smallMedium : undefined
                         }
 
                         Behavior on opacity {
@@ -278,7 +278,8 @@ Kicker.DashboardWindow {
 
                     ListView {
                         id: pageList
-                        anchors.top: horizontalSeparator.bottom // if favorites are shown, then it all will look beautiful. If they are not shown, the horizontal separator still exists, but will have null height and will be invisible. Therefore, it all will look beautiful as well.
+                        anchors.top: horizontalSeparator.bottom
+                        anchors.topMargin: (showFavoritesInGrid && !searching) ?units.iconSizes.small : undefined// if favorites are shown, then it all will look beautiful. If they are not shown, the horizontal separator still exists, but will have null height and will be invisible. Therefore, it all will look beautiful as well.
                         interactive: false // this fixes a nasty occurrence by which we would have this ListView listed all over again after scrolling for a short while
 
 

@@ -56,6 +56,8 @@ Kicker.DashboardWindow {
 
     property bool searching: searchField.text != ""
 
+    property bool showFavoritesInGrid: plasmoid.configuration.favoritesInGrid && globalFavorites.count > 0
+
     //property bool
 
     function colorWithAlpha(color, alpha) {
@@ -65,6 +67,7 @@ Kicker.DashboardWindow {
     onKeyEscapePressed: {
         if (searching) {
             searchField.text = ""
+            console.log("showFavoritesInGrid: ", showFavoritesInGrid)
         } else {
             root.toggle()
         }
@@ -78,6 +81,11 @@ Kicker.DashboardWindow {
             reset();
         }
 
+    }
+
+    onShowFavoritesInGridChanged: {
+        showFavoritesInGrid ? appsRectangle.state = "weHaveFavorites" : appsRectangle.state = "weDontHaveFavorites"
+        console.log("Algo cambió ", showFavoritesInGrid)
     }
 
     onVisibleChanged: {
@@ -175,12 +183,20 @@ Kicker.DashboardWindow {
                         if (event.key == Qt.Key_Down) {
                             event.accepted = true;
                             pageList.currentIndex = 0 // "return to the grid"
-                            pageList.currentItem.itemGrid.tryActivate(1, 0); // highlight first item - second row
+                            if (!searching) {
+                                pageList.currentItem.itemGrid.tryActivate(0, 0); // highlight
+                            } else {
+                                pageList.currentItem.itemGrid.tryActivate(1, 0); // highlight first item - second row
+                            }
                         } else if (event.key == Qt.Key_Right) {
                             if (cursorPosition == length) {
                                 event.accepted = true;
                                 pageList.currentIndex = 0 // "return to the grid"
-                                pageList.currentItem.itemGrid.tryActivate(0, 1); // highlight second item - first row
+                                if (!searching) {
+                                    pageList.currentItem.itemGrid.tryActivate(0, 0); // highlight
+                                } else {
+                                    pageList.currentItem.itemGrid.tryActivate(0, 1); // highlight second item - first row
+                                }
                             }
                         } else if (event.key == Qt.Key_Return || event.key == Qt.Key_Enter) {
                             pageList.currentIndex = 0 // "return to the grid"
@@ -197,6 +213,7 @@ Kicker.DashboardWindow {
                 }
 
                 Rectangle { // applications will be inside this
+                    id: appsRectangle
                     width: widthScreen
     //                 height: heightScreen
                     color: "transparent" // use "red" to see real dimensions and limits
@@ -211,7 +228,7 @@ Kicker.DashboardWindow {
                     ItemGridView {
                         id: myFavorites
                         model: globalFavorites
-                        visible: model.count > 0 // TODO: this should be enabled from configuration
+                        visible: showFavoritesInGrid
                         height: cellSize
                         width: columns * cellSize
                         cellWidth:  cellSize
@@ -221,15 +238,18 @@ Kicker.DashboardWindow {
                     PlasmaCore.SvgItem {
                         id: horizontalSeparator
 //                         opacity: applicationsView.listView.contentY !== 0
+                        visible: showFavoritesInGrid
                         height: PlasmaCore.Units.devicePixelRatio * 4
+                        width: Math.round(widthScreen * 0.75)
                         elementId: "horizontal-line"
                         z: 1
 
                         anchors {
-                            left: parent.left
-                            leftMargin: PlasmaCore.Units.smallSpacing * 4
-                            right: parent.right
-                            rightMargin: PlasmaCore.Units.smallSpacing * 4
+//                             left: parent.left
+//                             leftMargin: PlasmaCore.Units.smallSpacing * 4
+//                             right: parent.right
+//                             rightMargin: PlasmaCore.Units.smallSpacing * 4
+                            horizontalCenter: parent.horizontalCenter
                             top: myFavorites.bottom
                             topMargin: units.iconSizes.medium
                         }
@@ -250,7 +270,9 @@ Kicker.DashboardWindow {
                         id: pageList
 //                             anchors.fill: parent
                         interactive: false
-                        anchors.top: horizontalSeparator.bottom
+                        // if we want to show favorites,
+
+
 //                         keyNavigationEnabled: true
 
 
@@ -282,7 +304,7 @@ Kicker.DashboardWindow {
 
                         delegate: Item {
                             width: columns * cellSize
-                            height: !myFavorites.visible ? rows * cellSize : (rows - 1) * cellSize
+                            height: !showFavoritesInGrid ? rows * cellSize : (rows - 1) * cellSize
 
                             property Item itemGrid: appsGrid
                             focus: true
@@ -319,6 +341,35 @@ Kicker.DashboardWindow {
                             }
                         }
                     }
+
+
+
+                    states: [
+                        State {
+
+                            name: "weHaveFavorites"
+
+                            AnchorChanges {
+                                target: pageList
+                                anchors.top: horizontalSeparator.bottom
+                            }
+
+                            PropertyChanges {
+                                target: pageList
+                                anchors.topMargin: units.iconSizes.medium
+                            }
+                        },
+
+                        State {
+
+                            name: "weDontHaveFavorites"
+
+                            AnchorChanges {
+                                target: pageList
+                                anchors.top: parent.top
+                            }
+                        }
+                    ]
 
                 }
 

@@ -67,7 +67,7 @@ Kicker.DashboardWindow {
     onKeyEscapePressed: {
         if (searching) {
             searchField.text = ""
-            console.log("showFavoritesInGrid: ", showFavoritesInGrid)
+//             console.log("showFavoritesInGrid: ", showFavoritesInGrid)
         } else {
             root.toggle()
         }
@@ -187,7 +187,11 @@ Kicker.DashboardWindow {
                             event.accepted = true;
                             pageList.currentIndex = 0 // "return to the grid"
                             if (!searching) {
-                                pageList.currentItem.itemGrid.tryActivate(0, 0); // highlight
+                                if (!showFavoritesInGrid) {
+                                    pageList.currentItem.itemGrid.tryActivate(0, 0); // highlight
+                                } else {
+                                    myFavorites.tryActivate(0,0) // highlight first entry of favoritesGrid
+                                }
                             } else {
                                 pageList.currentItem.itemGrid.tryActivate(1, 0); // highlight first item - second row
                             }
@@ -196,7 +200,11 @@ Kicker.DashboardWindow {
                                 event.accepted = true;
                                 pageList.currentIndex = 0 // "return to the grid"
                                 if (!searching) {
-                                    pageList.currentItem.itemGrid.tryActivate(0, 0); // highlight
+                                    if (!showFavoritesInGrid) {
+                                        pageList.currentItem.itemGrid.tryActivate(0, 0); // highlight
+                                    } else {
+                                        myFavorites.tryActivate(0,0) // highlight first entry of favoritesGrid
+                                    }
                                 } else {
                                     pageList.currentItem.itemGrid.tryActivate(0, 1); // highlight second item - first row
                                 }
@@ -236,6 +244,15 @@ Kicker.DashboardWindow {
                         width: columns * cellSize
                         cellWidth:  cellSize
                         cellHeight: cellSize
+
+                        onKeyNavDown: {
+                            pageList.currentItem.itemGrid.tryActivate(0, 0); // highlight first entry of our "All Applications" grid
+                        }
+
+                        onKeyNavUp: {
+                            searchField.focus = true;
+                        }
+
                     }
 
                     PlasmaCore.SvgItem {
@@ -332,7 +349,11 @@ Kicker.DashboardWindow {
 
                                 onKeyNavUp: {
                                     currentIndex = -1;
-                                    searchField.focus = true;
+                                    if (showFavoritesInGrid && !searching) {
+                                        myFavorites.tryActivate(0,0)
+                                    } else {
+                                        searchField.focus = true;
+                                    }
                                 }
 
                                 onModelChanged: {

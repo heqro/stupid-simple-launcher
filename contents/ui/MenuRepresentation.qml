@@ -356,6 +356,11 @@ Kicker.DashboardWindow {
                                     }
                                 }
 
+                                // onKeyNavDown: { //TODO: this needs some work to communicate where to return if we are pressing the "up" key on sessionControlBar
+                                    //currentIndex = -1
+                                    //sessionControlBar.tryActivate(0,0)
+                                //}
+
                                 onModelChanged: {
                                     currentIndex = 0
                                     itemGrid.tryActivate(0, 0);
@@ -366,24 +371,29 @@ Kicker.DashboardWindow {
                 }
 
                 ItemGridView { // shutdown, reboot, logout, lock
+
                     id: sessionControlBar
-                    showLabels: false
+                    showLabels: false // don't show the text under the options -- they are expressive enough if you pick almost any icon pack out there
 
                     iconSize:   PlasmaCore.Units.iconSizes.large
                     cellHeight: iconSize + (2 * PlasmaCore.Units.smallSpacing) + (2 * Math.max(highlightItemSvg.margins.top + highlightItemSvg.margins.bottom, highlightItemSvg.margins.left + highlightItemSvg.margins.right))
                     cellWidth: iconSize + (2 * PlasmaCore.Units.smallSpacing) + (2 * Math.max(highlightItemSvg.margins.top + highlightItemSvg.margins.bottom, highlightItemSvg.margins.left + highlightItemSvg.margins.right))
 
                     height: cellHeight
-                    width: systemFavorites.count * cellWidth
+                    width: systemFavorites.count * cellWidth // extend it only as needed
 
-                    model: systemFavorites
+                    model: systemFavorites // this model automatically feeds lock, shutdown, logout and reset options
 
-    //                 usesPlasmaTheme: true // for using Plasma Style icons
+    //                 usesPlasmaTheme: true // for using Plasma Style icons (I personally don't like them, so I just comment this and keep going)
 
                     anchors {
                         bottom: parent.bottom
                         horizontalCenter: parent.horizontalCenter
                     }
+
+                    //onKeyNavUp { // communicating this grid with the applications grid will be tricky and may make the code unnecessarily trickier to understand
+
+                    //}
                 }
             }
         }

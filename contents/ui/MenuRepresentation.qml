@@ -83,10 +83,13 @@ Kicker.DashboardWindow {
 
     }
 
-    onShowFavoritesInGridChanged: {
-        showFavoritesInGrid ? appsRectangle.state = "weHaveFavorites" : appsRectangle.state = "weDontHaveFavorites"
-        console.log("Algo cambió ", showFavoritesInGrid)
-    }
+    //onShowFavoritesInGridChanged: {
+        //if (showFavoritesInGrid && !searching) {
+            //appsRectangle.state = "weHaveFavorites"
+        //} else {
+            //appsRectangle.state = "notFavoritesOrSearching"
+        //}
+    //}
 
     onVisibleChanged: {
         animationSearch.start()
@@ -228,8 +231,8 @@ Kicker.DashboardWindow {
                     ItemGridView {
                         id: myFavorites
                         model: globalFavorites
-                        visible: showFavoritesInGrid
-                        height: cellSize
+                        visible: showFavoritesInGrid && !searching
+                        height: (showFavoritesInGrid && !searching) ? cellSize : 0
                         width: columns * cellSize
                         cellWidth:  cellSize
                         cellHeight: cellSize
@@ -238,8 +241,8 @@ Kicker.DashboardWindow {
                     PlasmaCore.SvgItem {
                         id: horizontalSeparator
 //                         opacity: applicationsView.listView.contentY !== 0
-                        visible: showFavoritesInGrid
-                        height: PlasmaCore.Units.devicePixelRatio * 4
+                        visible: showFavoritesInGrid && !searching
+                        height: (showFavoritesInGrid && !searching) ? PlasmaCore.Units.devicePixelRatio * 4 : 0
                         width: Math.round(widthScreen * 0.75)
                         elementId: "horizontal-line"
                         z: 1
@@ -251,7 +254,7 @@ Kicker.DashboardWindow {
 //                             rightMargin: PlasmaCore.Units.smallSpacing * 4
                             horizontalCenter: parent.horizontalCenter
                             top: myFavorites.bottom
-                            topMargin: units.iconSizes.medium
+                            topMargin: (showFavoritesInGrid && !searching) ?units.iconSizes.medium : undefined
                         }
 
                         Behavior on opacity {
@@ -268,9 +271,8 @@ Kicker.DashboardWindow {
 
                     ListView {
                         id: pageList
-//                             anchors.fill: parent
-                        interactive: false
-                        // if we want to show favorites,
+                        anchors.top: horizontalSeparator.bottom // if favorites are shown, then it all will look beautiful. If they are not shown, the horizontal separator still exists, but will have null height and will be invisible. Therefore, it all will look beautiful as well.
+                        interactive: false // this fixes a nasty occurrence by which we would have this ListView listed all over again after scrolling for a short while
 
 
 //                         keyNavigationEnabled: true
@@ -304,7 +306,7 @@ Kicker.DashboardWindow {
 
                         delegate: Item {
                             width: columns * cellSize
-                            height: !showFavoritesInGrid ? rows * cellSize : (rows - 1) * cellSize
+                            height: (!showFavoritesInGrid || searching) ? rows * cellSize : (rows - 1) * cellSize
 
                             property Item itemGrid: appsGrid
                             focus: true
@@ -316,7 +318,6 @@ Kicker.DashboardWindow {
 
                                 cellWidth:  cellSize
                                 cellHeight: cellSize
-//                                 focus: true
 
                                 verticalScrollBarPolicy: Qt.ScrollBarAlwaysOff
 
@@ -341,36 +342,6 @@ Kicker.DashboardWindow {
                             }
                         }
                     }
-
-
-
-                    states: [
-                        State {
-
-                            name: "weHaveFavorites"
-
-                            AnchorChanges {
-                                target: pageList
-                                anchors.top: horizontalSeparator.bottom
-                            }
-
-                            PropertyChanges {
-                                target: pageList
-                                anchors.topMargin: units.iconSizes.medium
-                            }
-                        },
-
-                        State {
-
-                            name: "weDontHaveFavorites"
-
-                            AnchorChanges {
-                                target: pageList
-                                anchors.top: parent.top
-                            }
-                        }
-                    ]
-
                 }
 
                 ItemGridView { // shutdown, reboot, logout, lock

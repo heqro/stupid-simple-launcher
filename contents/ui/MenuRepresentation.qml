@@ -58,8 +58,6 @@ Kicker.DashboardWindow {
 
     property bool showFavoritesInGrid: plasmoid.configuration.favoritesInGrid && globalFavorites.count > 0
 
-    //property bool
-
     function colorWithAlpha(color, alpha) {
         return Qt.rgba(color.r, color.g, color.b, alpha)
     }
@@ -82,14 +80,6 @@ Kicker.DashboardWindow {
         }
 
     }
-
-    //onShowFavoritesInGridChanged: {
-        //if (showFavoritesInGrid && !searching) {
-            //appsRectangle.state = "weHaveFavorites"
-        //} else {
-            //appsRectangle.state = "notFavoritesOrSearching"
-        //}
-    //}
 
     onVisibleChanged: {
         animationSearch.start()

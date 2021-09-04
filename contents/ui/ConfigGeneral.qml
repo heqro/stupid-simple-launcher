@@ -49,6 +49,7 @@ Item {
     //property alias cfg_spaceWidth:    spaceWidth.value
     //property alias cfg_spaceHeight:   spaceHeight.value
     property alias cfg_favoritesInGrid: favoritesInGrid.checked
+    property alias cfg_writeSomething: writeSomething.checked
     property alias cfg_greetingText: greetingText.text
 
     ColumnLayout {
@@ -184,12 +185,14 @@ Item {
 
         RowLayout {
             Layout.fillWidth: true
-            Label {
+            CheckBox {
                 Layout.leftMargin: units.smallSpacing
-                text: i18n("Write a greeting text (leave blank to default):")
+                id: writeSomething
+                text: i18n("Write a greeting text")
             }
             PlasmaComponents.TextField {
                 id: greetingText
+                enabled: writeSomething.checked
             }
         }
 

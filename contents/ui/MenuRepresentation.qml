@@ -162,7 +162,7 @@ Kicker.DashboardWindow {
                     property string greetingMessage: plasmoid.configuration.greetingText
 
                     font.pointSize: 20
-                    placeholderText: plasmoid.configuration.greetingText.length > 0 ? plasmoid.configuration.greetingText : "Howdy, " + kuser.loginName + "! Type to start searching..."
+                    placeholderText: plasmoid.configuration.writeSomething ? plasmoid.configuration.greetingText : "Howdy, " + kuser.loginName + "! Type to start searching..."
                     placeholderTextColor: colorWithAlpha(PlasmaCore.Theme.headerTextColor, 0.8)
                     horizontalAlignment: TextInput.AlignHCenter
 

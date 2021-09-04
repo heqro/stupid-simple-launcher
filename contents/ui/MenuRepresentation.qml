@@ -58,6 +58,8 @@ Kicker.DashboardWindow {
 
     property bool showFavoritesInGrid: plasmoid.configuration.favoritesInGrid && globalFavorites.count > 0
 
+
+
     function colorWithAlpha(color, alpha) {
         return Qt.rgba(color.r, color.g, color.b, alpha)
     }
@@ -157,8 +159,10 @@ Kicker.DashboardWindow {
                         horizontalCenter: parent.horizontalCenter
                     }
 
+                    property string greetingMessage: plasmoid.configuration.greetingText
+
                     font.pointSize: 20
-                    placeholderText: "Howdy, " + kuser.loginName + "! Type to start searching..."
+                    placeholderText: plasmoid.configuration.greetingText.length > 0 ? plasmoid.configuration.greetingText : "Howdy, " + kuser.loginName + "! Type to start searching..."
                     placeholderTextColor: colorWithAlpha(PlasmaCore.Theme.headerTextColor, 0.8)
                     horizontalAlignment: TextInput.AlignHCenter
 

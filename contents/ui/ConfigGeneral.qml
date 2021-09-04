@@ -25,6 +25,7 @@ import QtQuick.Layouts 1.0
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 2.0 as PlasmaComponents
 
+
 import org.kde.kquickcontrolsaddons 2.0 as KQuickAddons
 import org.kde.draganddrop 2.0 as DragDrop
 
@@ -48,6 +49,7 @@ Item {
     //property alias cfg_spaceWidth:    spaceWidth.value
     //property alias cfg_spaceHeight:   spaceHeight.value
     property alias cfg_favoritesInGrid: favoritesInGrid.checked
+    property alias cfg_greetingText: greetingText.text
 
     ColumnLayout {
         anchors.horizontalCenter: parent.horizontalCenter
@@ -177,10 +179,17 @@ Item {
             CheckBox{
                 id: favoritesInGrid
                 text: i18n("Show favorite applications at the top of the grid")
-                //onChecked: {
-                    //cfg_favoritesInGrid = favoritesInGrid.checked
-                    //console.log("El Checo Pérez ",cfg_favoritesInGrid)
-                //}
+            }
+        }
+
+        RowLayout {
+            Layout.fillWidth: true
+            Label {
+                Layout.leftMargin: units.smallSpacing
+                text: i18n("Write a greeting text (leave blank to default):")
+            }
+            PlasmaComponents.TextField {
+                id: greetingText
             }
         }
 

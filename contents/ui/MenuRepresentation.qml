@@ -32,6 +32,9 @@ import QtQuick.Controls.Styles 1.4
 
 import org.kde.kcoreaddons 1.0 as KCoreAddons
 
+// icons
+import QtLocation 5.15
+
 Kicker.DashboardWindow {
     
     id: root
@@ -42,6 +45,7 @@ Kicker.DashboardWindow {
         + (2 * PlasmaCore.Units.smallSpacing)
         + (2 * Math.max(highlightItemSvg.margins.top + highlightItemSvg.margins.bottom,
                         highlightItemSvg.margins.left + highlightItemSvg.margins.right))
+
 
     backgroundColor: "transparent"
 
@@ -88,6 +92,18 @@ Kicker.DashboardWindow {
         reset();
     }
 
+    function updateCategories() {
+        var categoryStartIndex = 2
+        var categoryEndIndex = rootModel.count - 1
+        for (var i = categoryStartIndex; i < categoryEndIndex; i++) {
+            var modelIndex = rootModel.index(i, 0)
+            var categoryLabel = rootModel.data(modelIndex, Qt.DisplayRole)
+            var index = i
+            categoriesModel.append({"categoryText": categoryLabel, "categoryIndex": index})
+
+        }
+    }
+
     function reset() {
         if (!searching) {
             pageList.model = rootModel.modelForRow(0).modelForRow(1)
@@ -96,6 +112,7 @@ Kicker.DashboardWindow {
 
 //         appsGrid.currentIndex = 0
         //pageList.currentIndex = 0;
+        updateCategories()
         pageList.focus = true
         searchField.text = ""
     }
@@ -390,12 +407,71 @@ Kicker.DashboardWindow {
 
                     //}
                 }
+
+
+                ListModel {
+                    id: categoriesModel
+                    //ListElement {
+                        //iconSource: "/home/heqro/Pictures/AllAppsFavsLight.png"
+                        //iconText: "Train"
+                    //}
+                    //ListElement {
+                        //iconSource: "/home/heqro/Pictures/AllAppsNoFavsLight.png"
+                        //iconText: "Train2"
+                    //}
+                }
+
+                Component {
+                    id: delegateListElement
+                    Item {
+                        width: 800
+                        height: width
+                        Column {
+                            //Image {
+                                //height: 300
+                                //width: 300
+                                //source: icon
+                            //}
+                            Text {
+                                text: categoryText
+                            }
+                            property int categoryIndex
+                        }
+                    }
+                }
+
+                ListView {
+                    anchors {
+                        //left: parent.right
+                        verticalCenter: parent.verticalCenter
+                    }
+
+                    model: categoriesModel
+                    delegate: delegateListElement
+                    focus: true
+                }
+
             }
         }
 
 
+
+
+
+
     Component.onCompleted: {
         rootModel.pageSize = -1 // this will, somehow, make it show everything -- again, don't ask me!
+//         var modelIndex = rootModel.index(3, 0)
+//         var categoryLabel = rootModel.data(modelIndex, Qt.DisplayRole)
+//         var categoryIcon = rootModel.data(modelIndex, Qt.DecorationRole)
+//         console.log("CATEGORÍAAAAAAAAAAAAA",categoryLabel)
+//         categoriesModel.append({"iconSource": categoryIcon})
+//         modelIndex = rootModel.index(4, 0)
+//         categoryLabel = rootModel.data(modelIndex, Qt.DisplayRole)
+//         categoryIcon = rootModel.data(modelIndex, Qt.DecorationRole)
+//         categoriesModel.append({"iconSource": categoryIcon})
+        //categoriesModel.append({"iconSource": "/home/heqro/Pictures/AllAppsNoFavsLight.png"})
         kicker.reset.connect(reset);
     }
 }
+

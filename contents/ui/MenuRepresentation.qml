@@ -92,15 +92,17 @@ Kicker.DashboardWindow {
         reset();
     }
 
+
     function updateCategories() {
-        var categoryStartIndex = 2
-        var categoryEndIndex = rootModel.count - 1
+        var categoryStartIndex = 0
+        //var categoryEndIndex = rootModel.count - 1
+        var categoryEndIndex = rootModel.count
+        categoriesModel.clear() // given that we feed the model by appending items to it, it's only logical that we have to clear it every time we reset
         for (var i = categoryStartIndex; i < categoryEndIndex; i++) {
             var modelIndex = rootModel.index(i, 0)
             var categoryLabel = rootModel.data(modelIndex, Qt.DisplayRole)
             var index = i
             categoriesModel.append({"categoryText": categoryLabel, "categoryIndex": index})
-
         }
     }
 
@@ -115,6 +117,7 @@ Kicker.DashboardWindow {
         updateCategories()
         pageList.focus = true
         searchField.text = ""
+        pageList.currentItem.itemGrid.model = rootModel.modelForRow(0).modelForRow(1)
     }
 
     mainItem:
@@ -240,11 +243,15 @@ Kicker.DashboardWindow {
     //                 height: heightScreen
                     color: "transparent" // use "red" to see real dimensions and limits
                     anchors {
-                        horizontalCenter: parent.horizontalCenter
+                        //horizontalCenter: parent.horizontalCenter
                         top: searchField.bottom
                         topMargin: units.iconSizes.medium
                         bottom: sessionControlBar.top
                         bottomMargin: units.iconSizes.medium
+                        leftMargin: Math.floor(0.05 * parent.width)
+                        //right: categoriesItem.left
+//                         leftMargin: Math.floor(widthScreen / 8)
+                        left: parent.left
                     }
 
                     ItemGridView {
@@ -411,46 +418,50 @@ Kicker.DashboardWindow {
 
                 ListModel {
                     id: categoriesModel
-                    //ListElement {
-                        //iconSource: "/home/heqro/Pictures/AllAppsFavsLight.png"
-                        //iconText: "Train"
-                    //}
-                    //ListElement {
-                        //iconSource: "/home/heqro/Pictures/AllAppsNoFavsLight.png"
-                        //iconText: "Train2"
-                    //}
                 }
 
                 Component {
                     id: delegateListElement
-                    Item {
-                        width: 800
-                        height: width
-                        Column {
-                            //Image {
-                                //height: 300
-                                //width: 300
-                                //source: icon
-                            //}
-                            Text {
-                                text: categoryText
+
+
+                    PlasmaComponents.Button {
+
+                        property int indexInModel: categoryIndex
+                        text: categoryText
+                        flat: true
+                        font.pointSize: 16
+
+                        onClicked: {
+                            if (indexInModel != 0) { // show some actual category
+                                pageList.currentItem.itemGrid.model = rootModel.modelForRow(indexInModel).modelForRow(0)
+                            } else { // show All Apps "category"
+                                pageList.currentItem.itemGrid.model = rootModel.modelForRow(0).modelForRow(1)
                             }
-                            property int categoryIndex
                         }
+
+                        enabled: !searching // buttons should only be able to
+
                     }
                 }
 
-                ListView {
-                    anchors {
-                        //left: parent.right
-                        verticalCenter: parent.verticalCenter
+                Item {
+                    id: categoriesItem
+                    anchors.left: appsRectangle.right
+                    anchors.leftMargin: units.iconSizes.medium
+                    anchors.verticalCenter: parent.verticalCenter
+                    height: categoriesList.contentHeight
+
+                    ListView {
+                        id: categoriesList
+                        anchors.fill: parent
+
+                        model: categoriesModel
+                        delegate: delegateListElement
+                        focus: true
                     }
 
-                    model: categoriesModel
-                    delegate: delegateListElement
-                    focus: true
-                }
 
+                }
             }
         }
 
@@ -461,16 +472,6 @@ Kicker.DashboardWindow {
 
     Component.onCompleted: {
         rootModel.pageSize = -1 // this will, somehow, make it show everything -- again, don't ask me!
-//         var modelIndex = rootModel.index(3, 0)
-//         var categoryLabel = rootModel.data(modelIndex, Qt.DisplayRole)
-//         var categoryIcon = rootModel.data(modelIndex, Qt.DecorationRole)
-//         console.log("CATEGORÍAAAAAAAAAAAAA",categoryLabel)
-//         categoriesModel.append({"iconSource": categoryIcon})
-//         modelIndex = rootModel.index(4, 0)
-//         categoryLabel = rootModel.data(modelIndex, Qt.DisplayRole)
-//         categoryIcon = rootModel.data(modelIndex, Qt.DecorationRole)
-//         categoriesModel.append({"iconSource": categoryIcon})
-        //categoriesModel.append({"iconSource": "/home/heqro/Pictures/AllAppsNoFavsLight.png"})
         kicker.reset.connect(reset);
     }
 }

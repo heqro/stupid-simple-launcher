@@ -407,22 +407,35 @@ Kicker.DashboardWindow {
 
                     SessionButton { // Shutdown Button
                         iconUrl: "system-shutdown"
-                        onClicked: executable.exec('qdbus org.kde.ksmserver /KSMServer logout -1 2 2')
+                        onClicked: {
+                            root.toggle() // make sure we hide this application prior to showing the fullscreen leave menu (or leave, this will depend on whether or not the user has set in its settings to skip the fullscreen leave menu)
+                            executable.exec('qdbus org.kde.ksmserver /KSMServer logout -1 2 2')
+                        }
                     }
 
                     SessionButton { // Restart Button
                         iconUrl: "system-reboot"
-                        onClicked: executable.exec('qdbus org.kde.ksmserver /KSMServer logout -1 1 2')
+                        onClicked: {
+                            root.toggle() // make sure we hide this application prior to showing the fullscreen leave menu (or leave, this will depend on whether or not the user has set in its settings to skip the fullscreen leave menu)
+                            executable.exec('qdbus org.kde.ksmserver /KSMServer logout -1 1 2')
+                        }
                     }
 
                     SessionButton { // Logout Button
                         iconUrl: "system-log-out"
-                        onClicked: executable.exec('qdbus org.kde.ksmserver /KSMServer logout -1 0 2')
+                        onClicked: {
+                            root.toggle() // make sure we hide this application prior to showing the fullscreen leave menu (or leave, this will depend on whether or not the user has set in its settings to skip the fullscreen leave menu)
+                            executable.exec('qdbus org.kde.ksmserver /KSMServer logout -1 0 2')
+                        }
                     }
 
                     SessionButton { // Lock Screen Button
                         iconUrl: "system-lock-screen"
-                        onClicked: executable.exec('qdbus org.freedesktop.ScreenSaver /ScreenSaver Lock')
+                        onClicked: {
+                            root.toggle() // make sure we hide this application prior to showing the fullscreen leave menu (or leave, this will depend on whether or not the user has set in its settings to skip the fullscreen leave menu)
+                            executable.exec('qdbus org.freedesktop.ScreenSaver /ScreenSaver Lock')
+
+                        }
                     }
 
                     anchors {

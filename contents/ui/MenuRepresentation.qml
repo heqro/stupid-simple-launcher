@@ -19,7 +19,11 @@
  ***************************************************************************/
 
 import QtQuick 2.4
-import QtQuick.Layouts 1.1
+//import QtQuick.Layouts 1.1
+
+// for using RawLayout
+import QtQuick.Layouts 1.15
+
 import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents
@@ -110,10 +114,6 @@ Kicker.DashboardWindow {
         if (!searching) {
             pageList.model = rootModel.modelForRow(0).modelForRow(1)
         }
-        //pageListScrollArea.focus = true
-
-//         appsGrid.currentIndex = 0
-        //pageList.currentIndex = 0;
         updateCategories()
         pageList.focus = true
         searchField.text = ""
@@ -389,32 +389,48 @@ Kicker.DashboardWindow {
                     }
                 }
 
-                ItemGridView { // shutdown, reboot, logout, lock
+                PlasmaCore.DataSource {
+                    id: executable
+                    engine: "executable"
+                    connectedSources: []
+                    onNewData: disconnectSource(sourceName)
+
+                    function exec(cmd) {
+                        executable.connectSource(cmd)
+                    }
+                }
+
+                RowLayout {
 
                     id: sessionControlBar
-                    showLabels: false // don't show the text under the options -- they are expressive enough if you pick almost any icon pack out there
+                    spacing: units.iconSizes.medium
 
-                    iconSize:   PlasmaCore.Units.iconSizes.large
-                    cellHeight: iconSize + (2 * PlasmaCore.Units.smallSpacing) + (2 * Math.max(highlightItemSvg.margins.top + highlightItemSvg.margins.bottom, highlightItemSvg.margins.left + highlightItemSvg.margins.right))
-                    cellWidth: iconSize + (2 * PlasmaCore.Units.smallSpacing) + (2 * Math.max(highlightItemSvg.margins.top + highlightItemSvg.margins.bottom, highlightItemSvg.margins.left + highlightItemSvg.margins.right))
+                    SessionButton { // Shutdown Button
+                        iconUrl: "system-shutdown"
+                        onClicked: executable.exec('qdbus org.kde.ksmserver /KSMServer logout -1 2 2')
+                    }
 
-                    height: cellHeight
-                    width: systemFavorites.count * cellWidth // extend it only as needed
+                    SessionButton { // Restart Button
+                        iconUrl: "system-reboot"
+                        onClicked: executable.exec('qdbus org.kde.ksmserver /KSMServer logout -1 1 2')
+                    }
 
-                    model: systemFavorites // this model automatically feeds lock, shutdown, logout and reset options
+                    SessionButton { // Logout Button
+                        iconUrl: "system-log-out"
+                        onClicked: executable.exec('qdbus org.kde.ksmserver /KSMServer logout -1 0 2')
+                    }
 
-    //                 usesPlasmaTheme: true // for using Plasma Style icons (I personally don't like them, so I just comment this and keep going)
+                    SessionButton { // Lock Screen Button
+                        iconUrl: "system-lock-screen"
+                        onClicked: executable.exec('qdbus org.freedesktop.ScreenSaver /ScreenSaver Lock')
+                    }
 
                     anchors {
                         bottom: parent.bottom
+                        bottomMargin: units.iconSizes.smallMedium
                         horizontalCenter: parent.horizontalCenter
                     }
-
-                    //onKeyNavUp { // communicating this grid with the applications grid will be tricky and may make the code unnecessarily trickier to understand
-
-                    //}
                 }
-
 
                 ListModel {
                     id: categoriesModel
@@ -439,7 +455,7 @@ Kicker.DashboardWindow {
                             }
                         }
 
-                        enabled: !searching // buttons should only be able to
+                        enabled: !searching // buttons should only be able to work if we are not searching
 
                     }
                 }
@@ -465,13 +481,9 @@ Kicker.DashboardWindow {
             }
         }
 
-
-
-
-
-
     Component.onCompleted: {
         rootModel.pageSize = -1 // this will, somehow, make it show everything -- again, don't ask me!
+        console.log(systemFavorites.count)
         kicker.reset.connect(reset);
     }
 }

@@ -37,7 +37,7 @@ import QtQuick.Controls.Styles 1.4
 import org.kde.kcoreaddons 1.0 as KCoreAddons
 
 // icons
-import QtLocation 5.15
+//import QtLocation 5.15
 
 Kicker.DashboardWindow {
     

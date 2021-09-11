@@ -476,7 +476,7 @@ Kicker.DashboardWindow {
 
     Component.onCompleted: {
         rootModel.pageSize = -1 // this will, somehow, make it show everything -- again, don't ask me!
-        console.log(systemFavorites.count)
+        //console.log(systemFavorites.count)
         kicker.reset.connect(reset);
     }
 }

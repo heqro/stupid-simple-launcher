@@ -52,6 +52,7 @@ Kicker.DashboardWindow {
 
     backgroundColor: "transparent"
 
+    // whenever a key is pressed that is not "grabbed" by anything with focus by our application, the search field will react to it
     keyEventProxy: searchField
 
 
@@ -61,62 +62,58 @@ Kicker.DashboardWindow {
     property int widthScreen:  columns * cellSize
     property int heightScreen: rows    * cellSize
 
+    // this property is exposed because it will determine the behavior of the grid - whenenver we are searching, we will have only a grid dedicated to it. However, when we aren't, we may have two (if favorites support is enabled). It also determines which model we feed to the applications grid.
     property bool searching: searchField.text != ""
 
+    // we will only show a grid dedicated towards favorites when the user tells us to do so and we have at least an application checked as favorite
     property bool showFavoritesInGrid: plasmoid.configuration.favoritesInGrid && globalFavorites.count > 0
 
-
-
+    // cool function to tweak transparency I took from the original launchpad
     function colorWithAlpha(color, alpha) {
         return Qt.rgba(color.r, color.g, color.b, alpha)
     }
 
-    onKeyEscapePressed: {
+    onKeyEscapePressed: { // using escape for both closing the menu and stopping the search
         if (searching) {
             searchField.text = ""
-//             console.log("showFavoritesInGrid: ", showFavoritesInGrid)
         } else {
             root.toggle()
         }
     }
 
     onSearchingChanged: {
-        if (searching) {
+        if (searching) { // swap model
             pageList.model = runnerModel;
-            //paginationBar.model = runnerModel;
-        } else {
+        } else { // we stopped searching - return everything to a basic known state
             reset();
         }
-
     }
 
-    onVisibleChanged: {
+    onVisibleChanged: { // start fancy animation and preemptively return to a known state
         animationSearch.start()
         reset();
     }
 
-
-    function updateCategories() {
+    function updateCategories() { // this function is dedicated to constructing the applications categories list and preemptively updating it, should changes have been applied
         var categoryStartIndex = 0
-        //var categoryEndIndex = rootModel.count - 1
         var categoryEndIndex = rootModel.count
-        categoriesModel.clear() // given that we feed the model by appending items to it, it's only logical that we have to clear it every time we reset
-        for (var i = categoryStartIndex; i < categoryEndIndex; i++) {
-            var modelIndex = rootModel.index(i, 0)
-            var categoryLabel = rootModel.data(modelIndex, Qt.DisplayRole)
-            var index = i
+        categoriesModel.clear() // given that we feed the model by appending items to it, it's only logical that we have to clear it every time we open the menu (just in case new applications have been installed)
+        for (var i = categoryStartIndex; i < categoryEndIndex; i++) { // loop courtesy of Windows 10 inspired menu plasmoid
+            var modelIndex = rootModel.index(i, 0) // I don't know how this line works but it does
+            var categoryLabel = rootModel.data(modelIndex, Qt.DisplayRole) // this is the name that will be shown in the list, say, "All applications", "Utilities", "Education", blah blah blah
+            var index = i // we will use this index to swap categories inside the model that feeds our applications grid
             categoriesModel.append({"categoryText": categoryLabel, "categoryIndex": index})
         }
     }
 
-    function reset() {
+    function reset() { // return everything to a last known state
         if (!searching) {
-            pageList.model = rootModel.modelForRow(0).modelForRow(1)
+            pageList.model = rootModel.modelForRow(0).modelForRow(1) // show all applications
         }
         updateCategories()
         pageList.focus = true
         searchField.text = ""
-        pageList.currentItem.itemGrid.model = rootModel.modelForRow(0).modelForRow(1)
+        pageList.currentItem.itemGrid.model = rootModel.modelForRow(0).modelForRow(1) // show all applications
     }
 
     mainItem:
@@ -132,7 +129,6 @@ Kicker.DashboardWindow {
                 acceptedButtons: Qt.LeftButton | Qt.RightButton
                 LayoutMirroring.enabled: Qt.application.layoutDirection == Qt.RightToLeft
                 LayoutMirroring.childrenInherit: true
-//                 focus: true
 
                 ScaleAnimator{
                     id: animationSearch
@@ -142,6 +138,7 @@ Kicker.DashboardWindow {
                 }
 
                 onClicked: {
+                    // when clicked inside this area and outside the applications grid or any cool buttons, register it as if the user wanted to get out of the menu
                     root.toggle();
                 }
 
@@ -165,7 +162,7 @@ Kicker.DashboardWindow {
 
 
 
-                KCoreAddons.KUser {
+                KCoreAddons.KUser { // this is needed for the greeting message (saying hello to the whatever name the user has)
                     id: kuser
                 }
 
@@ -185,7 +182,7 @@ Kicker.DashboardWindow {
                     placeholderTextColor: colorWithAlpha(PlasmaCore.Theme.headerTextColor, 0.8)
                     horizontalAlignment: TextInput.AlignHCenter
 
-                    onTextChanged: {
+                    onTextChanged: { // start searching
                         runnerModel.query = text
                     }
 
@@ -253,7 +250,7 @@ Kicker.DashboardWindow {
                         left: parent.left
                     }
 
-                    ItemGridView {
+                    ItemGridView { // this is the grid in which we will store the favorites list
                         id: myFavorites
                         model: globalFavorites
                         visible: showFavoritesInGrid && !searching
@@ -269,12 +266,10 @@ Kicker.DashboardWindow {
                         onKeyNavUp: {
                             searchField.focus = true;
                         }
-
                     }
 
-                    PlasmaCore.SvgItem {
+                    PlasmaCore.SvgItem { // nice line to separate favorites between all applications
                         id: horizontalSeparator
-//                         opacity: applicationsView.listView.contentY !== 0
                         visible: showFavoritesInGrid && !searching
                         height: (showFavoritesInGrid && !searching) ? PlasmaCore.Units.devicePixelRatio * 4 : 0
                         width: Math.round(widthScreen * 0.75)
@@ -282,13 +277,9 @@ Kicker.DashboardWindow {
                         z: 1
 
                         anchors {
-//                             left: parent.left
-//                             leftMargin: PlasmaCore.Units.smallSpacing * 4
-//                             right: parent.right
-//                             rightMargin: PlasmaCore.Units.smallSpacing * 4
-                            horizontalCenter: parent.horizontalCenter
-                            top: myFavorites.bottom
-                            topMargin: (showFavoritesInGrid && !searching) ?units.iconSizes.smallMedium : undefined
+                            horizontalCenter: parent.horizontalCenter // center
+                            top: myFavorites.bottom // under the favorites menu button
+                            topMargin: (showFavoritesInGrid && !searching) ? units.iconSizes.smallMedium : undefined // leave some space to make everything beautiful
                         }
 
                         Behavior on opacity {
@@ -309,17 +300,7 @@ Kicker.DashboardWindow {
                         anchors.topMargin: (showFavoritesInGrid && !searching) ?units.iconSizes.small : undefined// if favorites are shown, then it all will look beautiful. If they are not shown, the horizontal separator still exists, but will have null height and will be invisible. Therefore, it all will look beautiful as well.
                         interactive: false // this fixes a nasty occurrence by which we would have this ListView listed all over again after scrolling for a short while
 
-
-//                         keyNavigationEnabled: true
-
-
-//                             model: rootModel
-
-                        //onCurrentIndexChanged: {
-                            //positionViewAtIndex(currentIndex, ListView.Contain);
-                        //}
-
-                        onCurrentItemChanged: {
+                        onCurrentItemChanged: { // I don't really understand how this function works, but it's there and apparently does something (I didn't write this one)
                             if (!currentItem) {
                                 return;
                             }
@@ -341,12 +322,12 @@ Kicker.DashboardWindow {
 
                         delegate: Item {
                             width: columns * cellSize
-                            height: (!showFavoritesInGrid || searching) ? rows * cellSize : (rows - 1) * cellSize
+                            height: (!showFavoritesInGrid || searching) ? rows * cellSize : (rows - 1) * cellSize // be extremely careful not to overlap the applications grid with the favorites grid! If such grid is present, then this grid needs to have its row count diminshed by 1 to make room for the favorites grid
 
                             property Item itemGrid: appsGrid
                             focus: true
 
-                            ItemGridView {
+                            ItemGridView { // this is actually the applications grid
                                 id: appsGrid
                                 visible: model.count > 0
                                 anchors.fill: parent
@@ -354,11 +335,11 @@ Kicker.DashboardWindow {
                                 cellWidth:  cellSize
                                 cellHeight: cellSize
 
-                                verticalScrollBarPolicy: Qt.ScrollBarAlwaysOff
+                                verticalScrollBarPolicy: Qt.ScrollBarAlwaysOff // it will look much better without scrollbars (also for some reason it destroys the layout if enabled by making this grid's width much bigger)
 
                                 dragEnabled: (index == 0)
 
-                                model: searching ? runnerModel.modelForRow(0) : rootModel.modelForRow(0).modelForRow(1)
+                                model: searching ? runnerModel.modelForRow(0) : rootModel.modelForRow(0).modelForRow(1) // if we happen to be searching, then we must show the results of said search. Else, we will default to showing all the applications
 
                                 //onCountChanged: { // whenever the list of icons has its cardinality modified, account for the change
                                     //currentIndex = 0
@@ -379,7 +360,7 @@ Kicker.DashboardWindow {
                                     //sessionControlBar.tryActivate(0,0)
                                 //}
 
-                                onModelChanged: {
+                                onModelChanged: { // when we stop searching or start searching, highlight the first item just to give the user a hint that pressing "Enter" will launch the first entry.
                                     currentIndex = 0
                                     itemGrid.tryActivate(0, 0);
                                 }
@@ -388,7 +369,8 @@ Kicker.DashboardWindow {
                     }
                 }
 
-                PlasmaCore.DataSource {
+
+                PlasmaCore.DataSource { // courtesy of https://github.com/varlesh/org.kde.plasma.compact-shutdown/blob/main/contents/ui/main.qml (I just copy+pasted it, some day I'll figure how this works)
                     id: executable
                     engine: "executable"
                     connectedSources: []
@@ -399,11 +381,12 @@ Kicker.DashboardWindow {
                     }
                 }
 
-                RowLayout {
+                RowLayout { // display session management buttons in a row
 
                     id: sessionControlBar
-                    spacing: units.iconSizes.medium
+                    spacing: units.iconSizes.medium // arbitrary spacing between buttons whose value is non-arbitrary (it's taken from KDE Plasma's API so I trust they will work on other displays)
 
+                    // The following SessionButtons are defined in SessionButton.qml. They are basically Buttons taken from the PlasmaComponents library with some values that will always be present - thus, I just put them in a separate qml file to avoid repeating lines of code.
                     SessionButton { // Shutdown Button
                         iconUrl: "system-shutdown"
                         onClicked: {
@@ -438,9 +421,9 @@ Kicker.DashboardWindow {
                     }
 
                     anchors {
-                        bottom: parent.bottom
-                        bottomMargin: units.iconSizes.smallMedium
-                        horizontalCenter: parent.horizontalCenter
+                        bottom: parent.bottom // RowLayout will be at the bottom-most part of the grid
+                        bottomMargin: units.iconSizes.smallMedium // keep some nice distance towards the edge of the screen to not make it look out of place
+                        horizontalCenter: parent.horizontalCenter // center the entire row
                     }
                 }
 
@@ -451,44 +434,42 @@ Kicker.DashboardWindow {
                 Component {
                     id: delegateListElement
 
-
                     PlasmaComponents.Button {
 
                         property int indexInModel: categoryIndex
                         text: categoryText
-                        flat: true
-                        font.pointSize: 16
+                        flat: true // do not draw awkward rectangle around the button
+                        font.pointSize: 16 // arbitrary value that may break in some layouts. If this happens please do tell me
 
                         onClicked: {
-                            if (indexInModel != 0) { // show some actual category
+                            if (indexInModel != 0) { // show the category determined by indexInModel
                                 pageList.currentItem.itemGrid.model = rootModel.modelForRow(indexInModel).modelForRow(0)
-                            } else { // show All Apps "category"
+                            } else { // show All Applications
                                 pageList.currentItem.itemGrid.model = rootModel.modelForRow(0).modelForRow(1)
                             }
                         }
 
                         enabled: !searching // buttons should only be able to work if we are not searching
-
                     }
                 }
 
-                Item {
+                Item { // dedicated to storing the categories list
                     id: categoriesItem
-                    anchors.left: appsRectangle.right
-                    anchors.leftMargin: units.iconSizes.medium
-                    anchors.verticalCenter: parent.verticalCenter
                     height: categoriesList.contentHeight
 
                     ListView {
                         id: categoriesList
                         anchors.fill: parent
-
                         model: categoriesModel
                         delegate: delegateListElement
                         focus: true
                     }
 
-
+                    anchors {
+                        left: appsRectangle.right
+                        leftMargin: units.iconSizes.medium
+                        verticalCenter: parent.verticalCenter
+                    }
                 }
             }
         }

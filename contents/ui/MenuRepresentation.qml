@@ -18,7 +18,7 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
-import QtQuick 2.4
+import QtQuick 2.15
 
 // for using RawLayout
 import QtQuick.Layouts 1.1
@@ -446,6 +446,12 @@ Kicker.DashboardWindow {
                                 pageList.currentItem.itemGrid.model = rootModel.modelForRow(indexInModel).modelForRow(0)
                             } else { // show All Applications
                                 pageList.currentItem.itemGrid.model = rootModel.modelForRow(0).modelForRow(1)
+                            }
+                        }
+
+                        HoverHandler {
+                            onHoveredChanged: {
+                                console.log("Hoveriado",categoryText)
                             }
                         }
 

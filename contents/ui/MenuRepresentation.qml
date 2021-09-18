@@ -451,7 +451,7 @@ Kicker.DashboardWindow {
 
                         HoverHandler {
                             onHoveredChanged: {
-                                console.log("Hoveriado",categoryText)
+                                console.log("Hoveriado en",categoryText)
                             }
                         }
 

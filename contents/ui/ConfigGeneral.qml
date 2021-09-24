@@ -51,6 +51,7 @@ Item {
     property alias cfg_favoritesInGrid: favoritesInGrid.checked
     property alias cfg_writeSomething: writeSomething.checked
     property alias cfg_greetingText: greetingText.text
+//     property alias cfg_hideCategories: hideCategories.checked
 
     ColumnLayout {
         anchors.horizontalCenter: parent.horizontalCenter
@@ -195,6 +196,15 @@ Item {
                 enabled: writeSomething.checked
             }
         }
+
+//         RowLayout {
+//             Layout.fillWidth: true
+//             CheckBox {
+//                 Layout.leftMargin: units.smallSpacing
+//                 id: hideCategories
+//                 text: i18n("Hide applications' categories in the menu")
+//             }
+//         }
 
 //         RowLayout{
 //             ColumnLayout { // troublesome setting (TODO - try to see what can be done with it)

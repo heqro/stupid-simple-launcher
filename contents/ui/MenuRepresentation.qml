@@ -20,7 +20,7 @@
 
 import QtQuick 2.15
 
-// for using RawLayout
+// for using RowLayout
 import QtQuick.Layouts 1.1
 
 import org.kde.plasma.plasmoid 2.0
@@ -70,6 +70,8 @@ Kicker.DashboardWindow {
 
     //property bool showCategories: !plasmoid.configuration.hideCategories
 
+    property real alphaValue: plasmoid.configuration.opacitySet ? plasmoid.configuration.alphaValue : 0.6
+
     // cool function to tweak transparency I took from the original launchpad
     function colorWithAlpha(color, alpha) {
         return Qt.rgba(color.r, color.g, color.b, alpha)
@@ -116,7 +118,7 @@ Kicker.DashboardWindow {
             var categoryIcon = rootModel.data(modelIndex, Qt.DecorationRole)
 //             console.debug("ICONO SIN STRING", categoryIcon)
             var aux = categoryIcon.toString().split('"')
-            console.debug("EL ICONO",aux[1]);
+//             console.debug("EL ICONO",aux[1]);
             var index = i // we will use this index to swap categories inside the model that feeds our applications grid
             categoriesModel.append({"categoryText": categoryLabel, "categoryIcon": aux[1],"categoryIndex": index})
         }
@@ -164,7 +166,7 @@ Kicker.DashboardWindow {
 
                 Rectangle{
                     anchors.fill: parent
-                    color: colorWithAlpha(theme.backgroundColor,0.6)
+                    color: colorWithAlpha(theme.backgroundColor, alphaValue)
                 }
 
                 PlasmaExtras.Heading {
@@ -402,7 +404,7 @@ Kicker.DashboardWindow {
                             property string iconName: categoryIcon
 
                             text: categoryText
-                            icon.name: categoryIcon
+//                             icon.name: categoryIcon // will come shortly!!
                             flat: true // do not draw awkward rectangle around the button
                             font.pointSize: 16 // arbitrary value that may break in some layouts. If this happens please do tell me
 

@@ -24,6 +24,12 @@
     <entry name="greetingText" type="String">
         <default></default>
     </entry>
+    <entry name="opacitySet" type="Bool">
+        <default>false</default>
+    </entry>
+    <entry name="alphaValue" type="Double">
+        <default>0.6</default>
+    </entry>
     <entry name="hideCategories" type="Bool">
         <default>false</default>
     </entry>

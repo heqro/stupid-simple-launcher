@@ -24,6 +24,7 @@ import QtQuick.Layouts 1.0
 
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 2.0 as PlasmaComponents
+import org.kde.plasma.extras 2.0 as PlasmaExtras
 
 
 import org.kde.kquickcontrolsaddons 2.0 as KQuickAddons
@@ -51,13 +52,23 @@ Item {
     property alias cfg_favoritesInGrid: favoritesInGrid.checked
     property alias cfg_writeSomething: writeSomething.checked
     property alias cfg_greetingText: greetingText.text
+
+    property alias cfg_opacitySet: opacitySetter.checked
+    property alias cfg_alphaValue: alphaValue.value
+
 //     property alias cfg_hideCategories: hideCategories.checked
 
     ColumnLayout {
         anchors.horizontalCenter: parent.horizontalCenter
 
+        PlasmaExtras.Heading {
+            text: "Icons"
+        }
+
         RowLayout {
             spacing: units.smallSpacing
+
+
 
             Label {
                 text: i18n("Icon:")
@@ -175,6 +186,10 @@ Item {
             }
         }
 
+        PlasmaExtras.Heading {
+            text: "Layout"
+        }
+
         RowLayout {
             Layout.fillWidth: true
             spacing: units.smallSpacing
@@ -196,6 +211,34 @@ Item {
                 enabled: writeSomething.checked
             }
         }
+
+        RowLayout {
+            Layout.fillWidth: true
+
+            CheckBox {
+                Layout.leftMargin: units.smallSpacing
+                id: opacitySetter
+                text: i18n("Select the menu's opacity")
+            }
+
+
+        }
+
+        RowLayout {
+            Layout.fillWidth: true
+
+            PlasmaComponents.Slider {
+                id: alphaValue
+                enabled: opacitySetter.checked
+            }
+
+            PlasmaComponents.Label {
+                id: alphaValueText
+                text: Math.floor(alphaValue.value * 100) + "%"
+                visible: opacitySetter.checked
+            }
+        }
+
 
 //         RowLayout {
 //             Layout.fillWidth: true

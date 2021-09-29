@@ -113,6 +113,12 @@ Kicker.DashboardWindow {
         var categoryEndIndex = rootModel.count
         categoriesModel.clear() // given that we feed the model by appending items to it, it's only logical that we have to clear it every time we open the menu (just in case new applications have been installed)
         for (var i = categoryStartIndex; i < categoryEndIndex; i++) { // loop courtesy of Windows 10 inspired menu plasmoid
+
+            if (i == 1 ) { // we are currently adding the category right after "All applications"
+                // this is a great time to add Favorites support
+                categoriesModel.append({"categoryText": i18n("Favorites"), "categoryIcon": "applications-featured", "categoryIndex": -1}) // we manually set -1 as category index to distinguish the Favorites category from the rest -- this for loop won't register Favorites as a category.
+            }
+
             var modelIndex = rootModel.index(i, 0) // I don't know how this line works but it does
             var categoryLabel = rootModel.data(modelIndex, Qt.DisplayRole) // this is the name that will be shown in the list, say, "All applications", "Utilities", "Education", blah blah blah
             var categoryIcon = rootModel.data(modelIndex, Qt.DecorationRole)
@@ -412,18 +418,23 @@ Kicker.DashboardWindow {
 
 
                             onClicked: {
-                                if (indexInModel != 0) { // show the category determined by indexInModel
+                                if (indexInModel > 0) { // show the category determined by indexInModel
                                     pageList.currentItem.itemGrid.model = rootModel.modelForRow(indexInModel).modelForRow(0)
                                 } else { // show All Applications
-                                    pageList.currentItem.itemGrid.model = rootModel.modelForRow(0).modelForRow(1)
+                                    if (indexInModel == 0) {
+                                        pageList.currentItem.itemGrid.model = rootModel.modelForRow(0).modelForRow(1)
+                                    }
+                                    else { // show Favorites
+                                        pageList.currentItem.itemGrid.model = rootModel.modelForRow(0).modelForRow(0)
+                                    }
                                 }
                             }
 
-                            HoverHandler {
-                                onHoveredChanged: {
-                                    console.log("Hoveriado en",categoryText)
-                                }
-                            }
+//                             HoverHandler {
+//                                 onHoveredChanged: {
+//                                     console.log("Hoveriado en",categoryText)
+//                                 }
+//                             }
 
                             enabled: !searching // buttons should only be able to work if we are not searching
                         }

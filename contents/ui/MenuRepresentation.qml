@@ -38,6 +38,9 @@ import org.kde.kcoreaddons 1.0 as KCoreAddons
 // icons
 //import QtLocation 5.15
 
+// display
+import QtQuick.Controls 2.3
+
 Kicker.DashboardWindow {
     
     id: root
@@ -71,6 +74,12 @@ Kicker.DashboardWindow {
     //property bool showCategories: !plasmoid.configuration.hideCategories
 
     property real alphaValue: plasmoid.configuration.opacitySet ? plasmoid.configuration.alphaValue : 0.6
+
+    // boolean values to manage how to show categories in their corresponing sidebar
+    property bool showCategoriesIcon: plasmoid.configuration.categoriesIcon
+    property bool showCategoriesText: plasmoid.configuration.categoriesText
+    property bool showCategoriesIconAndText: plasmoid.configuration.categoriesIconAndText
+
 
     // cool function to tweak transparency I took from the original launchpad
     function colorWithAlpha(color, alpha) {
@@ -108,6 +117,18 @@ Kicker.DashboardWindow {
         reset();
     }
 
+    function getDisplay() {
+        // this function is used for determining the display of the categories sidebar (icons only, text only, text + icon)
+        var layout = AbstractButton.TextBesideIcon
+        if (showCategoriesIcon) {
+            layout = AbstractButton.IconOnly
+        } else if (showCategoriesText) {
+            layout = AbstractButton.TextOnly
+        }
+
+        return layout
+    }
+
     function updateCategories() { // this function is dedicated to constructing the applications categories list and preemptively updating it, should changes have been applied
         var categoryStartIndex = 0
         var categoryEndIndex = rootModel.count
@@ -122,9 +143,9 @@ Kicker.DashboardWindow {
             var modelIndex = rootModel.index(i, 0) // I don't know how this line works but it does
             var categoryLabel = rootModel.data(modelIndex, Qt.DisplayRole) // this is the name that will be shown in the list, say, "All applications", "Utilities", "Education", blah blah blah
             var categoryIcon = rootModel.data(modelIndex, Qt.DecorationRole)
-//             console.debug("ICONO SIN STRING", categoryIcon)
-            var aux = categoryIcon.toString().split('"')
-//             console.debug("EL ICONO",aux[1]);
+
+            var aux = categoryIcon.toString().split('"') // the day the way this prints out changes I will have a huge problem
+
             var index = i // we will use this index to swap categories inside the model that feeds our applications grid
             categoriesModel.append({"categoryText": categoryLabel, "categoryIcon": aux[1],"categoryIndex": index})
         }
@@ -397,6 +418,8 @@ Kicker.DashboardWindow {
                         }
                     }
 
+
+
                     ListModel {
                         id: categoriesModel
                     }
@@ -409,13 +432,15 @@ Kicker.DashboardWindow {
                             property int indexInModel: categoryIndex
                             property string iconName: categoryIcon
 
+                            height: Math.floor(heightScreen / 12) // arbitrary placeholder value
+                            width: display != AbstractButton.TextOnly ? Math.floor(widthScreen / 5) : Math.floor(widthScreen / 7) // arbitrary placeholder value
+
                             text: categoryText
-//                             icon.name: categoryIcon // will come shortly!!
+                            icon.name: categoryIcon
                             flat: true // do not draw awkward rectangle around the button
                             font.pointSize: 16 // arbitrary value that may break in some layouts. If this happens please do tell me
 
-
-
+                            display: getDisplay()
 
                             onClicked: {
                                 if (indexInModel > 0) { // show the category determined by indexInModel
@@ -446,7 +471,6 @@ Kicker.DashboardWindow {
 
                         id: categoriesItem
                         height: categoriesList.contentHeight
-//                         visible: showCategories
 
                         ListView {
 
@@ -455,7 +479,8 @@ Kicker.DashboardWindow {
                             model: categoriesModel
                             delegate: delegateListElement
                             focus: true
-//                             visible: showCategories
+                            // only add some fancy spacing between the buttons if they are only icons.
+                            spacing: getDisplay() != AbstractButton.IconOnly ? 0 : units.iconSizes.small
 
                         }
 

@@ -56,6 +56,10 @@ Item {
     property alias cfg_opacitySet: opacitySetter.checked
     property alias cfg_alphaValue: alphaValue.value
 
+    property alias cfg_categoriesText: categoriesShowText.checked
+    property alias cfg_categoriesIcon: categoriesShowIcon.checked
+    property alias cfg_categoriesIconAndText: categoriesShowTextAndIcon.checked
+
 //     property alias cfg_hideCategories: hideCategories.checked
 
     ColumnLayout {
@@ -236,6 +240,51 @@ Item {
                 id: alphaValueText
                 text: Math.floor(alphaValue.value * 100) + "%"
                 visible: opacitySetter.checked
+            }
+        }
+
+        PlasmaExtras.Heading {
+            text: "Categories bar customization"
+        }
+
+        RowLayout {
+            Layout.fillWidth: true
+
+            ColumnLayout {
+
+                // for some reason I have to resort to this sad trick even though documentation says this would work automatically. Intended usage: avoid user from unchecking a checked RadioButton as well as making sure only one RadioButton can be checked at a time.
+
+                RadioButton {
+                    id: categoriesShowText
+                    text: i18n("Show categories' names only")
+                    checked: true
+                    onClicked: {
+                        categoriesShowText.checked = true
+                        categoriesShowIcon.checked = false
+                        categoriesShowTextAndIcon.checked = false
+                    }
+                }
+
+                RadioButton {
+                    id: categoriesShowIcon
+                    text: i18n("Show categories' icons only")
+                    onClicked: {
+                        categoriesShowText.checked = false
+                        categoriesShowIcon.checked = true
+                        categoriesShowTextAndIcon.checked = false
+                    }
+                }
+
+                RadioButton {
+                    id: categoriesShowTextAndIcon
+                    text: i18n("Show categories' icons and names")
+                    onClicked: {
+                        categoriesShowIcon.checked = false
+                        categoriesShowText.checked = false
+                        categoriesShowTextAndIcon.checked = true
+                    }
+                }
+
             }
         }
 

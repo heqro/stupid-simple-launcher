@@ -26,6 +26,7 @@ import QtQuick.Layouts 1.1
 import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents
+
 import org.kde.plasma.extras 2.0 as PlasmaExtras
 import org.kde.plasma.private.kicker 0.1 as Kicker
 
@@ -34,6 +35,9 @@ import QtQuick.Window 2.0
 import QtQuick.Controls.Styles 1.4
 
 import org.kde.kcoreaddons 1.0 as KCoreAddons
+
+// highlighting
+import org.kde.plasma.components 2.0 as PC2
 
 // icons
 //import QtLocation 5.15
@@ -117,17 +121,17 @@ Kicker.DashboardWindow {
         reset();
     }
 
-    function getDisplay() {
-        // this function is used for determining the display of the categories sidebar (icons only, text only, text + icon)
-        var layout = AbstractButton.TextBesideIcon
-        if (showCategoriesIcon) {
-            layout = AbstractButton.IconOnly
-        } else if (showCategoriesText) {
-            layout = AbstractButton.TextOnly
-        }
-
-        return layout
-    }
+//     function getDisplay() {
+//         this function is used for determining the display of the categories sidebar (icons only, text only, text + icon)
+//         var layout = AbstractButton.TextBesideIcon
+//         if (showCategoriesIcon) {
+//             layout = AbstractButton.IconOnly
+//         } else if (showCategoriesText) {
+//             layout = AbstractButton.TextOnly
+//         }
+//
+//         return layout
+//     }
 
     function updateCategories() { // this function is dedicated to constructing the applications categories list and preemptively updating it, should changes have been applied
         var categoryStartIndex = 0
@@ -427,50 +431,86 @@ Kicker.DashboardWindow {
                     Component {
                         id: delegateListElement
 
-                        PlasmaComponents.Button {
-
+                        Rectangle {
                             property int indexInModel: categoryIndex
                             property string iconName: categoryIcon
 
+                            color: "transparent"
                             height: Math.floor(heightScreen / 12) // arbitrary placeholder value
-                            width: display != AbstractButton.TextOnly ? Math.floor(widthScreen / 5) : Math.floor(widthScreen / 7) // arbitrary placeholder value
+                            width: Math.floor(widthScreen / 8)
 
-                            text: categoryText
-                            icon.name: categoryIcon
-                            flat: true // do not draw awkward rectangle around the button
-                            font.pointSize: 16 // arbitrary value that may break in some layouts. If this happens please do tell me
-
-                            display: getDisplay()
-
-                            onClicked: {
-                                if (indexInModel > 0) { // show the category determined by indexInModel
-                                    pageList.currentItem.itemGrid.model = rootModel.modelForRow(indexInModel).modelForRow(0)
-                                } else { // show All Applications
-                                    if (indexInModel == 0) {
-                                        pageList.currentItem.itemGrid.model = rootModel.modelForRow(0).modelForRow(1)
-                                    }
-                                    else { // show Favorites
-                                        pageList.currentItem.itemGrid.model = rootModel.modelForRow(0).modelForRow(0)
-                                    }
+                            PlasmaComponents.Label {
+                                id: categoryTextId
+                                text: categoryText
+                                font.pointSize: 15
+                                visible: showCategoriesText || showCategoriesIconAndText
+                                anchors {
+                                    right: (showCategoriesIcon || showCategoriesIconAndText) ? categoryIconId.left : parent.right
+                                    left: parent.left
+                                    verticalCenter: parent.verticalCenter
+                                    leftMargin: highlightItemSvg.margins.left
+                                    rightMargin: highlightItemSvg.margins.right
                                 }
+
+                                // collapsing text when the going gets tough
+                                elide: Text.ElideRight
+                                wrapMode: Text.NoWrap
+
                             }
 
-//                             HoverHandler {
-//                                 onHoveredChanged: {
-//                                     console.log("Hoveriado en",categoryText)
-//                                 }
-//                             }
+                            PlasmaCore.IconItem {
+                                id: categoryIconId
+                                source: categoryIcon
+                                visible: showCategoriesIcon || showCategoriesIconAndText
 
-                            enabled: !searching // buttons should only be able to work if we are not searching
+                                anchors {
+                                    left: parent.contentItem
+                                    right: parent.right
+                                    rightMargin: highlightItemSvg.margins.right
+                                    verticalCenter: parent.verticalCenter
+                                }
+
+                            }
+
+
+
+                            MouseArea {
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                onClicked: {
+                                    if (indexInModel > 0) { // show the category determined by indexInModel
+                                        pageList.currentItem.itemGrid.model = rootModel.modelForRow(indexInModel).modelForRow(0)
+                                    } else { // show All Applications
+                                        if (indexInModel == 0) {
+                                            pageList.currentItem.itemGrid.model = rootModel.modelForRow(0).modelForRow(1)
+                                        }
+                                        else { // show Favorites
+                                            pageList.currentItem.itemGrid.model = rootModel.modelForRow(0).modelForRow(0)
+                                        }
+                                    }
+                                    categoriesList.currentIndex = index
+                                }
+
+                                //onEntered: {
+                                    //console.log("Entraste a", categoryText)
+                                //}
+
+                                //onExited: {
+                                    //console.log("Saliste de", categoryText)
+                                //}
+
+                            }
+
                         }
+
                     }
 
 
 
-                    Item { // dedicated to storing the categories list
+                    PlasmaExtras.ScrollArea { // dedicated to storing the categories list
 
                         id: categoriesItem
-                        height: categoriesList.contentHeight
+                        height: heightScreen
 
                         ListView {
 
@@ -480,9 +520,15 @@ Kicker.DashboardWindow {
                             delegate: delegateListElement
                             focus: true
                             // only add some fancy spacing between the buttons if they are only icons.
-                            spacing: getDisplay() != AbstractButton.IconOnly ? 0 : units.iconSizes.small
+                            spacing: (showCategoriesText || showCategoriesIconAndText) ? 0 : units.iconSizes.small
+
+                            highlight: PC2.Highlight {}
+                            highlightFollowsCurrentItem: true
+                            highlightMoveDuration: 0
 
                         }
+
+
 
                         anchors {
                             left: appsRectangle.right

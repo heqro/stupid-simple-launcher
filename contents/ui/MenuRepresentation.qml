@@ -523,6 +523,7 @@ Kicker.DashboardWindow {
                             spacing: (showCategoriesText || showCategoriesIconAndText) ? 0 : units.iconSizes.small
 
                             // the following lines help maintaining consistency in highlighting with respect to whatever you have set in your Plasma Style. (This is taken from ItemGridDelegate.qml)
+                            // TODO: it would be cool if some highlighting clues would be given to the user when some other category is hovered.
                             highlight: PC2.Highlight {}
                             highlightFollowsCurrentItem: true
                             highlightMoveDuration: 0

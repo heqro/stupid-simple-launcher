@@ -25,7 +25,7 @@ import QtQuick.Layouts 1.1
 
 import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
-import org.kde.plasma.components 3.0 as PlasmaComponents
+import org.kde.plasma.components 2.0 as PlasmaComponents
 
 import org.kde.plasma.extras 2.0 as PlasmaExtras
 import org.kde.plasma.private.kicker 0.1 as Kicker
@@ -34,16 +34,9 @@ import "../code/tools.js" as Tools
 import QtQuick.Window 2.0
 import QtQuick.Controls.Styles 1.4
 
+// user information is called by using this
 import org.kde.kcoreaddons 1.0 as KCoreAddons
 
-// highlighting
-import org.kde.plasma.components 2.0 as PC2
-
-// icons
-//import QtLocation 5.15
-
-// display
-import QtQuick.Controls 2.3
 
 Kicker.DashboardWindow {
     
@@ -227,21 +220,34 @@ Kicker.DashboardWindow {
                         topMargin: units.iconSizes.large
                         horizontalCenter: parent.horizontalCenter
                     }
+                    width: widthScreen
 
                     property string greetingMessage: plasmoid.configuration.greetingText
 
                     font.pointSize: 20
                     placeholderText: plasmoid.configuration.writeSomething ? plasmoid.configuration.greetingText : "Howdy, " + kuser.loginName + "! Type to start searching..."
-                    placeholderTextColor: colorWithAlpha(PlasmaCore.Theme.headerTextColor, 0.8)
+                    //placeholderTextColor: colorWithAlpha(PlasmaCore.Theme.headerTextColor, 0.8)
                     horizontalAlignment: TextInput.AlignHCenter
 
                     onTextChanged: { // start searching
                         runnerModel.query = text
                     }
 
-                    background: Rectangle {
-                        color: "transparent"
+                    style: TextFieldStyle {
+
+                        placeholderTextColor: colorWithAlpha(PlasmaCore.Theme.headerTextColor, 0.8)
+
+                        background: Rectangle {
+                            color: "transparent"
+                        }
+
                     }
+
+                    //searchField.background.color: "transparent"
+
+                    //background: Rectangle {
+                        //color: "transparent"
+                    //}
 
                     visible: true
 
@@ -524,7 +530,7 @@ Kicker.DashboardWindow {
 
                             // the following lines help maintaining consistency in highlighting with respect to whatever you have set in your Plasma Style. (This is taken from ItemGridDelegate.qml)
                             // TODO: it would be cool if some highlighting clues would be given to the user when some other category is hovered.
-                            highlight: PC2.Highlight {}
+                            highlight: PlasmaComponents.Highlight {}
                             highlightFollowsCurrentItem: true
                             highlightMoveDuration: 0
 

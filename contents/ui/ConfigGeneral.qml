@@ -60,6 +60,8 @@ Item {
     property alias cfg_categoriesIcon: categoriesShowIcon.checked
     property alias cfg_categoriesIconAndText: categoriesShowTextAndIcon.checked
 
+    property alias cfg_startOnFavorites: startOnFavorites.checked
+
 //     property alias cfg_hideCategories: hideCategories.checked
 
     ColumnLayout {
@@ -224,8 +226,6 @@ Item {
                 id: opacitySetter
                 text: i18n("Select the menu's opacity")
             }
-
-
         }
 
         RowLayout {
@@ -287,6 +287,23 @@ Item {
 
             }
         }
+
+        PlasmaExtras.Heading {
+            text: "Startup"
+        }
+
+        RowLayout {
+            Layout.fillWidth: true
+
+            CheckBox {
+                Layout.leftMargin: units.smallSpacing
+                id: startOnFavorites
+                text: i18n("Start the menu on the \"Favorites\" category")
+            }
+
+        }
+
+
 
 
 //         RowLayout {

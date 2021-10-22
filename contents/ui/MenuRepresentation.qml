@@ -77,6 +77,8 @@ Kicker.DashboardWindow {
     property bool showCategoriesText: plasmoid.configuration.categoriesText
     property bool showCategoriesIconAndText: plasmoid.configuration.categoriesIconAndText
 
+    // boolean value to know whether or not the user wants the menu to drop the user right into the favorites section instead of the "All applications" section on startup.
+    property bool startOnFavorites: plasmoid.configuration.startOnFavorites
 
     // cool function to tweak transparency I took from the original launchpad
     function colorWithAlpha(color, alpha) {
@@ -148,7 +150,7 @@ Kicker.DashboardWindow {
         }
     }
 
-    function reset() { // return everything to a last known state
+    function reset() { // return everything to the last known state
         if (!searching) {
             pageList.model = rootModel.modelForRow(0).modelForRow(1) // show all applications
         }
@@ -159,7 +161,15 @@ Kicker.DashboardWindow {
 
         pageList.focus = true
         searchField.text = ""
-        pageList.currentItem.itemGrid.model = rootModel.modelForRow(0).modelForRow(1) // show all applications
+
+        if (startOnFavorites) {
+            pageList.currentItem.itemGrid.model = rootModel.modelForRow(0).modelForRow(0) // show favorites
+            categoriesList.currentIndex = 1 // highlight "Favorites" category
+        } else {
+            pageList.currentItem.itemGrid.model = rootModel.modelForRow(0).modelForRow(1) // show all applications
+            categoriesList.currentIndex = 0 // highlight "All applications" category
+        }
+
     }
 
     mainItem:

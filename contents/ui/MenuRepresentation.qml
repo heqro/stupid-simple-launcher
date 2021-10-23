@@ -217,10 +217,7 @@ Kicker.DashboardWindow {
                     font: dummyHeading.font
                 }
 
-
-
-
-                KCoreAddons.KUser { // this is needed for the greeting message (saying hello to the whatever name the user has)
+                KCoreAddons.KUser { // this is needed for the greeting message (saying hello whatever the user name is)
                     id: kuser
                 }
 
@@ -440,8 +437,6 @@ Kicker.DashboardWindow {
                         }
                     }
 
-
-
                     ListModel {
                         id: categoriesModel
                     }
@@ -460,7 +455,7 @@ Kicker.DashboardWindow {
                             height: Math.floor(heightScreen / 12) // arbitrary placeholder value
                             width: Math.floor(widthScreen / 8)
 
-                            opacity: categoriesList.currentIndex == index ? 1 : 0.4
+                            opacity: (categoriesList.currentIndex == index && !searching) ? 1 : 0.4
 
                             PlasmaComponents.Label {
                                 id: categoryTextId
@@ -495,12 +490,13 @@ Kicker.DashboardWindow {
 
                             }
 
-
-
                             MouseArea {
                                 anchors.fill: parent
                                 hoverEnabled: true
                                 onClicked: {
+                                    if (searching) {
+                                        return
+                                    }
                                     if (indexInModel > 0) { // show the category determined by indexInModel
                                         pageList.currentItem.itemGrid.model = rootModel.modelForRow(indexInModel).modelForRow(0)
                                     } else { // show All Applications
@@ -516,24 +512,19 @@ Kicker.DashboardWindow {
                                 }
 
                                 onEntered: { // highlight item
-                                    if (categoriesList.currentIndex != index) {
+                                    if (categoriesList.currentIndex != index && !searching) {
                                         containerForCategory.opacity = 0.9
                                     }
                                 }
 
                                 onExited: {
-                                    if (categoriesList.currentIndex != index) {
+                                    if (categoriesList.currentIndex != index && !searching) {
                                         containerForCategory.opacity = 0.4
                                     }
                                 }
-
                             }
-
                         }
-
                     }
-
-
 
                     PlasmaExtras.ScrollArea { // dedicated to storing the categories list
 
@@ -551,14 +542,11 @@ Kicker.DashboardWindow {
                             spacing: (showCategoriesText || showCategoriesIconAndText) ? 0 : units.iconSizes.small
 
                             // the following lines help maintaining consistency in highlighting with respect to whatever you have set in your Plasma Style. (This is taken from ItemGridDelegate.qml)
-                            // TODO: it would be cool if some highlighting clues would be given to the user when some other category is hovered.
                             highlight: PlasmaComponents.Highlight {}
                             highlightFollowsCurrentItem: true
                             highlightMoveDuration: 0
 
                         }
-
-
 
                         anchors {
                             left: appsRectangle.right

@@ -145,7 +145,7 @@ Kicker.DashboardWindow {
 
             var aux = categoryIcon.toString().split('"') // the day the way this prints out changes I will have a huge problem
 
-            console.log("CAT:",categoryIcon)
+            //console.log("CAT:",categoryIcon)
 
             var index = i // we will use this index to swap categories inside the model that feeds our applications grid
             categoriesModel.append({"categoryText": categoryLabel, "categoryIcon": aux[1],"categoryIndex": index})
@@ -450,12 +450,17 @@ Kicker.DashboardWindow {
                         id: delegateListElement
 
                         Rectangle {
+
+                            id: containerForCategory
+
                             property int indexInModel: categoryIndex
                             property string iconName: categoryIcon
 
                             color: "transparent"
                             height: Math.floor(heightScreen / 12) // arbitrary placeholder value
                             width: Math.floor(widthScreen / 8)
+
+                            opacity: categoriesList.currentIndex == index ? 1 : 0.4
 
                             PlasmaComponents.Label {
                                 id: categoryTextId
@@ -507,15 +512,20 @@ Kicker.DashboardWindow {
                                         }
                                     }
                                     categoriesList.currentIndex = index
+                                    containerForCategory.opacity = 1
                                 }
 
-                                //onEntered: {
-                                    //console.log("Entraste a", categoryText)
-                                //}
+                                onEntered: { // highlight item
+                                    if (categoriesList.currentIndex != index) {
+                                        containerForCategory.opacity = 0.9
+                                    }
+                                }
 
-                                //onExited: {
-                                    //console.log("Saliste de", categoryText)
-                                //}
+                                onExited: {
+                                    if (categoriesList.currentIndex != index) {
+                                        containerForCategory.opacity = 0.4
+                                    }
+                                }
 
                             }
 

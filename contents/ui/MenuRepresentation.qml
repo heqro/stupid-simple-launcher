@@ -145,6 +145,8 @@ Kicker.DashboardWindow {
 
             var aux = categoryIcon.toString().split('"') // the day the way this prints out changes I will have a huge problem
 
+            console.log("CAT:",categoryIcon)
+
             var index = i // we will use this index to swap categories inside the model that feeds our applications grid
             categoriesModel.append({"categoryText": categoryLabel, "categoryIcon": aux[1],"categoryIndex": index})
         }

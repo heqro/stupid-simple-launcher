@@ -267,7 +267,7 @@ Item {
 
                 RadioButton {
                     id: categoriesShowIcon
-                    text: i18n("Show categories' icons only")
+                    text: i18n("Show categories' icons only (will misbehave with downloaded icons)")
                     onClicked: {
                         categoriesShowText.checked = false
                         categoriesShowIcon.checked = true

@@ -303,6 +303,7 @@ Kicker.DashboardWindow {
 
                 RowLayout {
 
+                    spacing: units.iconSizes.small
                     anchors {
                         top: searchField.bottom
                         topMargin: units.iconSizes.medium
@@ -454,12 +455,17 @@ Kicker.DashboardWindow {
 
                             property int indexInModel: categoryIndex
                             property string iconName: categoryIcon
+                            property int selectedItemIndex: categoriesList.currentIndex
 
                             color: "transparent"
                             height: Math.floor(heightScreen / 12) // arbitrary placeholder value
                             width: Math.floor(widthScreen / 8)
 
                             opacity: (categoriesList.currentIndex == index && !searching) ? 1 : 0.4 // TODO: spotty logic - this does not always work
+
+                            onSelectedItemIndexChanged: {
+                                opacity = (categoriesList.currentIndex == index && !searching) ? 1 : 0.4
+                            }
 
                             PlasmaComponents.Label {
                                 id: categoryTextId
@@ -512,7 +518,7 @@ Kicker.DashboardWindow {
                                         }
                                     }
                                     categoriesList.currentIndex = index
-                                    containerForCategory.opacity = 1
+//                                     containerForCategory.opacity = 1
                                 }
 
                                 onEntered: { // highlight item

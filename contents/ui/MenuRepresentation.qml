@@ -301,22 +301,26 @@ Kicker.DashboardWindow {
                     //enabled: false // this crashes plasmashell xdxd
                 }
 
+                RowLayout {
 
-
+                    anchors {
+                        top: searchField.bottom
+                        topMargin: units.iconSizes.medium
+                        bottom: sessionControlBar.top
+                        bottomMargin: units.iconSizes.medium
+                        horizontalCenter: parent.horizontalCenter
+//                         left: parent.left
+                        //leftMargin: Math.floor(0.05 * parent.width)
+                        //rightMargin: Math.floor(0.05 * parent.width)
+                        //right: parent.right
+                    }
 
                     Rectangle { // applications will be inside this
                         id: appsRectangle
-                        width: widthScreen
-                        //                 height: heightScreen
+                        Layout.preferredWidth: widthScreen
+                        Layout.preferredHeight: heightScreen
+//                         height: heightScreen
                         color: "transparent" //  use "red" to see real dimensions and limits
-                        anchors {
-                            top: searchField.bottom
-                            topMargin: units.iconSizes.medium
-                            bottom: sessionControlBar.top
-                            bottomMargin: units.iconSizes.medium
-                            left: parent.left
-                            leftMargin: Math.floor(0.05 * parent.width)
-                        }
 
                         ItemGridView { // this is the grid in which we will store the favorites list
                             id: myFavorites
@@ -529,11 +533,13 @@ Kicker.DashboardWindow {
                     PlasmaExtras.ScrollArea { // dedicated to storing the categories list
 
                         id: categoriesItem
-                        height: heightScreen
+                        //height: heightScreen
+                        Layout.preferredHeight: heightScreen
 
                         ListView {
 
                             id: categoriesList
+
                             anchors.fill: parent
                             model: categoriesModel
                             delegate: delegateListElement
@@ -547,13 +553,13 @@ Kicker.DashboardWindow {
                             highlightMoveDuration: 0
 
                         }
-
-                        anchors {
-                            left: appsRectangle.right
-                            leftMargin: units.iconSizes.medium
-                            verticalCenter: parent.verticalCenter
-                        }
                     }
+                }
+
+
+
+
+
 
 
 

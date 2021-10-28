@@ -455,7 +455,7 @@ Kicker.DashboardWindow {
                             height: Math.floor(heightScreen / 12) // arbitrary placeholder value
                             width: Math.floor(widthScreen / 8)
 
-                            opacity: (categoriesList.currentIndex == index && !searching) ? 1 : 0.4
+                            opacity: (categoriesList.currentIndex == index && !searching) ? 1 : 0.4 // TODO: spotty logic - this does not always work
 
                             PlasmaComponents.Label {
                                 id: categoryTextId

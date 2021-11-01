@@ -491,6 +491,9 @@ Kicker.DashboardWindow {
                                 source: categoryIcon
                                 visible: showCategoriesIcon || showCategoriesIconAndText
 
+                                height: Math.floor(4 * parent.height / 5)
+                                width: Math.floor(4 * parent.height / 5)
+
                                 anchors {
                                     left: parent.contentItem
                                     right: parent.right

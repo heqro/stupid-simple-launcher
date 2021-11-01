@@ -136,7 +136,7 @@ Kicker.DashboardWindow {
 
             if (i == 1 ) { // we are currently adding the category right after "All applications"
                 // this is a great time to add Favorites support
-                categoriesModel.append({"categoryText": i18n("Favorites"), "categoryIcon": "favorite", "categoryIndex": -1}) // we manually set -1 as category index to distinguish the Favorites category from the rest -- this for loop won't register Favorites as a category.
+                categoriesModel.append({"categoryText": i18n("Favorites"), "categoryIcon": "applications-featured", "categoryIndex": -1}) // we manually set -1 as category index to distinguish the Favorites category from the rest -- this for loop won't register Favorites as a category.
             }
 
             var modelIndex = rootModel.index(i, 0) // I don't know how this line works but it does
@@ -239,7 +239,7 @@ Kicker.DashboardWindow {
                     horizontalAlignment: TextInput.AlignHCenter
 
                     onTextChanged: { // start searching
-                        runnerModel.query = textarbol.attach(pos, subTree(pos));
+                        runnerModel.query = text
                     }
 
                     style: TextFieldStyle {
@@ -467,59 +467,38 @@ Kicker.DashboardWindow {
                                 opacity = (categoriesList.currentIndex == index && !searching) ? 1 : 0.4
                             }
 
-                            RowLayout {
+                            PlasmaComponents.Label {
+                                id: categoryTextId
+                                text: categoryText
+                                font.pointSize: 15
+                                visible: showCategoriesText || showCategoriesIconAndText
+                                anchors {
+                                    right: (showCategoriesIcon || showCategoriesIconAndText) ? categoryIconId.left : parent.right
+                                    left: parent.left
+                                    verticalCenter: parent.verticalCenter
+                                    leftMargin: highlightItemSvg.margins.left
+                                    rightMargin: highlightItemSvg.margins.right
+                                }
+
+                                // collapsing text when the going gets tough
+                                elide: Text.ElideRight
+                                wrapMode: Text.NoWrap
+
+                            }
+
+                            PlasmaCore.IconItem {
+                                id: categoryIconId
+                                source: categoryIcon
+                                visible: showCategoriesIcon || showCategoriesIconAndText
 
                                 anchors {
+                                    left: parent.contentItem
+                                    right: parent.right
+                                    rightMargin: highlightItemSvg.margins.right
                                     verticalCenter: parent.verticalCenter
                                 }
 
-                                spacing: units.iconSizes.small
-
-                                PlasmaComponents.Label {
-                                    id: categoryTextId
-                                    text: categoryText
-                                    font.pointSize: 15
-
-                                    //Layout.alignment: Qt.AlignVCenter
-
-                                    // disaster
-                                    //Layout.fillWidth: true
-                                    //Layout.fillHeight: true
-                                    //Layout.maximumWidth: Math.floor(3 * parent.width / 5)
-                                    // disaster off
-                                    visible: showCategoriesText || showCategoriesIconAndText
-//                                     anchors {
-//                                         right: (showCategoriesIcon || showCategoriesIconAndText) ? categoryIconId.left : parent.right
-//                                         left: parent.left
-//                                         verticalCenter: parent.verticalCenter
-//                                         leftMargin: highlightItemSvg.margins.left
-//                                         rightMargin: highlightItemSvg.margins.right
-//                                     }
-
-                                    // collapsing text when the going gets tough
-                                    elide: Text.ElideRight
-                                    wrapMode: Text.NoWrap
-
-                                }
-
-                                PlasmaCore.IconItem {
-                                    id: categoryIconId
-                                    source: categoryIcon
-                                    Layout.fillWidth: true
-                                    Layout.fillHeight: true
-                                    visible: showCategoriesIcon || showCategoriesIconAndText
-
-//                                     anchors {
-//                                         left: parent.contentItem
-//                                         right: parent.right
-//                                         rightMargin: highlightItemSvg.margins.right
-//                                         verticalCenter: parent.verticalCenter
-//                                     }
-
-                                }
                             }
-
-
 
                             MouseArea {
                                 anchors.fill: parent

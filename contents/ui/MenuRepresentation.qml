@@ -136,7 +136,7 @@ Kicker.DashboardWindow {
 
             if (i == 1 ) { // we are currently adding the category right after "All applications"
                 // this is a great time to add Favorites support
-                categoriesModel.append({"categoryText": i18n("Favorites"), "categoryIcon": "applications-featured", "categoryIndex": -1}) // we manually set -1 as category index to distinguish the Favorites category from the rest -- this for loop won't register Favorites as a category.
+                categoriesModel.append({"categoryText": i18n("Favorites"), "categoryIcon": "favorite", "categoryIndex": -1}) // we manually set -1 as category index to distinguish the Favorites category from the rest -- this for loop won't register Favorites as a category.
             }
 
             var modelIndex = rootModel.index(i, 0) // I don't know how this line works but it does

@@ -101,32 +101,10 @@ Kicker.DashboardWindow {
         }
     }
 
-    //onShowCategoriesChanged: {
-
-        //if (showCategories) {
-            //appsRectangle.anchors.left = parent.left
-        //} else {
-            //appsRectangle.anchors.horizontalCenter = parent.horizontalCenter
-        //}
-
-    //}
-
     onVisibleChanged: { // start fancy animation and preemptively return to a known state
         animationSearch.start()
         reset();
     }
-
-//     function getDisplay() {
-//         this function is used for determining the display of the categories sidebar (icons only, text only, text + icon)
-//         var layout = AbstractButton.TextBesideIcon
-//         if (showCategoriesIcon) {
-//             layout = AbstractButton.IconOnly
-//         } else if (showCategoriesText) {
-//             layout = AbstractButton.TextOnly
-//         }
-//
-//         return layout
-//     }
 
     function updateCategories() { // this function is dedicated to constructing the applications categories list and preemptively updating it, should changes have been applied
         var categoryStartIndex = 0
@@ -160,11 +138,11 @@ Kicker.DashboardWindow {
         if(showCategories) {
             updateCategories()
         } else {
-            categoriesModel.clear()
+            categoriesModel.clear() // always preemptively clean the categories model
         }
 
         pageList.focus = true
-        searchField.text = ""
+        searchField.text = "" // force placeholder text to be shown
 
         if (startOnFavorites) {
             pageList.currentItem.itemGrid.model = rootModel.modelForRow(0).modelForRow(0) // show favorites

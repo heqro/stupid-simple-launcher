@@ -230,15 +230,6 @@ Item {
 
         RowLayout {
             Layout.fillWidth: true
-            CheckBox {
-                Layout.leftMargin: units.smallSpacing
-                id: showCategories
-                text: i18n("Show the categories sidebar")
-            }
-        }
-
-        RowLayout {
-            Layout.fillWidth: true
 
             PlasmaComponents.Slider {
                 id: alphaValue
@@ -249,6 +240,15 @@ Item {
                 id: alphaValueText
                 text: Math.floor(alphaValue.value * 100) + "%"
                 visible: opacitySetter.checked
+            }
+        }
+
+        RowLayout {
+            Layout.fillWidth: true
+            CheckBox {
+                Layout.leftMargin: units.smallSpacing
+                id: showCategories
+                text: i18n("Show the categories sidebar")
             }
         }
 

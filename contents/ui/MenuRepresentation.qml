@@ -497,35 +497,22 @@ Kicker.DashboardWindow {
                     // The following SessionButtons are defined in SessionButton.qml. They are basically Buttons taken from the PlasmaComponents library with some values that will always be present - thus, I just put them in a separate qml file to avoid repeating lines of code.
                     SessionButton { // Shutdown Button
                         iconUrl: "system-shutdown"
-                        onClicked: {
-                            root.toggle() // make sure we hide this application prior to showing the fullscreen leave menu (or leave, this will depend on whether or not the user has set in its settings to skip the fullscreen leave menu)
-                            executable.exec('qdbus org.kde.ksmserver /KSMServer logout -1 2 2')
-                        }
+                        commandToLaunch: 'qdbus org.kde.ksmserver /KSMServer logout -1 2 2'
                     }
 
                     SessionButton { // Restart Button
                         iconUrl: "system-reboot"
-                        onClicked: {
-                            root.toggle() // make sure we hide this application prior to showing the fullscreen leave menu (or leave, this will depend on whether or not the user has set in its settings to skip the fullscreen leave menu)
-                            executable.exec('qdbus org.kde.ksmserver /KSMServer logout -1 1 2')
-                        }
+                        commandToLaunch: 'qdbus org.kde.ksmserver /KSMServer logout -1 1 2'
                     }
 
                     SessionButton { // Logout Button
                         iconUrl: "system-log-out"
-                        onClicked: {
-                            root.toggle() // make sure we hide this application prior to showing the fullscreen leave menu (or leave, this will depend on whether or not the user has set in its settings to skip the fullscreen leave menu)
-                            executable.exec('qdbus org.kde.ksmserver /KSMServer logout -1 0 2')
-                        }
+                        commandToLaunch: 'qdbus org.kde.ksmserver /KSMServer logout -1 0 2'
                     }
 
                     SessionButton { // Lock Screen Button
                         iconUrl: "system-lock-screen"
-                        onClicked: {
-                            root.toggle() // make sure we hide this application prior to showing the fullscreen leave menu (or leave, this will depend on whether or not the user has set in its settings to skip the fullscreen leave menu)
-                            executable.exec('qdbus org.freedesktop.ScreenSaver /ScreenSaver Lock')
-
-                        }
+                        commandToLaunch: 'qdbus org.freedesktop.ScreenSaver /ScreenSaver Lock'
                     }
 
                     anchors {

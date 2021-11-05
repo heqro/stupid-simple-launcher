@@ -3,7 +3,7 @@ import org.kde.plasma.core 2.0 as PlasmaCore
 // for using the button itself
 import org.kde.plasma.components 2.0 as PlasmaComponents
 
-Rectangle {
+Rectangle { // rectangle used for marking the bounds for the category button
 
     id: containerForCategory
 
@@ -21,7 +21,7 @@ Rectangle {
         opacity = (categoriesList.currentIndex == index && !searching) ? 1 : 0.4
     }
 
-    PlasmaComponents.Label {
+    PlasmaComponents.Label { // label showing the category name
         id: categoryTextId
         text: categoryText
         font.pointSize: 15
@@ -40,7 +40,7 @@ Rectangle {
 
     }
 
-    PlasmaCore.IconItem {
+    PlasmaCore.IconItem { // category icon
         id: categoryIconId
         source: categoryIcon
         visible: showCategoriesIcon || showCategoriesIconAndText
@@ -79,13 +79,13 @@ Rectangle {
             //                                     containerForCategory.opacity = 1
         }
 
-        onEntered: { // highlight item
+        onEntered: { // highlight item on hovering
             if (categoriesList.currentIndex != index && !searching) {
                 containerForCategory.opacity = 0.9
             }
         }
 
-        onExited: {
+        onExited: { // reduce opacity on leaving
             if (categoriesList.currentIndex != index && !searching) {
                 containerForCategory.opacity = 0.4
             }

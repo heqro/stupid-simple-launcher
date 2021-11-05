@@ -68,7 +68,7 @@ Kicker.DashboardWindow {
     // we will only show a grid dedicated towards favorites when the user tells us to do so and we have at least an application checked as favorite
     property bool showFavoritesInGrid: plasmoid.configuration.favoritesInGrid && globalFavorites.count > 0
 
-    //property bool showCategories: !plasmoid.configuration.hideCategories
+    property bool showCategories: plasmoid.configuration.showCategories
 
     property real alphaValue: plasmoid.configuration.opacitySet ? plasmoid.configuration.alphaValue : 0.6
 
@@ -157,19 +157,26 @@ Kicker.DashboardWindow {
             pageList.model = rootModel.modelForRow(0).modelForRow(1) // show all applications
         }
 
-        //if(showCategories) {
-        updateCategories()
-//         }
+        if(showCategories) {
+            updateCategories()
+        } else {
+            categoriesModel.clear()
+        }
 
         pageList.focus = true
         searchField.text = ""
 
         if (startOnFavorites) {
             pageList.currentItem.itemGrid.model = rootModel.modelForRow(0).modelForRow(0) // show favorites
-            categoriesList.currentIndex = 1 // highlight "Favorites" category
+            if (showCategories) {
+                categoriesList.currentIndex = 1 // highlight "Favorites" category
+            }
+
         } else {
             pageList.currentItem.itemGrid.model = rootModel.modelForRow(0).modelForRow(1) // show all applications
-            categoriesList.currentIndex = 0 // highlight "All applications" category
+            if (showCategories) {
+                categoriesList.currentIndex = 0 // highlight "All applications" category
+            }
         }
 
     }
@@ -491,6 +498,7 @@ Kicker.DashboardWindow {
                                 source: categoryIcon
                                 visible: showCategoriesIcon || showCategoriesIconAndText
 
+                                // arbitrary values because some icon packs cannot behave properly and need to be scaled down.
                                 height: Math.floor(4 * parent.height / 5)
                                 width: Math.floor(4 * parent.height / 5)
 
@@ -544,6 +552,7 @@ Kicker.DashboardWindow {
                         id: categoriesItem
                         //height: heightScreen
                         Layout.preferredHeight: heightScreen
+                        Layout.preferredWidth: categoriesModel.count == 0 ? 0 : -1
 
                         ListView {
 
@@ -564,13 +573,6 @@ Kicker.DashboardWindow {
                         }
                     }
                 }
-
-
-
-
-
-
-
 
                 PlasmaCore.DataSource { // courtesy of https://github.com/varlesh/org.kde.plasma.compact-shutdown/blob/main/contents/ui/main.qml (I just copy+pasted it, some day I'll figure how this works)
                     id: executable

@@ -62,7 +62,7 @@ Item {
 
     property alias cfg_startOnFavorites: startOnFavorites.checked
 
-//     property alias cfg_hideCategories: hideCategories.checked
+    property alias cfg_showCategories: showCategories.checked
 
     ColumnLayout {
         anchors.horizontalCenter: parent.horizontalCenter
@@ -230,6 +230,15 @@ Item {
 
         RowLayout {
             Layout.fillWidth: true
+            CheckBox {
+                Layout.leftMargin: units.smallSpacing
+                id: showCategories
+                text: i18n("Show the categories sidebar")
+            }
+        }
+
+        RowLayout {
+            Layout.fillWidth: true
 
             PlasmaComponents.Slider {
                 id: alphaValue
@@ -300,20 +309,7 @@ Item {
                 id: startOnFavorites
                 text: i18n("Start the menu on the \"Favorites\" category")
             }
-
         }
-
-
-
-
-//         RowLayout {
-//             Layout.fillWidth: true
-//             CheckBox {
-//                 Layout.leftMargin: units.smallSpacing
-//                 id: hideCategories
-//                 text: i18n("Hide applications' categories in the menu")
-//             }
-//         }
 
 //         RowLayout{
 //             ColumnLayout { // troublesome setting (TODO - try to see what can be done with it)

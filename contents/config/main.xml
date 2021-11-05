@@ -39,9 +39,6 @@
     <entry name="categoriesIconAndText" type="Bool">
         <default>false</default>
     </entry>
-    <entry name="hideCategories" type="Bool">
-        <default>false</default>
-    </entry>
     <entry name="numberColumns" type="Int">
       <default>7</default>
     </entry>
@@ -54,7 +51,12 @@
     <entry name="startOnFavorites" type="Bool">
         <default>false</default>
     </entry>
-
+    <entry name="showCategories" type="Bool">
+        <default>true</default>
+    </entry>
+    <entry name="hideCategories" type="Bool">
+        <default>false</default>
+    </entry>
     <entry name="spaceWidth" type="Int">
       <default>32</default>
     </entry>

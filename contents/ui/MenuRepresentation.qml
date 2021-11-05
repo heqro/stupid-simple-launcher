@@ -449,16 +449,6 @@ Kicker.DashboardWindow {
                         }
                     }
 
-                    ListModel {
-                        id: categoriesModel
-                    }
-
-                    Component {
-                        id: delegateListElement
-
-                        CategoryButton {}
-                    }
-
                     PlasmaExtras.ScrollArea { // dedicated to storing the categories list
 
                         id: categoriesItem
@@ -471,8 +461,10 @@ Kicker.DashboardWindow {
                             id: categoriesList
 
                             anchors.fill: parent
-                            model: categoriesModel
-                            delegate: delegateListElement
+                            model: ListModel {
+                                id: categoriesModel
+                            }
+                            delegate: CategoryButton {}
                             focus: true
                             // only add some fancy spacing between the buttons if they are only icons.
                             spacing: (showCategoriesText || showCategoriesIconAndText) ? 0 : units.iconSizes.small

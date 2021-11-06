@@ -228,14 +228,7 @@ Item {
             }
         }
 
-        RowLayout {
-            Layout.fillWidth: true
-            CheckBox {
-                Layout.leftMargin: units.smallSpacing
-                id: showCategories
-                text: i18n("Show the categories sidebar")
-            }
-        }
+
 
         RowLayout {
             Layout.fillWidth: true
@@ -261,38 +254,47 @@ Item {
 
             ColumnLayout {
 
-                // for some reason I have to resort to this sad trick even though documentation says this would work automatically. Intended usage: avoid user from unchecking a checked RadioButton as well as making sure only one RadioButton can be checked at a time.
+                // if I don't use QtQuick Controls 1.0 this whole thing crashes.
+                // As a consequence, I have to use ExclusiveGroup as defined in
+                // https://doc.qt.io/qt-5/qml-qtquick-controls-radiobutton.html#details
 
-                RadioButton {
-                    id: categoriesShowText
-                    text: i18n("Show categories' names only")
-                    checked: true
-                    onClicked: {
-                        categoriesShowText.checked = true
-                        categoriesShowIcon.checked = false
-                        categoriesShowTextAndIcon.checked = false
+                RowLayout {
+                    Layout.fillWidth: true
+                    CheckBox {
+                        Layout.leftMargin: units.smallSpacing
+                        id: showCategories
+                        text: i18n("Show the categories sidebar")
                     }
                 }
 
-                RadioButton {
-                    id: categoriesShowIcon
-                    text: i18n("Show categories' icons only (will misbehave with downloaded icons)")
-                    onClicked: {
-                        categoriesShowText.checked = false
-                        categoriesShowIcon.checked = true
-                        categoriesShowTextAndIcon.checked = false
+                GroupBox {
+
+                    visible: showCategories.checked
+                    ExclusiveGroup { id: categoriesCustomizationGroup}
+
+                    ColumnLayout {
+                        RadioButton {
+                            id: categoriesShowText
+                            text: i18n("Show categories' names only")
+                            checked: true
+                            exclusiveGroup: categoriesCustomizationGroup
+                        }
+
+                        RadioButton {
+                            id: categoriesShowIcon
+                            text: i18n("Show categories' icons only (will misbehave with downloaded icons)")
+                            exclusiveGroup: categoriesCustomizationGroup
+                        }
+
+                        RadioButton {
+                            id: categoriesShowTextAndIcon
+                            text: i18n("Show categories' icons and names")
+                            exclusiveGroup: categoriesCustomizationGroup
+                        }
                     }
+
                 }
 
-                RadioButton {
-                    id: categoriesShowTextAndIcon
-                    text: i18n("Show categories' icons and names")
-                    onClicked: {
-                        categoriesShowIcon.checked = false
-                        categoriesShowText.checked = false
-                        categoriesShowTextAndIcon.checked = true
-                    }
-                }
 
             }
         }

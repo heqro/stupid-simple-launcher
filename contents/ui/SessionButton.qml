@@ -7,8 +7,13 @@ import org.kde.plasma.components 3.0 as PlasmaComponents
 
 PlasmaComponents.Button {
     property string iconUrl
+    property string commandToLaunch
     flat: true
     icon.name: iconUrl
     icon.height: PlasmaCore.Units.iconSizes.large
     icon.width: PlasmaCore.Units.iconSizes.large
+    onClicked: {
+        root.toggle() // make sure we hide this application prior to showing the fullscreen leave menu (or leave, this will depend on whether or not the user has set in its settings to skip the fullscreen leave menu)
+        executable.exec(commandToLaunch)
+    }
 }

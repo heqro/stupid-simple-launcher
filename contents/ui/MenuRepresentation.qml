@@ -101,32 +101,10 @@ Kicker.DashboardWindow {
         }
     }
 
-    //onShowCategoriesChanged: {
-
-        //if (showCategories) {
-            //appsRectangle.anchors.left = parent.left
-        //} else {
-            //appsRectangle.anchors.horizontalCenter = parent.horizontalCenter
-        //}
-
-    //}
-
     onVisibleChanged: { // start fancy animation and preemptively return to a known state
         animationSearch.start()
         reset();
     }
-
-//     function getDisplay() {
-//         this function is used for determining the display of the categories sidebar (icons only, text only, text + icon)
-//         var layout = AbstractButton.TextBesideIcon
-//         if (showCategoriesIcon) {
-//             layout = AbstractButton.IconOnly
-//         } else if (showCategoriesText) {
-//             layout = AbstractButton.TextOnly
-//         }
-//
-//         return layout
-//     }
 
     function updateCategories() { // this function is dedicated to constructing the applications categories list and preemptively updating it, should changes have been applied
         var categoryStartIndex = 0
@@ -160,11 +138,11 @@ Kicker.DashboardWindow {
         if(showCategories) {
             updateCategories()
         } else {
-            categoriesModel.clear()
+            categoriesModel.clear() // always preemptively clean the categories model
         }
 
         pageList.focus = true
-        searchField.text = ""
+        searchField.text = "" // force placeholder text to be shown
 
         if (startOnFavorites) {
             pageList.currentItem.itemGrid.model = rootModel.modelForRow(0).modelForRow(0) // show favorites
@@ -449,104 +427,6 @@ Kicker.DashboardWindow {
                         }
                     }
 
-                    ListModel {
-                        id: categoriesModel
-                    }
-
-                    Component {
-                        id: delegateListElement
-
-                        Rectangle {
-
-                            id: containerForCategory
-
-                            property int indexInModel: categoryIndex
-                            property string iconName: categoryIcon
-                            property int selectedItemIndex: categoriesList.currentIndex
-
-                            color: "transparent"
-                            height: Math.floor(heightScreen / 12) // arbitrary placeholder value
-                            width: Math.floor(widthScreen / 8)
-
-                            opacity: (categoriesList.currentIndex == index && !searching) ? 1 : 0.4
-
-                            onSelectedItemIndexChanged: {
-                                opacity = (categoriesList.currentIndex == index && !searching) ? 1 : 0.4
-                            }
-
-                            PlasmaComponents.Label {
-                                id: categoryTextId
-                                text: categoryText
-                                font.pointSize: 15
-                                visible: showCategoriesText || showCategoriesIconAndText
-                                anchors {
-                                    right: (showCategoriesIcon || showCategoriesIconAndText) ? categoryIconId.left : parent.right
-                                    left: parent.left
-                                    verticalCenter: parent.verticalCenter
-                                    leftMargin: highlightItemSvg.margins.left
-                                    rightMargin: highlightItemSvg.margins.right
-                                }
-
-                                // collapsing text when the going gets tough
-                                elide: Text.ElideRight
-                                wrapMode: Text.NoWrap
-
-                            }
-
-                            PlasmaCore.IconItem {
-                                id: categoryIconId
-                                source: categoryIcon
-                                visible: showCategoriesIcon || showCategoriesIconAndText
-
-                                // arbitrary values because some icon packs cannot behave properly and need to be scaled down.
-                                height: Math.floor(4 * parent.height / 5)
-                                width: Math.floor(4 * parent.height / 5)
-
-                                anchors {
-                                    left: parent.contentItem
-                                    right: parent.right
-                                    rightMargin: highlightItemSvg.margins.right
-                                    verticalCenter: parent.verticalCenter
-                                }
-
-                            }
-
-                            MouseArea {
-                                anchors.fill: parent
-                                hoverEnabled: true
-                                onClicked: {
-                                    if (searching) {
-                                        return
-                                    }
-                                    if (indexInModel > 0) { // show the category determined by indexInModel
-                                        pageList.currentItem.itemGrid.model = rootModel.modelForRow(indexInModel).modelForRow(0)
-                                    } else { // show All Applications
-                                        if (indexInModel == 0) {
-                                            pageList.currentItem.itemGrid.model = rootModel.modelForRow(0).modelForRow(1)
-                                        }
-                                        else { // show Favorites
-                                            pageList.currentItem.itemGrid.model = rootModel.modelForRow(0).modelForRow(0)
-                                        }
-                                    }
-                                    categoriesList.currentIndex = index
-//                                     containerForCategory.opacity = 1
-                                }
-
-                                onEntered: { // highlight item
-                                    if (categoriesList.currentIndex != index && !searching) {
-                                        containerForCategory.opacity = 0.9
-                                    }
-                                }
-
-                                onExited: {
-                                    if (categoriesList.currentIndex != index && !searching) {
-                                        containerForCategory.opacity = 0.4
-                                    }
-                                }
-                            }
-                        }
-                    }
-
                     PlasmaExtras.ScrollArea { // dedicated to storing the categories list
 
                         id: categoriesItem
@@ -559,8 +439,10 @@ Kicker.DashboardWindow {
                             id: categoriesList
 
                             anchors.fill: parent
-                            model: categoriesModel
-                            delegate: delegateListElement
+                            model: ListModel {
+                                id: categoriesModel
+                            }
+                            delegate: CategoryButton {}
                             focus: true
                             // only add some fancy spacing between the buttons if they are only icons.
                             spacing: (showCategoriesText || showCategoriesIconAndText) ? 0 : units.iconSizes.small
@@ -593,35 +475,22 @@ Kicker.DashboardWindow {
                     // The following SessionButtons are defined in SessionButton.qml. They are basically Buttons taken from the PlasmaComponents library with some values that will always be present - thus, I just put them in a separate qml file to avoid repeating lines of code.
                     SessionButton { // Shutdown Button
                         iconUrl: "system-shutdown"
-                        onClicked: {
-                            root.toggle() // make sure we hide this application prior to showing the fullscreen leave menu (or leave, this will depend on whether or not the user has set in its settings to skip the fullscreen leave menu)
-                            executable.exec('qdbus org.kde.ksmserver /KSMServer logout -1 2 2')
-                        }
+                        commandToLaunch: 'qdbus org.kde.ksmserver /KSMServer logout -1 2 2'
                     }
 
                     SessionButton { // Restart Button
                         iconUrl: "system-reboot"
-                        onClicked: {
-                            root.toggle() // make sure we hide this application prior to showing the fullscreen leave menu (or leave, this will depend on whether or not the user has set in its settings to skip the fullscreen leave menu)
-                            executable.exec('qdbus org.kde.ksmserver /KSMServer logout -1 1 2')
-                        }
+                        commandToLaunch: 'qdbus org.kde.ksmserver /KSMServer logout -1 1 2'
                     }
 
                     SessionButton { // Logout Button
                         iconUrl: "system-log-out"
-                        onClicked: {
-                            root.toggle() // make sure we hide this application prior to showing the fullscreen leave menu (or leave, this will depend on whether or not the user has set in its settings to skip the fullscreen leave menu)
-                            executable.exec('qdbus org.kde.ksmserver /KSMServer logout -1 0 2')
-                        }
+                        commandToLaunch: 'qdbus org.kde.ksmserver /KSMServer logout -1 0 2'
                     }
 
                     SessionButton { // Lock Screen Button
                         iconUrl: "system-lock-screen"
-                        onClicked: {
-                            root.toggle() // make sure we hide this application prior to showing the fullscreen leave menu (or leave, this will depend on whether or not the user has set in its settings to skip the fullscreen leave menu)
-                            executable.exec('qdbus org.freedesktop.ScreenSaver /ScreenSaver Lock')
-
-                        }
+                        commandToLaunch: 'qdbus org.freedesktop.ScreenSaver /ScreenSaver Lock'
                     }
 
                     anchors {

@@ -66,7 +66,7 @@ Item {
     }
     PlasmaCore.IconItem {
         id: icon
-        y: iconSize*0.2
+        y: iconSize*0.02
         anchors.horizontalCenter: box.horizontalCenter
         //anchors.verticalCenter:   box.verticalCenter
         width: iconSize
@@ -88,12 +88,14 @@ Item {
             leftMargin: highlightItemSvg.margins.left
             right: box.right
             rightMargin: highlightItemSvg.margins.right
+            bottom: box.bottom
+            bottomMargin:highlightItemSvg.margins.bottom
         }
 
         horizontalAlignment: Text.AlignHCenter
 
         elide: Text.ElideRight
-        wrapMode: Text.NoWrap
+        wrapMode: Text.WordWrap
 
         text: model.display
     }

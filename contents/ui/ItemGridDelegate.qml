@@ -64,6 +64,7 @@ Item {
         //opacity: 0.4
         color:"transparent"
     }
+
     PlasmaCore.IconItem {
         id: icon
         y: iconSize*0.02

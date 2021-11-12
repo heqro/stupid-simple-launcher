@@ -62,6 +62,8 @@ Item {
 
     property alias cfg_startOnFavorites: startOnFavorites.checked
 
+    property alias cfg_showCategoriesTooltip: showCategoriesTooltip.checked
+
     property alias cfg_showCategories: showCategories.checked
 
     ColumnLayout {
@@ -262,6 +264,16 @@ Item {
                         Layout.leftMargin: units.smallSpacing
                         id: showCategories
                         text: i18n("Show the categories sidebar")
+                    }
+                }
+
+                RowLayout {
+                    Layout.fillWidth: true
+                    visible: showCategories.checked
+                    CheckBox {
+                        Layout.leftMargin: units.smallSpacing
+                        id: showCategoriesTooltip
+                        text: i18n("Show categories' names in a tooltip when the text is elided or when using icons-only menu")
                     }
                 }
 

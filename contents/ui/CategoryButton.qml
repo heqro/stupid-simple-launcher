@@ -11,6 +11,8 @@ Rectangle { // rectangle used for marking the bounds for the category button
     property string iconName: categoryIcon
     property int selectedItemIndex: categoriesList.currentIndex
 
+    property bool showToolTip: (categoryTextId.truncated || showCategoriesIcon) && showCategoriesTooltip
+
     color: "transparent"
     height: Math.floor(heightScreen / 12) // arbitrary placeholder value
     width: Math.floor(widthScreen / 8)
@@ -32,6 +34,11 @@ Rectangle { // rectangle used for marking the bounds for the category button
             verticalCenter: parent.verticalCenter
             leftMargin: highlightItemSvg.margins.left
             rightMargin: highlightItemSvg.margins.right
+        }
+
+        PlasmaCore.ToolTipArea {
+            id: toolTip
+            mainText: categoryText
         }
 
         // collapsing text when the going gets tough
@@ -83,12 +90,21 @@ Rectangle { // rectangle used for marking the bounds for the category button
             if (categoriesList.currentIndex != index && !searching) {
                 containerForCategory.opacity = 0.9
             }
+            if (showToolTip) {
+                toolTip.showToolTip()
+            }
+
+
         }
 
         onExited: { // reduce opacity on leaving
             if (categoriesList.currentIndex != index && !searching) {
                 containerForCategory.opacity = 0.4
             }
+            if (showToolTip) {
+                toolTip.hideToolTip()
+            }
+
         }
     }
 }

@@ -77,6 +77,8 @@ Kicker.DashboardWindow {
     property bool showCategoriesText: plasmoid.configuration.categoriesText
     property bool showCategoriesIconAndText: plasmoid.configuration.categoriesIconAndText
 
+    property bool showCategoriesTooltip: plasmoid.configuration.showCategoriesTooltip
+
     // boolean value to know whether or not the user wants the menu to drop the user right into the favorites section instead of the "All applications" section on startup.
     property bool startOnFavorites: plasmoid.configuration.startOnFavorites
 

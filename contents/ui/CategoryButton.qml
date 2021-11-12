@@ -2,6 +2,8 @@ import QtQuick 2.4
 import org.kde.plasma.core 2.0 as PlasmaCore
 // for using the button itself
 import org.kde.plasma.components 2.0 as PlasmaComponents
+// for using RowLayout
+import QtQuick.Layouts 1.1
 
 Rectangle { // rectangle used for marking the bounds for the category button
 
@@ -23,47 +25,48 @@ Rectangle { // rectangle used for marking the bounds for the category button
         opacity = (categoriesList.currentIndex == index && !searching) ? 1 : 0.4
     }
 
-    PlasmaComponents.Label { // label showing the category name
-        id: categoryTextId
-        text: categoryText
-        font.pointSize: 15
-        visible: showCategoriesText || showCategoriesIconAndText
-        anchors {
-            right: (showCategoriesIcon || showCategoriesIconAndText) ? categoryIconId.left : parent.right
-            left: parent.left
-            verticalCenter: parent.verticalCenter
-            leftMargin: highlightItemSvg.margins.left
-            rightMargin: highlightItemSvg.margins.right
+    RowLayout {
+        anchors.fill: parent
+        anchors.leftMargin: highlightItemSvg.margins.left
+        anchors.rightMargin: highlightItemSvg.margins.right
+
+        layoutDirection: showCategoriesOnTheRight ? Qt.RightToLeft : Qt.LeftToRight
+
+        PlasmaCore.IconItem { // category icon
+            id: categoryIconId
+            source: categoryIcon
+            visible: showCategoriesIcon || showCategoriesIconAndText
+
+            // arbitrary values because some icon packs cannot behave properly and need to be scaled down.
+            Layout.preferredHeight: Math.floor(4 * parent.height / 5)
+            Layout.preferredWidth: Math.floor(4 * parent.height / 5)
+
         }
 
-        PlasmaCore.ToolTipArea {
-            id: toolTip
-            mainText: categoryText
+        PlasmaComponents.Label { // label showing the category name
+            id: categoryTextId
+            text: categoryText
+            font.pointSize: 15
+            visible: showCategoriesText || showCategoriesIconAndText
+            Layout.preferredHeight: parent.height
+            Layout.fillWidth: true
+            PlasmaCore.ToolTipArea {
+                id: toolTip
+                mainText: categoryText
+            }
+
+            // collapsing text when the going gets tough
+            elide: Text.ElideRight
+            wrapMode: Text.NoWrap
+
         }
 
-        // collapsing text when the going gets tough
-        elide: Text.ElideRight
-        wrapMode: Text.NoWrap
 
     }
 
-    PlasmaCore.IconItem { // category icon
-        id: categoryIconId
-        source: categoryIcon
-        visible: showCategoriesIcon || showCategoriesIconAndText
 
-        // arbitrary values because some icon packs cannot behave properly and need to be scaled down.
-        height: Math.floor(4 * parent.height / 5)
-        width: Math.floor(4 * parent.height / 5)
 
-        anchors {
-            left: parent.contentItem
-            right: parent.right
-            rightMargin: highlightItemSvg.margins.right
-            verticalCenter: parent.verticalCenter
-        }
 
-    }
 
     MouseArea {
         anchors.fill: parent

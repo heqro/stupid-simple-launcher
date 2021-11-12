@@ -66,6 +66,8 @@ Item {
 
     property alias cfg_showCategories: showCategories.checked
 
+    property alias cfg_showCategoriesOnTheRight: showCategoriesOnTheRight.checked
+
     ColumnLayout {
         anchors.horizontalCenter: parent.horizontalCenter
 
@@ -264,6 +266,16 @@ Item {
                         Layout.leftMargin: units.smallSpacing
                         id: showCategories
                         text: i18n("Show the categories sidebar")
+                    }
+                }
+
+                RowLayout {
+                    Layout.fillWidth: true
+                    visible: showCategories.checked
+                    CheckBox {
+                        Layout.leftMargin: units.smallSpacing
+                        id: showCategoriesOnTheRight
+                        text: i18n("Show the categories sidebar at the right side of the menu")
                     }
                 }
 

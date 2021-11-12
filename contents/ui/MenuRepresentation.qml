@@ -79,6 +79,8 @@ Kicker.DashboardWindow {
 
     property bool showCategoriesTooltip: plasmoid.configuration.showCategoriesTooltip
 
+    property bool showCategoriesOnTheRight: plasmoid.configuration.showCategoriesOnTheRight
+
     // boolean value to know whether or not the user wants the menu to drop the user right into the favorites section instead of the "All applications" section on startup.
     property bool startOnFavorites: plasmoid.configuration.startOnFavorites
 
@@ -302,6 +304,8 @@ Kicker.DashboardWindow {
                         //rightMargin: Math.floor(0.05 * parent.width)
                         //right: parent.right
                     }
+
+                    layoutDirection: showCategoriesOnTheRight ? Qt.LeftToRight : Qt.RightToLeft
 
                     Rectangle { // applications will be inside this
                         id: appsRectangle

@@ -1,4 +1,7 @@
 import QtQuick 2.4
+
+// communicating with plasmoid options so as to customize the sidebar from this module
+import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
 // for using the button itself
 import org.kde.plasma.components 2.0 as PlasmaComponents
@@ -14,6 +17,10 @@ Rectangle { // rectangle used for marking the bounds for the category button
     property int selectedItemIndex: categoriesList.currentIndex
 
     property bool showToolTip: (categoryTextId.truncated || showCategoriesIcon) && showCategoriesTooltip
+
+    // customization options set from ConfigGeneral.qml
+    property bool customizeCategoriesFontSize: plasmoid.configuration.customizeCategoriesFontSize
+    property int categoriesFontSize: plasmoid.configuration.categoriesFontSize
 
     color: "transparent"
     height: Math.floor(heightScreen / 12) // arbitrary placeholder value
@@ -46,10 +53,11 @@ Rectangle { // rectangle used for marking the bounds for the category button
         PlasmaComponents.Label { // label showing the category name
             id: categoryTextId
             text: categoryText
-            font.pointSize: 15
+            font.pointSize: customizeCategoriesFontSize ? categoriesFontSize : 15
             visible: showCategoriesText || showCategoriesIconAndText
             Layout.preferredHeight: parent.height
             Layout.fillWidth: true
+            fontSizeMode: Text.VerticalFit
             PlasmaCore.ToolTipArea {
                 id: toolTip
                 mainText: categoryText

@@ -68,6 +68,9 @@ Item {
 
     property alias cfg_showCategoriesOnTheRight: showCategoriesOnTheRight.checked
 
+    property alias cfg_customizeCategoriesFontSize: customizeCategoriesFontSize.checked
+    property alias cfg_categoriesFontSize: categoriesFontSize.value
+
     ColumnLayout {
         anchors.horizontalCenter: parent.horizontalCenter
 
@@ -314,8 +317,27 @@ Item {
                             exclusiveGroup: categoriesCustomizationGroup
                         }
                     }
+                }
+
+                RowLayout {
+                    Layout.fillWidth: true
+                    visible: showCategories.checked && (categoriesShowText.checked || categoriesShowTextAndIcon.checked)
+
+                    CheckBox {
+                        Layout.leftMargin: units.smallSpacing
+                        id: customizeCategoriesFontSize
+                        text: i18n("Customize categories' font size")
+                    }
+                    SpinBox{
+                        id: categoriesFontSize
+                        minimumValue: 4
+                        maximumValue: 128
+                        stepSize: 1
+                        enabled: customizeCategoriesFontSize.checked
+                    }
 
                 }
+
 
 
             }

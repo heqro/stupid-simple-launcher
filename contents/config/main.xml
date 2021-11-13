@@ -39,6 +39,12 @@
     <entry name="categoriesIconAndText" type="Bool">
         <default>false</default>
     </entry>
+    <entry name="customizeCategoriesFontSize" type="Bool">
+        <default>false</default>
+    </entry>
+    <entry name="categoriesFontSize" type="Int">
+        <default>15</default>
+    </entry>
     <entry name="numberColumns" type="Int">
       <default>7</default>
     </entry>

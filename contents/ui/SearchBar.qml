@@ -82,5 +82,4 @@ PlasmaComponents.TextField { //searchbar
             }
         }
     }
-    //enabled: false // this crashes plasmashell xdxd
 }

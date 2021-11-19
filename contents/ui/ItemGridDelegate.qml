@@ -42,6 +42,7 @@ Item {
 
     Accessible.role: Accessible.MenuItem
     Accessible.name: model.display
+    Accessible.description: model.description
 
     function openActionMenu(x, y) {
         var actionList = hasActionList ? model.actionList : [];
@@ -52,6 +53,19 @@ Item {
 
     function actionTriggered(actionId, actionArgument) {
         Tools.triggerAction(plasmoid, GridView.view.model, model.index, actionId, actionArgument);
+    }
+
+    function showDelegateToolTip(show, now) {
+        if (show) {
+            delegateTooltip.showToolTip()
+        } else {
+            if (now) {
+                delegateTooltip.hideImmediately()
+            } else {
+                delegateTooltip.hideToolTip()
+            }
+        }
+
     }
 
     Rectangle{
@@ -99,6 +113,13 @@ Item {
         wrapMode: Text.WordWrap
 
         text: model.display
+    }
+
+    PlasmaCore.ToolTipArea {
+        id: delegateTooltip
+        mainText: model.display
+        subText: model.description
+        interactive: false
     }
 
     Keys.onPressed: {

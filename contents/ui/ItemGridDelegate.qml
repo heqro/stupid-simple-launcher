@@ -65,7 +65,6 @@ Item {
                 delegateTooltip.hideToolTip()
             }
         }
-
     }
 
     Rectangle{

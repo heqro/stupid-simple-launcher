@@ -52,11 +52,12 @@ FocusScope {
     property alias horizontalScrollBarPolicy: scrollArea.horizontalScrollBarPolicy
     property alias verticalScrollBarPolicy: scrollArea.verticalScrollBarPolicy
 
-    onCurrentIndexChanged: {
-        // extremely roundabout way to handle hovering.
-//         The issue lies on the fact that this qml element already features a MouseArea with hoverEnabled set to true; thus, everything I do on ItemGridDelegate.qml relating to hovering and such things (via MouseArea) is intercepted by the MouseArea set in here. HOWEVER, we can, instead of handling hovering, listening to which element is the currentIndex so as to know whether or not this or that element is being looked at by the user :)
-        if (currentIndex != -1 && mouseAreaView.containsMouse) {
-            currentItem.showDelegateToolTip(true, false)
+    property bool rootVisible: root.visible
+
+    onRootVisibleChanged: {
+        // This makes sure that the application tooltip is hidden when the user leaves the menu. We can determine they has left leaves because the root visibility is changed.
+        if (currentIndex != -1 && currentItem) {
+            currentItem.showDelegateToolTip(false, true)
         }
     }
 
@@ -130,6 +131,19 @@ FocusScope {
                 item.GridView.view.model.moveRow(dragSource.itemIndex, item.itemIndex);
             }
 
+        }
+
+        Timer {
+            id: showToolTipTimer
+            interval: 500
+            running: true
+            onTriggered: { // show tooltip after user has hovered for half a second
+                if (mouseAreaView.containsMouse && currentIndex != -1) {
+                    //console.log("500 ms have passed") // debugging
+                    currentItem.showDelegateToolTip(true, false)
+                    showToolTipTimer.stop()
+                }
+            }
         }
 
         Timer {
@@ -311,15 +325,24 @@ FocusScope {
                 lastX = x;
                 lastY = y;
 
+                if (currentIndex != -1 && currentItem) {
+
+                    currentItem.showDelegateToolTip(false, true)
+                }
+
+
                 var cPos = mapToItem(gridView.contentItem, x, y);
                 var item = gridView.itemAt(cPos.x, cPos.y);
 
                 if (!item) {
+
                     gridView.currentIndex = -1;
                     pressedItem = null;
                 } else {
                     gridView.currentIndex = item.itemIndex;
                     itemGrid.focus = (currentIndex != -1)
+
+                    showToolTipTimer.restart()
                 }
 
                 return item;
@@ -422,17 +445,17 @@ FocusScope {
                 // the user places the cursor inside or outside the apps
                 // grid
                 if (!containsMouse) {
-
-                    if (currentIndex != -1) {
-                        if (root.visible) {
-                            // graciously hide tooltip - user has moved elsewhere in the menu
-                            currentItem.showDelegateToolTip(false, false)
-                        } else {
-                            // abruptly hide tooltip - user has left the menu
-                            currentItem.showDelegateToolTip(false, true)
-                        }
-
-                    }
+                    //showToolTipTimer.stop()
+//                     if (currentIndex != -1) {
+//                         if (root.visible) {
+//                             graciously hide tooltip - user has moved elsewhere in the menu
+//                             currentItem.showDelegateToolTip(false, false)
+//                         } else {
+//                             abruptly hide tooltip - user has left the menu
+//                             currentItem.showDelegateToolTip(false, true)
+//                         }
+//
+//                     }
 
                     if (!actionMenu.opened) {
                         gridView.currentIndex = -1;
@@ -444,6 +467,11 @@ FocusScope {
                     lastY = -1;
                     pressedItem = null;
                 }
+                //else {
+                    //if (currentIndex != -1) {
+                        //currentItem.showDelegateToolTip(false, true)
+                    //}
+                //}
             }
             //Rectangle { // debugging
                 //anchors.fill: parent

@@ -452,17 +452,6 @@ FocusScope {
                 // the user places the cursor inside or outside the apps
                 // grid
                 if (!containsMouse) {
-                    //showToolTipTimer.stop()
-//                     if (currentIndex != -1) {
-//                         if (root.visible) {
-//                             graciously hide tooltip - user has moved elsewhere in the menu
-//                             currentItem.showDelegateToolTip(false, false)
-//                         } else {
-//                             abruptly hide tooltip - user has left the menu
-//                             currentItem.showDelegateToolTip(false, true)
-//                         }
-//
-//                     }
 
                     if (!actionMenu.opened) {
                         gridView.currentIndex = -1;
@@ -474,11 +463,6 @@ FocusScope {
                     lastY = -1;
                     pressedItem = null;
                 }
-                //else {
-                    //if (currentIndex != -1) {
-                        //currentItem.showDelegateToolTip(false, true)
-                    //}
-                //}
             }
             //Rectangle { // debugging
                 //anchors.fill: parent

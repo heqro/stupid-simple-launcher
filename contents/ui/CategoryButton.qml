@@ -24,7 +24,7 @@ Rectangle { // rectangle used for marking the bounds for the category button
 
     color: "transparent"
     height: Math.floor(heightScreen / 12) // arbitrary placeholder value
-    width: Math.floor(widthScreen / 8)
+    width: (showCategoriesText || showCategoriesIconAndText) ? Math.floor(widthScreen / 8) : height
 
     opacity: (categoriesList.currentIndex == index && !searching) ? 1 : 0.4
 
@@ -47,7 +47,6 @@ Rectangle { // rectangle used for marking the bounds for the category button
             // arbitrary values because some icon packs cannot behave properly and need to be scaled down.
             Layout.preferredHeight: Math.floor(4 * parent.height / 5)
             Layout.preferredWidth: Math.floor(4 * parent.height / 5)
-
         }
 
         PlasmaComponents.Label { // label showing the category name

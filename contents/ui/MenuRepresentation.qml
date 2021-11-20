@@ -342,7 +342,7 @@ Kicker.DashboardWindow {
                         id: categoriesItem
                         //height: heightScreen
                         Layout.preferredHeight: heightScreen
-                        Layout.preferredWidth: categoriesModel.count == 0 ? 0 : -1
+                        Layout.preferredWidth: categoriesModel.count == 0 ? 0 : Math.floor(widthScreen / 8)
 
                         ListView {
 

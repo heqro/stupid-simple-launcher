@@ -33,6 +33,7 @@ Item {
     height: GridView.view.cellHeight
 
     property bool showLabel: true
+    property bool showToolTips: plasmoid.configuration.tooltipsInGrid
 
     readonly property int itemIndex: model.index
     readonly property url url: model.url != undefined ? model.url : ""
@@ -56,13 +57,15 @@ Item {
     }
 
     function showDelegateToolTip(show, now) {
-        if (show) {
-            delegateTooltip.showToolTip()
-        } else {
-            if (now) {
-                delegateTooltip.hideImmediately()
+        if (showToolTips) {
+            if (show) {
+                delegateTooltip.showToolTip()
             } else {
-                delegateTooltip.hideToolTip()
+                if (now) {
+                    delegateTooltip.hideImmediately()
+                } else {
+                    delegateTooltip.hideToolTip()
+                }
             }
         }
     }

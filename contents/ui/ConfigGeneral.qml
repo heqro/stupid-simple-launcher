@@ -49,6 +49,9 @@ Item {
     //property alias cfg_numberRows:    numberRows.value
     //property alias cfg_spaceWidth:    spaceWidth.value
     //property alias cfg_spaceHeight:   spaceHeight.value
+
+    property alias cfg_tooltipsInGrid: tooltipsInGrid.checked
+
     property alias cfg_favoritesInGrid: favoritesInGrid.checked
     property alias cfg_writeSomething: writeSomething.checked
     property alias cfg_greetingText: greetingText.text
@@ -205,7 +208,16 @@ Item {
 
         RowLayout {
             Layout.fillWidth: true
-            spacing: units.smallSpacing
+            Layout.leftMargin: units.smallSpacing
+            CheckBox{
+                id: tooltipsInGrid
+                text: i18n("Show tooltips when hovering on an application")
+            }
+        }
+
+        RowLayout {
+            Layout.fillWidth: true
+            Layout.leftMargin: units.smallSpacing
             CheckBox{
                 id: favoritesInGrid
                 text: i18n("Show favorite applications at the top of the grid")

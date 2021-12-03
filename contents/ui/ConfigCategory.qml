@@ -117,6 +117,131 @@ Item {
                     }
 
                 }
+
+                RowLayout {
+                    Layout.fillWidth: true
+
+
+                    ColumnLayout {
+                        CheckBox {
+                            Layout.leftMargin: units.smallSpacing
+                            id: customizeCategoriesSize
+                            text: i18n("Customize categories' size")
+                        }
+
+                        ListView {
+                            id: myCategoryTemplateList
+                            currentIndex: -1
+                            Layout.preferredWidth: contentWidth
+                            Layout.fillHeight: true
+                            visible: customizeCategoriesSize.checked
+                            highlight: PlasmaComponents.Highlight {}
+                            highlightFollowsCurrentItem: true
+                            highlightMoveDuration: 0
+                            delegate: CategoryButtonTemplate {
+                                id: myCategoryTemplate
+                                opacity: 0.4
+                                property int rulersSize: 18
+                                MouseArea {
+                                    property bool clicked: false
+                                    anchors.fill: parent
+                                    hoverEnabled: true
+
+                                    drag{
+                                        target: parent
+                                        minimumX: 0
+                                        minimumY: 0
+                                        maximumX: parent.parent.width - parent.width
+                                        maximumY: parent.parent.height - parent.height
+                                        smoothed: true
+                                    }
+
+                                    onClicked: {
+                                        myCategoryTemplate.opacity = 1
+                                        if (clicked) {
+                                            myCategoryTemplateList.currentIndex = -1
+                                        } else {
+                                            myCategoryTemplateList.currentIndex = 0
+                                        }
+                                        clicked = !clicked
+                                    }
+
+                                    onEntered: { // highlight item on hovering
+                                        if (!clicked) {
+                                            myCategoryTemplate.opacity = 0.9
+                                        }
+                                    }
+
+                                    onExited: { // reduce opacity on leaving
+//                                     if (categoriesList.currentIndex != index && !searching) {
+//                                         containerForCategory.opacity = 0.4
+//                                     }
+//                                     if (showToolTip) {
+//                                         toolTip.hideToolTip()
+//                                     }
+                                        if (!clicked) {
+                                            myCategoryTemplate.opacity = 0.4
+                                        }
+                                    }
+                                }
+
+                                Rectangle {
+                                    width: rulersSize
+                                    height: rulersSize
+                                    radius: rulersSize
+                                    color: Qt.rgba(theme.highlightColor.r,theme.highlightColor.g,theme.highlightColor.b, 1)
+                                    anchors.horizontalCenter: parent.right
+                                    anchors.verticalCenter: parent.verticalCenter
+
+                                    MouseArea {
+                                        anchors.fill: parent
+                                        drag{ target: parent; axis: Drag.XAxis }
+                                        onMouseXChanged: {
+                                            if(drag.active){
+                                                myCategoryTemplate.width = myCategoryTemplate.width + mouseX
+                                                if(myCategoryTemplate.width < units.iconSizes.huge)
+                                                    myCategoryTemplate.width = units.iconSizes.huge
+                                            }
+                                        }
+                                    }
+                                }
+                                Rectangle {
+                                    width: rulersSize
+                                    height: rulersSize
+                                    radius: rulersSize
+//                                     x: parent.x / 2
+                                    //y: parent.y
+                                    color: Qt.rgba(theme.highlightColor.r,theme.highlightColor.g,theme.highlightColor.b, 1)
+                                    anchors.horizontalCenter: parent.horizontalCenter
+                                    anchors.verticalCenter: parent.bottom
+
+                                    MouseArea {
+                                        anchors.fill: parent
+                                        drag{ target: parent; axis: Drag.YAxis }
+                                        onMouseYChanged: {
+                                            if(drag.active){
+                                                if(myCategoryTemplate.height + mouseY < units.iconSizes.huge)
+                                                    myCategoryTemplate.height = units.iconSizes.huge
+                                                else
+                                                    myCategoryTemplate.height = myCategoryTemplate.height + mouseY
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            model: ListModel {
+                                ListElement {}
+                            }
+                        }
+                    }
+
+                }
+
+
+
+
+
+
             }
         }
     }

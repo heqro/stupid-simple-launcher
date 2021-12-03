@@ -71,8 +71,6 @@ Item {
         RowLayout {
             spacing: units.smallSpacing
 
-
-
             Label {
                 text: i18n("Icon:")
             }

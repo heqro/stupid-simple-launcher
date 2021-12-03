@@ -14,6 +14,7 @@ Rectangle { // rectangle used for marking the bounds for the category button
 
     property int indexInModel: categoryIndex
     property string iconName: categoryIcon
+    property string categoryName: categoryText
     property int selectedItemIndex: categoriesList.currentIndex
 
     property bool showToolTip: (categoryTextId.truncated || showCategoriesIcon) && showCategoriesTooltip
@@ -23,7 +24,8 @@ Rectangle { // rectangle used for marking the bounds for the category button
     property int categoriesFontSize: plasmoid.configuration.categoriesFontSize
 
     color: "transparent"
-    height: Math.floor(heightScreen / 12) // arbitrary placeholder value
+    height: units.iconSizes.huge
+//     width: height * 32
     width: (showCategoriesText || showCategoriesIconAndText) ? Math.floor(widthScreen / 8) : height
 
     opacity: (categoriesList.currentIndex == index && !searching) ? 1 : 0.4
@@ -34,8 +36,10 @@ Rectangle { // rectangle used for marking the bounds for the category button
 
     RowLayout {
         anchors.fill: parent
-        anchors.leftMargin: highlightItemSvg.margins.left
-        anchors.rightMargin: highlightItemSvg.margins.right
+//         anchors.leftMargin: highlightItemSvg.margins.left
+        anchors.leftMargin: 2 * units.smallSpacing
+//         anchors.rightMargin: highlightItemSvg.margins.right
+        anchors.rightMargin: 2 * units.smallSpacing
 
         layoutDirection: showCategoriesOnTheRight ? Qt.RightToLeft : Qt.LeftToRight
 
@@ -51,8 +55,9 @@ Rectangle { // rectangle used for marking the bounds for the category button
 
         PlasmaComponents.Label { // label showing the category name
             id: categoryTextId
-            text: categoryText
-            font.pointSize: customizeCategoriesFontSize ? categoriesFontSize : 15
+            text: categoryName
+            font.pointSize: customizeCategoriesFontSize ? categoriesFontSize : containerForCategory.height
+            minimumPointSize: 15
             visible: showCategoriesText || showCategoriesIconAndText
             Layout.preferredHeight: parent.height
             Layout.fillWidth: true
@@ -70,10 +75,6 @@ Rectangle { // rectangle used for marking the bounds for the category button
 
 
     }
-
-
-
-
 
     MouseArea {
         anchors.fill: parent

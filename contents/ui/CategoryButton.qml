@@ -23,10 +23,17 @@ Rectangle { // rectangle used for marking the bounds for the category button
     property bool customizeCategoriesFontSize: plasmoid.configuration.customizeCategoriesFontSize
     property int categoriesFontSize: plasmoid.configuration.categoriesFontSize
 
+    property bool isButtonSizeSet: plasmoid.configuration.customizeCategoriesButtonSize
+
     color: "transparent"
-    height: units.iconSizes.huge
+//     height: units.iconSizes.huge
+    height: isButtonSizeSet ? plasmoid.configuration.categoriesButtonHeight : units.iconSizes.huge
+//     width:  isButtonSizeSet ? Math.min(plasmoid.configuration.categoriesButtonWidth, Math.floor(widthScreen / 8) : units.iconSizes.huge * 32
+    width:  isButtonSizeSet ? plasmoid.configuration.categoriesButtonWidth : Math.floor(widthScreen / 8)
+
+
 //     width: height * 32
-    width: (showCategoriesText || showCategoriesIconAndText) ? Math.floor(widthScreen / 8) : height
+    //width: (showCategoriesText || showCategoriesIconAndText) ? Math.floor(widthScreen / 8) : height
 
     opacity: (categoriesList.currentIndex == index && !searching) ? 1 : 0.4
 

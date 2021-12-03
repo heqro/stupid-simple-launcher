@@ -80,6 +80,9 @@ Kicker.DashboardWindow {
     // boolean value to know whether or not the user wants the menu to drop the user right into the favorites section instead of the "All applications" section on startup.
     property bool startOnFavorites: plasmoid.configuration.startOnFavorites
 
+    property bool customizeCategoriesSidebarSize: plasmoid.configuration.customizeCategoriesButtonSize
+    property int categoriesSidebarWidth: plasmoid.configuration.categoriesButtonWidth
+
     // cool function to tweak transparency I took from the original launchpad
     function colorWithAlpha(color, alpha) {
         return Qt.rgba(color.r, color.g, color.b, alpha)
@@ -342,7 +345,8 @@ Kicker.DashboardWindow {
                         id: categoriesItem
                         //height: heightScreen
                         Layout.preferredHeight: heightScreen
-                        Layout.preferredWidth: categoriesModel.count == 0 ? 0 : Math.floor(widthScreen / 8)
+                        //Layout.preferredWidth: categoriesModel.count == 0 ? 0 : (customizeCategoriesSidebarSize ? Math.min(categoriesSidebarWidth, Math.floor(widthScreen / 8)) : Math.floor(widthScreen / 8))
+                        Layout.preferredWidth: categoriesModel.count == 0 ? 0 : (customizeCategoriesSidebarSize ? categoriesSidebarWidth : Math.floor(widthScreen / 8))
 
                         ListView {
 

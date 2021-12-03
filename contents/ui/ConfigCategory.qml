@@ -7,6 +7,7 @@ import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 2.0 as PlasmaComponents
 import org.kde.plasma.extras 2.0 as PlasmaExtras
 
+import org.kde.kirigami 2.5 as Kirigami
 
 import org.kde.kquickcontrolsaddons 2.0 as KQuickAddons
 import org.kde.draganddrop 2.0 as DragDrop
@@ -32,6 +33,10 @@ Item {
 
     property alias cfg_customizeCategoriesFontSize: customizeCategoriesFontSize.checked
     property alias cfg_categoriesFontSize: categoriesFontSize.value
+
+    property alias cfg_customizeCategoriesButtonSize: customizeCategoriesSize.checked
+    property alias cfg_categoriesButtonHeight: myCategoryTemplateList.buttonHeight
+    property alias cfg_categoriesButtonWidth: myCategoryTemplateList.buttonWidth
 
     ColumnLayout {
         RowLayout {
@@ -129,11 +134,23 @@ Item {
                             text: i18n("Customize categories' size")
                         }
 
+                        Kirigami.InlineMessage {
+                            id: changingSidebarSizeWarning
+                            type: Kirigami.MessageType.Warning
+                            visible: customizeCategoriesSize.checked
+                            Layout.fillWidth: true
+                            text: i18n("Manually setting the categories sidebar buttons' size may place different elements of the menu out of your screen.")
+                        }
+
                         ListView {
                             id: myCategoryTemplateList
                             currentIndex: -1
-                            Layout.preferredWidth: contentWidth
-                            Layout.fillHeight: true
+                            Layout.minimumWidth: contentWidth
+                            Layout.minimumHeight: contentHeight
+
+                            property int buttonWidth: 0
+                            property int buttonHeight: 0
+
                             visible: customizeCategoriesSize.checked
                             highlight: PlasmaComponents.Highlight {}
                             highlightFollowsCurrentItem: true
@@ -199,6 +216,7 @@ Item {
                                         onMouseXChanged: {
                                             if(drag.active){
                                                 myCategoryTemplate.width = myCategoryTemplate.width + mouseX
+                                                myCategoryTemplateList.buttonWidth = myCategoryTemplate.width
                                                 if(myCategoryTemplate.width < units.iconSizes.huge)
                                                     myCategoryTemplate.width = units.iconSizes.huge
                                             }
@@ -224,6 +242,7 @@ Item {
                                                     myCategoryTemplate.height = units.iconSizes.huge
                                                 else
                                                     myCategoryTemplate.height = myCategoryTemplate.height + mouseY
+                                                myCategoryTemplateList.buttonHeight = myCategoryTemplate.height
                                             }
                                         }
                                     }

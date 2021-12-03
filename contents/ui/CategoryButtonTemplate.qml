@@ -34,9 +34,14 @@ Rectangle { // rectangle used for marking the bounds for the category button
     property bool customizeCategoriesFontSize: plasmoid.configuration.customizeCategoriesFontSize
     property int categoriesFontSize: customizeCategoriesFontSize ? plasmoid.configuration.categoriesFontSize : parent.height
 
+    property bool isButtonSizeSet: plasmoid.configuration.customizeCategoriesButtonSize
+    property int buttonHeight: plasmoid.configuration.categoriesButtonHeight
+    property int buttonWidth: plasmoid.configuration.categoriesButtonWidth
+
+
     color: "transparent"
-    height: units.iconSizes.huge
-    width: 320
+    height: isButtonSizeSet ? buttonHeight : units.iconSizes.huge
+    width:  isButtonSizeSet ? buttonWidth : 320
     //     width: (showCategoriesText || showCategoriesIconAndText) ? Math.floor(widthScreen / 8) : height
 
     RowLayout {

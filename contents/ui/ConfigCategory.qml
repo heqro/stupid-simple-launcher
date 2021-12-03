@@ -1,0 +1,124 @@
+import QtQuick 2.0
+import QtQuick.Controls 1.0
+import QtQuick.Dialogs 1.2
+import QtQuick.Layouts 1.0
+
+import org.kde.plasma.core 2.0 as PlasmaCore
+import org.kde.plasma.components 2.0 as PlasmaComponents
+import org.kde.plasma.extras 2.0 as PlasmaExtras
+
+
+import org.kde.kquickcontrolsaddons 2.0 as KQuickAddons
+import org.kde.draganddrop 2.0 as DragDrop
+
+import org.kde.plasma.private.kicker 0.1 as Kicker
+
+
+Item {
+    id: configCategory
+
+    width: childrenRect.width
+    height: childrenRect.height
+
+    property alias cfg_categoriesText: categoriesShowText.checked
+    property alias cfg_categoriesIcon: categoriesShowIcon.checked
+    property alias cfg_categoriesIconAndText: categoriesShowTextAndIcon.checked
+
+    property alias cfg_showCategoriesTooltip: showCategoriesTooltip.checked
+
+    property alias cfg_showCategories: showCategories.checked
+
+    property alias cfg_showCategoriesOnTheRight: showCategoriesOnTheRight.checked
+
+    property alias cfg_customizeCategoriesFontSize: customizeCategoriesFontSize.checked
+    property alias cfg_categoriesFontSize: categoriesFontSize.value
+
+    ColumnLayout {
+        RowLayout {
+            Layout.fillWidth: true
+
+            ColumnLayout {
+
+                // if I don't use QtQuick Controls 1.0 this whole thing crashes.
+                // As a consequence, I have to use ExclusiveGroup as defined in
+                // https://doc.qt.io/qt-5/qml-qtquick-controls-radiobutton.html#details
+
+                RowLayout {
+                    Layout.fillWidth: true
+                    CheckBox {
+                        Layout.leftMargin: units.smallSpacing
+                        id: showCategories
+                        text: i18n("Show the categories sidebar")
+                    }
+                }
+
+                RowLayout {
+                    Layout.fillWidth: true
+                    visible: showCategories.checked
+                    CheckBox {
+                        Layout.leftMargin: units.smallSpacing
+                        id: showCategoriesOnTheRight
+                        text: i18n("Show the categories sidebar at the right side of the menu")
+                    }
+                }
+
+                RowLayout {
+                    Layout.fillWidth: true
+                    visible: showCategories.checked
+                    CheckBox {
+                        Layout.leftMargin: units.smallSpacing
+                        id: showCategoriesTooltip
+                        text: i18n("Show categories' names in a tooltip when the text is elided or when using icons-only menu")
+                    }
+                }
+
+                GroupBox {
+
+                    visible: showCategories.checked
+                    ExclusiveGroup { id: categoriesCustomizationGroup}
+
+                    ColumnLayout {
+                        RadioButton {
+                            id: categoriesShowText
+                            text: i18n("Show categories' names only")
+                            checked: true
+                            exclusiveGroup: categoriesCustomizationGroup
+                        }
+
+                        RadioButton {
+                            id: categoriesShowIcon
+                            text: i18n("Show categories' icons only (will misbehave with downloaded icons)")
+                            exclusiveGroup: categoriesCustomizationGroup
+                        }
+
+                        RadioButton {
+                            id: categoriesShowTextAndIcon
+                            text: i18n("Show categories' icons and names")
+                            exclusiveGroup: categoriesCustomizationGroup
+                        }
+                    }
+                }
+
+                RowLayout {
+                    Layout.fillWidth: true
+                    visible: showCategories.checked && (categoriesShowText.checked || categoriesShowTextAndIcon.checked)
+
+                    CheckBox {
+                        Layout.leftMargin: units.smallSpacing
+                        id: customizeCategoriesFontSize
+                        text: i18n("Customize categories' font size")
+                    }
+                    SpinBox{
+                        id: categoriesFontSize
+                        minimumValue: 4
+                        maximumValue: 128
+                        stepSize: 1
+                        enabled: customizeCategoriesFontSize.checked
+                    }
+
+                }
+            }
+        }
+    }
+
+}

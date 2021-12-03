@@ -27,4 +27,10 @@ ConfigModel {
          icon: "kde"
          source: "ConfigGeneral.qml"
     }
+
+    ConfigCategory {
+        name: i18n("Categories sidebar")
+        icon: "view-list-icons"
+        source: "ConfigCategory.qml"
+    }
 }

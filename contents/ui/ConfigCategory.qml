@@ -126,18 +126,18 @@ Item {
                 RowLayout {
                     Layout.fillWidth: true
 
-
                     ColumnLayout {
                         CheckBox {
                             Layout.leftMargin: units.smallSpacing
                             id: customizeCategoriesSize
                             text: i18n("Customize categories' size")
+                            visible: showCategories.checked
                         }
 
                         Kirigami.InlineMessage {
                             id: changingSidebarSizeWarning
                             type: Kirigami.MessageType.Warning
-                            visible: customizeCategoriesSize.checked
+                            visible: customizeCategoriesSize.checked && showCategories.checked
                             Layout.fillWidth: true
                             text: i18n("Manually setting the categories sidebar buttons' size may place different elements of the menu out of your screen.")
                         }
@@ -147,11 +147,10 @@ Item {
                             currentIndex: -1
                             Layout.minimumWidth: contentWidth
                             Layout.minimumHeight: contentHeight
-
+                            visible: showCategories.checked && customizeCategoriesSize.checked
                             property int buttonWidth: 0
                             property int buttonHeight: 0
 
-                            visible: customizeCategoriesSize.checked
                             highlight: PlasmaComponents.Highlight {}
                             highlightFollowsCurrentItem: true
                             highlightMoveDuration: 0

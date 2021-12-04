@@ -1,3 +1,7 @@
+// CategoryButtonTemplate.qml - this file creates a generic category button that we can use as a mold for both the categories sidebar as well as the draggable category found in the configuration options.
+
+// TODO - make CategoryButton.qml extend this file just like ConfigCategory.qml currently does to avoid code repetition.
+
 import QtQuick 2.4
 
 // communicating with plasmoid options so as to customize the sidebar from this module
@@ -24,15 +28,15 @@ Rectangle { // rectangle used for marking the bounds for the category button
 
     property bool showCategoriesTooltip: true
 
-    property bool showCategoriesOnTheRight: plasmoid.configuration.showCategoriesOnTheRight
+    property bool isSidebarOnTheRight: plasmoid.configuration.showCategoriesOnTheRight
     // fin deletthis
 
 
     property bool showToolTip: (categoryTextId.truncated || showCategoriesIcon) && showCategoriesTooltip
 
     // customization options set from ConfigGeneral.qml
-    property bool customizeCategoriesFontSize: plasmoid.configuration.customizeCategoriesFontSize
-    property int categoriesFontSize: customizeCategoriesFontSize ? plasmoid.configuration.categoriesFontSize : parent.height
+    property bool isCategoriesFontSizeSet: plasmoid.configuration.customizeCategoriesFontSize
+    property int fontSize: isCategoriesFontSizeSet ? plasmoid.configuration.categoriesFontSize : parent.height
 
     property bool isButtonSizeSet: plasmoid.configuration.customizeCategoriesButtonSize
     property int buttonHeight: plasmoid.configuration.categoriesButtonHeight
@@ -51,7 +55,7 @@ Rectangle { // rectangle used for marking the bounds for the category button
         //         anchors.rightMargin: highlightItemSvg.margins.right
         anchors.rightMargin: 2 * units.smallSpacing
 
-        layoutDirection: showCategoriesOnTheRight ? Qt.RightToLeft : Qt.LeftToRight
+        layoutDirection: isSidebarOnTheRight ? Qt.RightToLeft : Qt.LeftToRight
 
         PlasmaCore.IconItem { // category icon
             id: categoryIconId
@@ -66,8 +70,8 @@ Rectangle { // rectangle used for marking the bounds for the category button
         PlasmaComponents.Label { // label showing the category name
             id: categoryTextId
             text: categoryName
-//             font.pointSize: customizeCategoriesFontSize ? categoriesFontSize : myCategoryTemplate.height
-            font.pointSize: categoriesFontSize
+//             font.pointSize: isCategoriesFontSizeSet ? fontSize : myCategoryTemplate.height
+            font.pointSize: fontSize
             minimumPointSize: 15
             visible: showCategoriesText || showCategoriesIconAndText
             Layout.fillHeight: true
@@ -83,50 +87,5 @@ Rectangle { // rectangle used for marking the bounds for the category button
             wrapMode: Text.NoWrap
 
         }
-
-
     }
-
-    //MouseArea {
-        //anchors.fill: parent
-        //hoverEnabled: true
-        //onClicked: {
-            //if (searching) {
-                //return
-            //}
-            //if (indexInModel > 0) { // show the category determined by indexInModel
-                //pageList.currentItem.itemGrid.model = rootModel.modelForRow(indexInModel).modelForRow(0)
-            //} else { // show All Applications
-                //if (indexInModel == 0) {
-                    //pageList.currentItem.itemGrid.model = rootModel.modelForRow(0).modelForRow(1)
-                //}
-                //else { // show Favorites
-                    //pageList.currentItem.itemGrid.model = rootModel.modelForRow(0).modelForRow(0)
-                //}
-            //}
-            //categoriesList.currentIndex = index
-                                                //myCategoryTemplate.opacity = 1
-        //}
-
-        //onEntered: { // highlight item on hovering
-            //if (categoriesList.currentIndex != index && !searching) {
-                //myCategoryTemplate.opacity = 0.9
-            //}
-            //if (showToolTip) {
-                //toolTip.showToolTip()
-            //}
-
-
-        //}
-
-        //onExited: { // reduce opacity on leaving
-            //if (categoriesList.currentIndex != index && !searching) {
-                //myCategoryTemplate.opacity = 0.4
-            //}
-            //if (showToolTip) {
-                //toolTip.hideToolTip()
-            //}
-
-        //}
-    //}
 }

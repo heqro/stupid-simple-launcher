@@ -158,6 +158,12 @@ Item {
                                 id: myCategoryTemplate
                                 opacity: 0.4
                                 property int rulersSize: 18
+                                showCategoriesIcon: categoriesShowIcon.checked
+                                showCategoriesText: categoriesShowText.checked
+                                showCategoriesIconAndText: categoriesShowTextAndIcon.checked
+                                isSidebarOnTheRight: showCategoriesOnTheRight.checked
+                                isCategoriesFontSizeSet: customizeCategoriesFontSize.checked
+                                fontSize: categoriesFontSize.value
                                 MouseArea {
                                     property bool clicked: false
                                     anchors.fill: parent

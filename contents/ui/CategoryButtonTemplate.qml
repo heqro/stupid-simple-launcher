@@ -65,18 +65,19 @@ Rectangle { // rectangle used for marking the bounds for the category button
             // arbitrary values because some icon packs cannot behave properly and need to be scaled down.
             Layout.preferredHeight: Math.floor(11 * parent.height / 13)
             Layout.preferredWidth: Math.floor(11 * parent.height / 13)
+            Layout.alignment: Qt.AlignVCenter
         }
 
         PlasmaComponents.Label { // label showing the category name
             id: categoryTextId
             text: categoryName
-//             font.pointSize: isCategoriesFontSizeSet ? fontSize : myCategoryTemplate.height
-            font.pointSize: fontSize
-            minimumPointSize: 15
+            font.pointSize: isCategoriesFontSizeSet ? fontSize : parent.height
             visible: showCategoriesText || showCategoriesIconAndText
+
             Layout.fillHeight: true
             Layout.fillWidth: true
             fontSizeMode: Text.VerticalFit
+//             Layout.alignment: Qt.AlignVCenter
             PlasmaCore.ToolTipArea {
                 id: toolTip
                 mainText: categoryName

@@ -87,7 +87,7 @@ PlasmaComponents.TextField { //searchbar
 
     TextMetrics {
         id: t_metrics
-        text: (myText != "") ? myText : ""
+        text: myText
         font.pointSize: 20
     }
 

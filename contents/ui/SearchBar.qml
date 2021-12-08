@@ -87,14 +87,14 @@ PlasmaComponents.TextField { //searchbar
 
     TextMetrics {
         id: t_metrics
-        text: myText
-        font.pointSize: 20
+        text: (myText != "") ? myText : placeholderText
+        font.pointSize: 20 // account for the arbitrary font size chosen in the parent object.
     }
 
     Rectangle { // (CONCEPT) line under search field. This should be loaded on demand by the Loader QML type.
         height: Math.floor(units.smallSpacing / 2)
         color: Qt.rgba(theme.highlightColor.r,theme.highlightColor.g,theme.highlightColor.b, 1)
-        width: (t_metrics.width > 0) ? t_metrics.width + units.smallSpacing : 0
+        width: (t_metrics.width > 0) ? t_metrics.width + Math.ceil(1.25 * units.smallSpacing) : 0
         anchors {
             horizontalCenter: parent.horizontalCenter
             top: parent.bottom

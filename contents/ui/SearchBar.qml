@@ -12,6 +12,8 @@ import org.kde.kcoreaddons 1.0 as KCoreAddons
 
 PlasmaComponents.TextField { //searchbar
 
+    property string myText: text
+
     KCoreAddons.KUser { // this is needed for the greeting message (saying hello whatever the user name is)
         id: kuser
     }
@@ -80,6 +82,22 @@ PlasmaComponents.TextField { //searchbar
                 pageList.currentItem.itemGrid.model.trigger(0, "", null);
                 root.toggle();
             }
+        }
+    }
+
+    TextMetrics {
+        id: t_metrics
+        text: (myText != "") ? myText : ""
+        font.pointSize: 20
+    }
+
+    Rectangle { // (CONCEPT) line under search field. This should be loaded on demand by the Loader QML type.
+        height: Math.floor(units.smallSpacing / 2)
+        color: Qt.rgba(theme.highlightColor.r,theme.highlightColor.g,theme.highlightColor.b, 1)
+        width: (t_metrics.width > 0) ? t_metrics.width + units.smallSpacing : 0
+        anchors {
+            horizontalCenter: parent.horizontalCenter
+            top: parent.bottom
         }
     }
 }

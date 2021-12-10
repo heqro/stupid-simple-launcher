@@ -29,7 +29,6 @@ PlasmaComponents.TextField { //searchbar
 
     font.pointSize: 20
     placeholderText: plasmoid.configuration.writeSomething ? plasmoid.configuration.greetingText : "Howdy, " + kuser.loginName + "! Type to start searching..."
-    //placeholderTextColor: colorWithAlpha(PlasmaCore.Theme.headerTextColor, 0.8)
     horizontalAlignment: TextInput.AlignHCenter
 
     onTextChanged: { // start searching
@@ -85,17 +84,8 @@ PlasmaComponents.TextField { //searchbar
         }
     }
 
-    TextMetrics {
-        id: t_metrics
-        text: (myText != "") ? myText : placeholderText
-        font.pointSize: 20 // account for the arbitrary font size chosen in the parent object.
-    }
-
-    Rectangle { // (CONCEPT) line under search field. This should be loaded on demand by the Loader QML type.
-        height: Math.floor(units.smallSpacing / 2)
-        color: Qt.rgba(theme.highlightColor.r,theme.highlightColor.g,theme.highlightColor.b, 1)
-        width: (t_metrics.width > 0) ? t_metrics.width + Math.ceil(1.25 * units.smallSpacing) : 0
-        Behavior on width { SmoothedAnimation {duration: 300; velocity: 200} } // setting both duration and velocity helps when the user cancels out his search and the greeting text is too long for the velocity to catch up in a good fashion.
+    Loader {
+        source: "searchbar_designs/Underlining.qml"
         anchors {
             horizontalCenter: parent.horizontalCenter
             top: parent.bottom

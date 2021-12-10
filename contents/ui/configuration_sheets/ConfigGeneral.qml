@@ -35,8 +35,9 @@ import org.kde.plasma.private.kicker 0.1 as Kicker
 Item {
     id: configGeneral
 
-    width: childrenRect.width
-    height: childrenRect.height
+
+//     width: childrenRect.width
+    //height: childrenRect.height
 
     property string cfg_icon: plasmoid.configuration.icon
     property bool cfg_useCustomButtonImage: plasmoid.configuration.useCustomButtonImage

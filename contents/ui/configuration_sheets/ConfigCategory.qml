@@ -18,8 +18,8 @@ import org.kde.plasma.private.kicker 0.1 as Kicker
 Item {
     id: configCategory
 
-    width: childrenRect.width
-    height: childrenRect.height
+    //width: childrenRect.width
+    //height: childrenRect.height
 
     property alias cfg_categoriesText: categoriesShowText.checked
     property alias cfg_categoriesIcon: categoriesShowIcon.checked

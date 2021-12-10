@@ -33,4 +33,10 @@ ConfigModel {
         icon: "view-list-icons"
         source: "configuration_sheets/ConfigCategory.qml"
     }
+
+    ConfigCategory {
+        name: i18n("Searchbar")
+        icon: "search"
+        source: "configuration_sheets/ConfigSearchBar.qml"
+    }
 }

@@ -14,6 +14,9 @@ PlasmaComponents.TextField { //searchbar
 
     property string myText: text
 
+    property bool noDesignChosen: plasmoid.configuration.searchBarNoDesign
+    property bool underlineDesign: plasmoid.configuration.searchBarUnderline
+
     KCoreAddons.KUser { // this is needed for the greeting message (saying hello whatever the user name is)
         id: kuser
     }
@@ -85,10 +88,12 @@ PlasmaComponents.TextField { //searchbar
     }
 
     Loader {
-        source: "searchbar_designs/Underlining.qml"
+        active: !noDesignChosen
         anchors {
             horizontalCenter: parent.horizontalCenter
             top: parent.bottom
         }
+
+        source: underlineDesign ? "searchbar_designs/Underlining.qml" : ""
     }
 }

@@ -95,6 +95,7 @@ PlasmaComponents.TextField { //searchbar
         height: Math.floor(units.smallSpacing / 2)
         color: Qt.rgba(theme.highlightColor.r,theme.highlightColor.g,theme.highlightColor.b, 1)
         width: (t_metrics.width > 0) ? t_metrics.width + Math.ceil(1.25 * units.smallSpacing) : 0
+        Behavior on width { SmoothedAnimation {duration: 300; velocity: 200} } // setting both duration and velocity helps when the user cancels out his search and the greeting text is too long for the velocity to catch up in a good fashion.
         anchors {
             horizontalCenter: parent.horizontalCenter
             top: parent.bottom

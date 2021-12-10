@@ -25,12 +25,12 @@ ConfigModel {
     ConfigCategory {
          name: i18n("General")
          icon: "kde"
-         source: "ConfigGeneral.qml"
+         source: "configuration_sheets/ConfigGeneral.qml"
     }
 
     ConfigCategory {
         name: i18n("Categories sidebar")
         icon: "view-list-icons"
-        source: "ConfigCategory.qml"
+        source: "configuration_sheets/ConfigCategory.qml"
     }
 }

@@ -132,6 +132,7 @@ Item {
                             id: changingSidebarSizeWarning
                             type: Kirigami.MessageType.Warning
                             visible: customizeCategoriesSize.checked && showCategories.checked
+                            showCloseButton: true
                             Layout.fillWidth: true
                             text: i18n("Manually setting the categories sidebar buttons' size may place different elements of the menu out of your screen.")
                         }

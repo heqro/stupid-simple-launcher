@@ -57,14 +57,8 @@ Item {
                     }
                 }
 
-                RowLayout {
-                    Layout.fillWidth: true
-                    visible: showCategories.checked
-                    CheckBox {
-                        Layout.leftMargin: units.smallSpacing
-                        id: showCategoriesOnTheRight
-                        text: i18n("Show the categories sidebar at the right side of the menu")
-                    }
+                PlasmaExtras.Heading {
+                    text: "Appearance"
                 }
 
                 RowLayout {
@@ -72,8 +66,8 @@ Item {
                     visible: showCategories.checked
                     CheckBox {
                         Layout.leftMargin: units.smallSpacing
-                        id: showCategoriesTooltip
-                        text: i18n("Show categories' names in a tooltip when the text is elided or when using icons-only menu")
+                        id: showCategoriesOnTheRight
+                        text: i18n("Show the categories sidebar at the right side of the menu")
                     }
                 }
 
@@ -261,9 +255,19 @@ Item {
 
                 }
 
+                PlasmaExtras.Heading {
+                    text: "Behavior"
+                }
 
-
-
+                RowLayout {
+                    Layout.fillWidth: true
+                    visible: showCategories.checked
+                    CheckBox {
+                        Layout.leftMargin: units.smallSpacing
+                        id: showCategoriesTooltip
+                        text: i18n("Show categories' names in a tooltip when the text is elided or when using icons-only menu")
+                    }
+                }
 
 
             }

@@ -12,6 +12,7 @@ Item {
 
     property alias cfg_searchBarNoDesign: designNull.checked
     property alias cfg_searchBarUnderline: designUnderline.checked
+    property alias cfg_searchBarFullyFledged: designFullyFledged.checked
 
     ColumnLayout {
         PlasmaExtras.Heading {
@@ -37,6 +38,14 @@ Item {
                     text: i18n("Underlining")
                     exclusiveGroup: designChoice
                 }
+
+                RadioButton {
+                    Layout.fillWidth: true
+                    id: designFullyFledged
+                    text: i18n("Fully-fledged")
+                    exclusiveGroup: designChoice
+                }
+
             }
         }
     }

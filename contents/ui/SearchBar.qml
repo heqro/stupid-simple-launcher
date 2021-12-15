@@ -12,10 +12,13 @@ import org.kde.kcoreaddons 1.0 as KCoreAddons
 
 PlasmaComponents.TextField { //searchbar
 
+    id: searchBar
+
     property string myText: text
 
     property bool noDesignChosen: plasmoid.configuration.searchBarNoDesign
     property bool underlineDesign: plasmoid.configuration.searchBarUnderline
+    property bool fullyFledgedDesign: plasmoid.configuration.searchBarFullyFledged
 
     KCoreAddons.KUser { // this is needed for the greeting message (saying hello whatever the user name is)
         id: kuser
@@ -88,12 +91,15 @@ PlasmaComponents.TextField { //searchbar
     }
 
     Loader {
+        z: -1 // draw this element under parent (TODO - please fix this shit workaround once you know more about QML)
         active: !noDesignChosen
         anchors {
             horizontalCenter: parent.horizontalCenter
             top: parent.bottom
         }
 
-        source: underlineDesign ? "searchbar_designs/Underlining.qml" : ""
+        property int parentHeight: parent.height // propagate this property so that each and every design can make use of it (without explicitly assigning a value to the Loader element because it will affect loaded elements' dimensions.)
+
+        source: underlineDesign ? "searchbar_designs/Underlining.qml" : (fullyFledgedDesign ? "searchbar_designs/FullyFledged.qml" : "")
     }
 }

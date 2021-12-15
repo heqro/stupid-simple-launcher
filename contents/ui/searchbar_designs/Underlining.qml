@@ -16,4 +16,6 @@ Rectangle { // (CONCEPT) line under search field. This should be loaded on deman
         text: (myText != "") ? myText : placeholderText
         font.pointSize: 20 // account for the arbitrary font size chosen in the parent object.
     }
+
+    anchors.top: parent.bottom
 }

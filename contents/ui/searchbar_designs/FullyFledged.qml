@@ -43,7 +43,8 @@ Rectangle { // (CONCEPT) Fully-fledged Gnome-like design.
 
         PlasmaCore.IconItem { // category icon
             //id: categoryIconId
-            source: "plasma-search"
+            //source: "plasma-search" // more detailed design. I dislike it a bit.
+            source: "nepomuk" // symbolic-like. I enjoy much more this one than a detailed one.
             height: Math.floor(4 * parent.height / 5)
             width: Math.floor(4 * parent.height / 5)
             anchors.centerIn: parent
@@ -51,13 +52,15 @@ Rectangle { // (CONCEPT) Fully-fledged Gnome-like design.
 
     }
 
-    Rectangle {
+    Rectangle { // this is the real rectangle that draws the border around every element in the menu.
+        z: -1
         height: parentHeight
         width: searchIconContainer.width + parent.width + units.smallSpacing/2
 //         color: "red"
         border.color: Qt.rgba(theme.highlightColor.r,theme.highlightColor.g,theme.highlightColor.b, 1)
         border.width: Math.floor(units.smallSpacing/2)
         color: "transparent"
+        //color: Qt.rgba(theme.backgroundColor.r, theme.backgroundColor.g, theme.backgroundColor.b, 0.5)
         radius: 40
 
         anchors {

@@ -14,9 +14,12 @@ Item {
     property alias cfg_searchBarUnderline: designUnderline.checked
     property alias cfg_searchBarFullyFledged: designFullyFledged.checked
 
+    property alias cfg_configureOpacity: opacitySetter.checked
+    property alias cfg_searchBarOpacity: alphaValue.value
+
     ColumnLayout {
         PlasmaExtras.Heading {
-            text: "Design"
+            text: i18n("Design")
         }
 
         GroupBox {
@@ -48,6 +51,35 @@ Item {
 
             }
         }
-    }
 
+        PlasmaExtras.Heading {
+            Layout.fillWidth: true
+            text: i18n("Configure the design")
+            visible: designFullyFledged.checked
+        }
+
+        CheckBox {
+            Layout.fillWidth: true
+            id: opacitySetter
+            text: i18n("Select the search bar's opacity")
+            visible: designFullyFledged.checked
+        }
+
+        RowLayout {
+            visible: designFullyFledged.checked
+            Layout.fillWidth: true
+
+            PlasmaComponents.Slider {
+                id: alphaValue
+                visible: opacitySetter.checked
+                enabled: opacitySetter.checked
+            }
+
+            PlasmaComponents.Label {
+                id: alphaValueText
+                text: Math.floor(alphaValue.value * 100) + "%"
+                visible: opacitySetter.checked
+            }
+        }
+    }
 }

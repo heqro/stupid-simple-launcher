@@ -5,6 +5,7 @@ import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 2.0 as PlasmaComponents
 
 Rectangle { // (CONCEPT) Fully-fledged Gnome-like design.
+
     height: parentHeight
 //     border.color: Qt.rgba(theme.highlightColor.r,theme.highlightColor.g,theme.highlightColor.b, 1)
 //     border.width: Math.floor(units.smallSpacing/2)
@@ -56,16 +57,13 @@ Rectangle { // (CONCEPT) Fully-fledged Gnome-like design.
         z: -1
         height: parentHeight
         width: searchIconContainer.width + parent.width + units.smallSpacing/2
-//         color: "red"
         border.color: Qt.rgba(theme.highlightColor.r,theme.highlightColor.g,theme.highlightColor.b, 1)
         border.width: Math.floor(units.smallSpacing/2)
-        color: "transparent"
-        //color: Qt.rgba(theme.backgroundColor.r, theme.backgroundColor.g, theme.backgroundColor.b, 0.5)
+        color: Qt.rgba(theme.backgroundColor.r, theme.backgroundColor.g, theme.backgroundColor.b, plasmoid.configuration.searchBarOpacity)
         radius: 40
 
         anchors {
             right: parent.right
-
         }
     }
 

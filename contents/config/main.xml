@@ -96,6 +96,9 @@
     <entry name="categoriesButtonWidth" type="Int">
         <default></default>
     </entry>
+    <entry name="showSessionControlTooltips" type="Bool">
+        <default>true</default>
+    </entry>
     <entry name="spaceWidth" type="Int">
       <default>32</default>
     </entry>

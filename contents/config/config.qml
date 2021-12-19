@@ -39,4 +39,10 @@ ConfigModel {
         icon: "search"
         source: "configuration_sheets/ConfigSearchBar.qml"
     }
+
+    ConfigCategory {
+        name: i18n("Session control bar")
+        icon: "preferences-system-login"
+        source: "configuration_sheets/ConfigSessionControl.qml"
+    }
 }

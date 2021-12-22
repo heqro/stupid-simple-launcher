@@ -10,6 +10,7 @@ import org.kde.plasma.extras 2.0 as PlasmaExtras
 Item {
     id: configSessionControl
 
+    property alias cfg_showSessionControlBar: showSessionControlBar.checked
     property alias cfg_showSessionControlTooltips: showTooltips.checked
 
     ColumnLayout {
@@ -18,7 +19,13 @@ Item {
         }
         CheckBox {
             Layout.fillWidth: true
+            id: showSessionControlBar
+            text: i18n("Show the session control bar")
+        }
+        CheckBox {
+            Layout.fillWidth: true
             id: showTooltips
+            visible: showSessionControlBar.checked
             text: i18n("Show tooltips on each session control button")
         }
     }

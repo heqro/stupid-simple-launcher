@@ -43,6 +43,7 @@ PlasmaComponents.TextField { //searchbar
 
     style: TextFieldStyle {
 
+        textColor: Qt.rgba(PlasmaCore.Theme.headerTextColor.r, PlasmaCore.Theme.headerTextColor.g, PlasmaCore.Theme.headerTextColor.b,1)
         placeholderTextColor: colorWithAlpha(PlasmaCore.Theme.headerTextColor, 0.8)
 
         background: Rectangle {

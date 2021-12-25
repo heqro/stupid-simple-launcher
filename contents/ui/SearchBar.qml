@@ -100,6 +100,7 @@ PlasmaComponents.TextField { //searchbar
         }
 
         property int parentHeight: parent.height // propagate this property so that each and every design can make use of it (without explicitly assigning a value to the Loader element because it will affect loaded elements' dimensions.)
+        property bool isSearchBarFocused: parent.activeFocus
 
         source: underlineDesign ? "searchbar_designs/Underlining.qml" : (fullyFledgedDesign ? "searchbar_designs/FullyFledged.qml" : "")
     }

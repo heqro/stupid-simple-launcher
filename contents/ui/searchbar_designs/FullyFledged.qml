@@ -57,7 +57,7 @@ Rectangle { // (CONCEPT) Fully-fledged Gnome-like design.
         z: -1
         height: parentHeight
         width: searchIconContainer.width + parent.width + units.smallSpacing/2
-        border.color: Qt.rgba(theme.highlightColor.r,theme.highlightColor.g,theme.highlightColor.b, 1)
+        border.color: isSearchBarFocused ? Qt.rgba(theme.buttonFocusColor.r,theme.buttonFocusColor.g,theme.buttonFocusColor.b, 1) :  Qt.rgba(theme.highlightColor.r,theme.highlightColor.g,theme.highlightColor.b, 1)
         border.width: Math.floor(units.smallSpacing/2)
         color: Qt.rgba(theme.backgroundColor.r, theme.backgroundColor.g, theme.backgroundColor.b, plasmoid.configuration.searchBarOpacity)
         radius: 40

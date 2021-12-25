@@ -14,7 +14,7 @@ Rectangle { // (CONCEPT) Fully-fledged Gnome-like design.
 
     radius: 40
 
-    Behavior on width { SmoothedAnimation {duration: 150; velocity: 200} } // setting both duration and velocity helps when the user cancels out his search and the greeting text is too long for the velocity to catch up in a good fashion.
+    Behavior on width { SmoothedAnimation {velocity: 2500; easing.type: Easing.OutQuint} } // setting both duration and velocity helps when the user cancels out his search and the greeting text is too long for the velocity to catch up in a good fashion.
 
     TextMetrics { // this elements allows us to read the width of the user's input text
         id: t_metrics
@@ -30,16 +30,12 @@ Rectangle { // (CONCEPT) Fully-fledged Gnome-like design.
         id: searchIconContainer
         height: parentHeight
         width: parentHeight
-
-//         border.color: Qt.rgba(theme.highlightColor.r,theme.highlightColor.g,theme.highlightColor.b, 1)
-//         border.width: Math.floor(units.smallSpacing/2)
         color: "transparent"
 
         radius: width/2
 
         anchors {
             right: parent.left
-//             rightMargin: units.smallSpacing/2
         }
 
         PlasmaCore.IconItem { // category icon
@@ -54,6 +50,7 @@ Rectangle { // (CONCEPT) Fully-fledged Gnome-like design.
     }
 
     Rectangle { // this is the real rectangle that draws the border around every element in the menu.
+        id: borderingRectangle
         z: -1
         height: parentHeight
         width: searchIconContainer.width + parent.width + units.smallSpacing/2
@@ -65,6 +62,7 @@ Rectangle { // (CONCEPT) Fully-fledged Gnome-like design.
         anchors {
             right: parent.right
         }
+
     }
 
 }

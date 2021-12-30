@@ -271,6 +271,8 @@ Kicker.DashboardWindow {
                             anchors.topMargin: (showFavoritesInGrid && !searching) ? units.iconSizes.small : undefined// if favorites are shown, then it all will look beautiful. If they are not shown, the horizontal separator still exists, but will have null height and will be invisible. Therefore, it all will look beautiful as well.
                             interactive: false // this fixes a nasty occurrence by which we would have this ListView listed all over again after scrolling for a short while
 
+                            snapMode:ListView.SnapOneItem
+
                             onCurrentItemChanged: { // I don't really understand how this function works, but it's there and apparently does something (I didn't write this one)
                                 if (!currentItem) {
                                     return;

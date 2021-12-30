@@ -33,7 +33,7 @@ PlasmaComponents.TextField { //searchbar
 
     property string greetingMessage: plasmoid.configuration.greetingText
 
-    font.pointSize: 20
+    font.pointSize: PlasmaCore.Theme.defaultFont.pointSize * 2
     placeholderText: plasmoid.configuration.writeSomething ? plasmoid.configuration.greetingText : "Howdy, " + kuser.loginName + "! Type to start searching..."
     horizontalAlignment: TextInput.AlignHCenter
 

@@ -66,7 +66,7 @@ Kicker.DashboardWindow {
 
     property bool showCategories: plasmoid.configuration.showCategories
 
-    property real alphaValue: plasmoid.configuration.opacitySet ? plasmoid.configuration.alphaValue : 0.6
+    property real alphaValue: plasmoid.configuration.opacitySet ? plasmoid.configuration.alphaValue : 0.8
 
     // boolean values to manage how to show categories in their corresponing sidebar
     property bool showCategoriesIcon: plasmoid.configuration.categoriesIcon

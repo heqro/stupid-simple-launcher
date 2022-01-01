@@ -71,7 +71,7 @@ Rectangle { // rectangle used for marking the bounds for the category button
         PlasmaComponents.Label { // label showing the category name
             id: categoryTextId
             text: categoryName
-            font.pointSize: isCategoriesFontSizeSet ? fontSize : parent.height
+            font.pointSize: isCategoriesFontSizeSet ? fontSize : Math.min(parent.height, PlasmaCore.Theme.defaultFont.pointSize * 1.2)
             visible: showCategoriesText || showCategoriesIconAndText
 
             Layout.fillHeight: true

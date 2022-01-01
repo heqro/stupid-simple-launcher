@@ -8,7 +8,7 @@ Rectangle { // (CONCEPT) Fully-fledged Gnome-like design.
 
     height: parentHeight
     color: "transparent"
-    width: (t_metrics.width > 0) ? t_metrics.width + Math.ceil(units.largeSpacing * 2) : 0
+    width: (t_metrics.width > 0) ? t_metrics.width + Math.ceil(units.largeSpacing * 2) : Math.ceil(units.largeSpacing * 2)
 
     radius: 40
 
@@ -16,7 +16,7 @@ Rectangle { // (CONCEPT) Fully-fledged Gnome-like design.
 
     TextMetrics { // this elements allows us to read the width of the user's input text
         id: t_metrics
-        text: (myText != "") ? myText : placeholderText
+        text: isSearchBarFocused ? myText : placeholderText
         font.pointSize: PlasmaCore.Theme.defaultFont.pointSize * 2 // account for the arbitrary font size chosen in the parent object.
     }
 

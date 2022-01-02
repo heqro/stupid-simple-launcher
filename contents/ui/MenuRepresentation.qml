@@ -221,6 +221,12 @@ Kicker.DashboardWindow {
 //                         height: heightScreen
                         color: "transparent" //  use "red" to see real dimensions and limits
 
+                        // The following lines are just for me testing stuff for adding cool new designs to the app grid:
+//                         border.color: 'red'
+//                         border.width: Math.floor(units.smallSpacing/2)
+//                         radius: 40
+                        // End of testing ground
+
                         ItemGridView { // this is the grid in which we will store the favorites list
                             id: myFavorites
                             model: globalFavorites

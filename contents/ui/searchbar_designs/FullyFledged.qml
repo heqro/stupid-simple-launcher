@@ -8,11 +8,11 @@ Rectangle { // (CONCEPT) Fully-fledged Gnome-like design.
 
     height: parentHeight
     color: "transparent"
-    width: (t_metrics.width > 0) ? t_metrics.width + Math.ceil(units.largeSpacing * 2) : Math.ceil(units.largeSpacing * 2)
+    width: (t_metrics.width > 0) ? t_metrics.width + Math.ceil(units.largeSpacing * 2) : Math.ceil(units.largeSpacing * 2) // if the user has written something, then make this rectangle surround it. If the user has not written anything, leave some room for the design to "breathe".
 
     radius: 40
 
-    Behavior on width { SmoothedAnimation {velocity: 2500; easing.type: Easing.OutQuad} } // setting both duration and velocity helps when the user cancels out his search and the greeting text is too long for the velocity to catch up in a good fashion.
+    Behavior on width { SmoothedAnimation {velocity: 2500; easing.type: Easing.OutQuad} } // velocity makes it fast. Easing makes it smooth when there is a lot of variation on the text's length for some reason.
 
     TextMetrics { // this elements allows us to read the width of the user's input text
         id: t_metrics
@@ -49,12 +49,12 @@ Rectangle { // (CONCEPT) Fully-fledged Gnome-like design.
 
     Rectangle { // this is the real rectangle that draws the border around every element in the menu.
         id: borderingRectangle
-        z: -1
+        z: -1 // set this element under the parent element
         height: parentHeight
         width: searchIconContainer.width + parent.width + units.smallSpacing/2
-        border.color: isSearchBarFocused ? Qt.rgba(theme.buttonFocusColor.r,theme.buttonFocusColor.g,theme.buttonFocusColor.b, 1) :  Qt.rgba(theme.highlightColor.r,theme.highlightColor.g,theme.highlightColor.b, 1)
+        border.color: isSearchBarFocused ? colorWithAlpha(theme.buttonFocusColor, 1) : colorWithAlpha(theme.highlightColor, 1)
         border.width: Math.floor(units.smallSpacing/2)
-        color: Qt.rgba(theme.backgroundColor.r, theme.backgroundColor.g, theme.backgroundColor.b, plasmoid.configuration.searchBarOpacity)
+        color: colorWithAlpha(theme.backgroundColor, plasmoid.configuration.searchBarOpacity)
         radius: 40
 
         anchors {

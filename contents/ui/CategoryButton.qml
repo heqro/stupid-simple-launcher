@@ -63,13 +63,17 @@ Rectangle { // rectangle used for marking the bounds for the category button
         PlasmaComponents.Label { // label showing the category name
             id: categoryTextId
             text: categoryName
-            font.pointSize: customizeCategoriesFontSize ? categoriesFontSize : Math.min(containerForCategory.height, PlasmaCore.Theme.defaultFont.pointSize * 1.2)
-            minimumPointSize: PlasmaCore.Theme.defaultFont.pointSize
+
+            // Using font sizes that are consistent with plasma
+            font.pointSize: customizeCategoriesFontSize ? categoriesFontSize : PlasmaCore.Theme.defaultFont.pointSize * 1.2
+            //font.pointSize: customizeCategoriesFontSize ? categoriesFontSize : Math.min(containerForCategory.height, PlasmaCore.Theme.defaultFont.pointSize * 1.2)
+            minimumPointSize: containerForCategory.height
+
             visible: showCategoriesText || showCategoriesIconAndText
             Layout.preferredHeight: parent.height
             Layout.fillWidth: true
             fontSizeMode: Text.VerticalFit
-            PlasmaCore.ToolTipArea {
+            PlasmaCore.ToolTipArea { // for showing the tooltip linked to this category's name
                 id: toolTip
                 mainText: categoryText
             }
@@ -83,7 +87,7 @@ Rectangle { // rectangle used for marking the bounds for the category button
 
     }
 
-    MouseArea {
+    MouseArea { // I am using this MouseArea to recreate how a button would behave (just using Buttons didn't entirely work the way I intended.)
         anchors.fill: parent
         hoverEnabled: true
         onClicked: {

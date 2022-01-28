@@ -24,12 +24,16 @@ PlasmaComponents.TextField { //searchbar
         id: kuser
     }
 
-    anchors {
-        top: parent.top
-        topMargin: units.iconSizes.large
-        horizontalCenter: parent.horizontalCenter
-    }
-    width: widthScreen
+    Layout.alignment: Qt.AlignCenter
+    Layout.fillWidth: true
+
+
+//     anchors {
+//         top: parent.top
+//         topMargin: units.iconSizes.large
+//         horizontalCenter: parent.horizontalCenter
+//     }
+    //width: widthScreen
 
     property string greetingMessage: plasmoid.configuration.greetingText
 

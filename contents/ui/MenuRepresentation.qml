@@ -195,14 +195,20 @@ Kicker.DashboardWindow {
 
                 ColumnLayout {
                     id: mainColumn
-
+                    anchors.fill: parent
+//                     anchors.centerIn: parent
                     SearchBar {
                         id: searchField
+                        Layout.alignment: Qt.AlignCenter
+                        Layout.fillWidth: true
+                        Layout.margins: units.iconSizes.large
                     }
 
                     RowLayout {
 
+                        Layout.alignment: Qt.AlignCenter
                         Layout.fillWidth: true
+                        Layout.fillHeight: true
                         //spacing: units.iconSizes.small
                         //anchors {
                             //top: searchField.bottom
@@ -216,10 +222,12 @@ Kicker.DashboardWindow {
 
                         Rectangle { // applications will be inside this
                             id: appsRectangle
-                            Layout.preferredWidth: widthScreen
-                            Layout.preferredHeight: heightScreen
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+//                             Layout.preferredWidth: widthScreen
+//                             Layout.preferredHeight: heightScreen
                             //                         height: heightScreen
-                            color: "transparent" //  use "red" to see real dimensions and limits
+                            color: "red" //  use "red" to see real dimensions and limits
 
                             // The following lines are just for me testing stuff for adding cool new designs to the app grid:
                             //                         border.color: 'red'
@@ -352,7 +360,8 @@ Kicker.DashboardWindow {
 
                             id: categoriesItem
                             //height: heightScreen
-                            Layout.preferredHeight: heightScreen
+                            //Layout.preferredHeight: heightScreen
+                            Layout.fillHeight: true
                             //Layout.preferredWidth: categoriesModel.count == 0 ? 0 : (customizeCategoriesSidebarSize ? Math.min(categoriesSidebarWidth, Math.floor(widthScreen / 8)) : Math.floor(widthScreen / 8))
                             Layout.preferredWidth: categoriesModel.count == 0 ? 0 : (customizeCategoriesSidebarSize ? Math.ceil(categoriesSidebarWidth + units.iconSizes.medium) : Math.floor(widthScreen / 8 + units.iconSizes.medium)) // adding up a little bit of "artificial" size to let the category button breathe with respect to the sidebar's scrollbar.
 
@@ -381,6 +390,8 @@ Kicker.DashboardWindow {
                     SessionControlBar {
                         id: sessionControlBar
                         Layout.fillWidth: true
+                        Layout.alignment: Qt.AlignCenter
+                        Layout.margins: units.iconSizes.large
                     }
 
                 }

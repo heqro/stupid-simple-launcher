@@ -24,9 +24,6 @@ PlasmaComponents.TextField { //searchbar
         id: kuser
     }
 
-    Layout.alignment: Qt.AlignCenter
-    Layout.fillWidth: true
-
 
 //     anchors {
 //         top: parent.top

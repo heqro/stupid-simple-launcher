@@ -38,11 +38,11 @@ RowLayout {
         commandToLaunch: 'qdbus org.freedesktop.ScreenSaver /ScreenSaver Lock'
     }
 
-    anchors {
-        bottom: parent.bottom // RowLayout will be at the bottom-most part of the grid
-        bottomMargin: units.iconSizes.smallMedium // keep some nice distance towards the edge of the screen to not make it look out of place
-        horizontalCenter: parent.horizontalCenter // center the entire row
-    }
+//     anchors {
+//         bottom: parent.bottom // RowLayout will be at the bottom-most part of the grid
+//         bottomMargin: units.iconSizes.smallMedium // keep some nice distance towards the edge of the screen to not make it look out of place
+//         horizontalCenter: parent.horizontalCenter // center the entire row
+//     }
 
     PlasmaCore.DataSource { // courtesy of https://github.com/varlesh/org.kde.plasma.compact-shutdown/blob/main/contents/ui/main.qml (I just copy+pasted it, some day I'll figure how this works)
         id: executable

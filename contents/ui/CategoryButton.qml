@@ -95,13 +95,13 @@ Rectangle { // rectangle used for marking the bounds for the category button
                 return
             }
             if (indexInModel > 0) { // show the category determined by indexInModel
-                pageList.currentItem.itemGrid.model = rootModel.modelForRow(indexInModel).modelForRow(0)
+                appsGrid.model = rootModel.modelForRow(indexInModel).modelForRow(0)
             } else { // show All Applications
                 if (indexInModel == 0) {
-                    pageList.currentItem.itemGrid.model = rootModel.modelForRow(0).modelForRow(1)
+                    appsGrid.model = rootModel.modelForRow(0).modelForRow(1)
                 }
                 else { // show Favorites
-                    pageList.currentItem.itemGrid.model = rootModel.modelForRow(0).modelForRow(0)
+                    appsGrid.model = rootModel.modelForRow(0).modelForRow(0)
                 }
             }
             categoriesList.currentIndex = index

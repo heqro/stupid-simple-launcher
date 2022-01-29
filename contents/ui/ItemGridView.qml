@@ -219,9 +219,11 @@ FocusScope {
                     showLabel: showLabels
                 }
 
+                // Using PlasmaComponents' highlight.
                 highlight: PlasmaComponents.Highlight {}
                 highlightFollowsCurrentItem: true
                 highlightMoveDuration: 0
+
 
                 onCountChanged: {
                     animationDuration = 0;

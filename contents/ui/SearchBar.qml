@@ -24,22 +24,26 @@ PlasmaComponents.TextField { //searchbar
         id: kuser
     }
 
-
-//     anchors {
-//         top: parent.top
-//         topMargin: units.iconSizes.large
-//         horizontalCenter: parent.horizontalCenter
-//     }
-    //width: widthScreen
-
     property string greetingMessage: plasmoid.configuration.greetingText
+
+
+    property bool hasNewTextBeenWritten: false // stupid binding to know if the user has been introduced new text. That way, we update foundNewApps to force a runnerModel update (if new results were found).
+    property bool foundNewApps: hasNewTextBeenWritten && runnerModel.count == 1
 
     font.pointSize: PlasmaCore.Theme.defaultFont.pointSize * 2
     placeholderText: plasmoid.configuration.writeSomething ? plasmoid.configuration.greetingText : "Howdy, " + kuser.loginName + "! Type to start searching..."
     horizontalAlignment: TextInput.AlignHCenter
 
+    onFoundNewAppsChanged: {
+        if (foundNewApps) {
+            appsGrid.model = runnerModel.modelForRow(0)
+            hasNewTextBeenWritten = false
+        }
+    }
+
     onTextChanged: { // start searching
         runnerModel.query = text
+        hasNewTextBeenWritten = true
     }
 
     style: TextFieldStyle {
@@ -56,37 +60,35 @@ PlasmaComponents.TextField { //searchbar
     Keys.onPressed: {
         if (event.key == Qt.Key_Down) {
             event.accepted = true;
-            pageList.currentIndex = 0 // "return to the grid"
+            //pageList.currentIndex = 0 // "return to the grid"
             if (!searching) {
                 if (!showFavoritesInGrid) {
-                    pageList.currentItem.itemGrid.tryActivate(0, 0); // highlight
+                    appsGrid.tryActivate(0, 0); // highlight
                 } else {
                     myFavorites.tryActivate(0,0) // highlight first entry of favoritesGrid
                 }
             } else {
-                pageList.currentItem.itemGrid.tryActivate(1, 0); // highlight first item - second row
+                appsGrid.tryActivate(1, 0); // highlight first item - second row
             }
         } else if (event.key == Qt.Key_Right) {
             if (cursorPosition == length) {
                 event.accepted = true;
-                pageList.currentIndex = 0 // "return to the grid"
+                //pageList.currentIndex = 0 // "return to the grid"
                 if (!searching) {
                     if (!showFavoritesInGrid) {
-                        pageList.currentItem.itemGrid.tryActivate(0, 0); // highlight
+                       appsGrid.tryActivate(0, 0) // highlight
                     } else {
                         myFavorites.tryActivate(0,0) // highlight first entry of favoritesGrid
                     }
                 } else {
-                    pageList.currentItem.itemGrid.tryActivate(0, 1); // highlight second item - first row
+                    appsGrid.tryActivate(0, 1); // highlight second item - first row
                 }
             }
         } else if (event.key == Qt.Key_Return || event.key == Qt.Key_Enter) {
-            pageList.currentIndex = 0 // "return to the grid"
-            if (text != "" && pageList.currentItem.itemGrid.count > 0) {
+            if (text != "" && appsGrid.itemGrid.count > 0) {
                 event.accepted = true;
-                //pageList.currentIndex = 0 // "return to the grid"
-                pageList.currentItem.itemGrid.tryActivate(0, 0);
-                pageList.currentItem.itemGrid.model.trigger(0, "", null);
+                appsGrid.tryActivate(0, 0);
+                appsGrid.itemGrid.model.trigger(0, "", null);
                 root.toggle();
             }
         }

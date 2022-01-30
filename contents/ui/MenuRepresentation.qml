@@ -56,6 +56,8 @@ Kicker.DashboardWindow {
     keyEventProxy: searchField
 
 
+    property int rootWidth: width
+
     property int columns: Math.floor(0.8 * Math.ceil(width / cellSize))
     property int rows: Math.floor(0.75 * Math.ceil(height / cellSize))
 
@@ -212,59 +214,85 @@ Kicker.DashboardWindow {
 
                         Layout.fillWidth: true
                         Layout.fillHeight: true
+                        Layout.alignment: Qt.AlignCenter
 
                         layoutDirection: showCategoriesOnTheRight ? Qt.LeftToRight : Qt.RightToLeft
 
-                        ColumnLayout {
+                        //Item {
+                            //Layout.fillWidth: true
+                            //Layout.maximumWidth: rootWidth-(appsGrid.width + categoriesItem.width)
+                        //}
 
-                            id: appsRectangle
-                            Layout.fillHeight: true
+                        Item {
+                            id: artifactForProperlyDisplayingEverythingInANiceWay
                             Layout.fillWidth: true
+                            Layout.fillHeight: true
 
-                            ItemGridView { // this is actually the applications grid
+                            ColumnLayout {
 
-                                id: appsGrid
-                                visible: model.count > 0
-                                Layout.fillHeight: true
-                                Layout.fillWidth: true
-//                                 Layout.preferredWidth: columns * cellSize
+                                id: appsRectangle
+                                anchors.fill: parent
+// anchors.top : parent.top; anchors.bottom: parent.bottom
+// anchors.right: parent.right
+//                                 width: Math.min(columns*cellSize, parent.width)
+//                                 Layout.fillHeight: true
+//                                 Layout.fillWidth: true
+                                //Layout.maximumWidth: columns * cellSize
+
+                                ItemGridView { // this is actually the applications grid
+
+                                    id: appsGrid
+                                    visible: model.count > 0
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    Layout.maximumWidth: columns * cellSize
+                                    Layout.alignment: Qt.AlignCenter
+
+                                    //Rectangle { // debugging purposes.
+                                        //z: -1
+                                        //color: "red"
+                                        //anchors.fill: parent
+                                    //}
+
+                                    //                                 Layout.preferredWidth: columns * cellSize
 
 
-                                cellWidth:  cellSize
-                                cellHeight: cellSize
+                                    cellWidth:  cellSize
+                                    cellHeight: cellSize
 
-//                                 verticalScrollBarPolicy: Qt.ScrollBarAlwaysOff // it will look much better without scrollbars (also for some reason it destroys the layout if enabled by making this grid's width much bigger)
+                                    //dragEnabled: (index == 0)
 
-                                //dragEnabled: (index == 0)
+                                    model: searching ? runnerModel.modelForRow(0) : rootModel.modelForRow(0).modelForRow(1) // if we happen to be searching, then we must show the results of said search. Else, we will default to showing all the applications
 
-                                model: searching ? runnerModel.modelForRow(0) : rootModel.modelForRow(0).modelForRow(1) // if we happen to be searching, then we must show the results of said search. Else, we will default to showing all the applications
+                                    //onCountChanged: { // whenever the list of icons has its cardinality modified, account for the change
+                                    //currentIndex = 0
+                                    //itemGrid.tryActivate(0, 0);
+                                    //}
 
-                                //onCountChanged: { // whenever the list of icons has its cardinality modified, account for the change
-                                //currentIndex = 0
-                                //itemGrid.tryActivate(0, 0);
-                                //}
+                                    onKeyNavUp: {
+                                        currentIndex = -1;
+                                        if (showFavoritesInGrid && !searching) {
+                                            myFavorites.tryActivate(0,0)
+                                        } else {
+                                            searchField.focus = true;
+                                        }
+                                    }
 
-                                onKeyNavUp: {
-                                    currentIndex = -1;
-                                    if (showFavoritesInGrid && !searching) {
-                                        myFavorites.tryActivate(0,0)
-                                    } else {
-                                        searchField.focus = true;
+                                    // onKeyNavDown: { //TODO: this needs some work to communicate where to return if we are pressing the "up" key on sessionControlBar
+                                    //currentIndex = -1
+                                    //sessionControlBar.tryActivate(0,0)
+                                    //}
+
+                                    onModelChanged: { // when we stop searching or start searching, highlight the first item just to give the user a hint that pressing "Enter" will launch the first entry.
+                                        currentIndex = 0
+                                        //appsGrid.itemGrid.tryActivate(0, 0);
                                     }
                                 }
 
-                                // onKeyNavDown: { //TODO: this needs some work to communicate where to return if we are pressing the "up" key on sessionControlBar
-                                //currentIndex = -1
-                                //sessionControlBar.tryActivate(0,0)
-                                //}
-
-                                onModelChanged: { // when we stop searching or start searching, highlight the first item just to give the user a hint that pressing "Enter" will launch the first entry.
-                                    currentIndex = 0
-                                    //appsGrid.itemGrid.tryActivate(0, 0);
-                                }
                             }
-
                         }
+
+
 
                         //Rectangle { // applications will be inside this
                             //id: appsRectangle
@@ -402,17 +430,19 @@ Kicker.DashboardWindow {
                             //}
                         //}
 
+//                         RowLayout {
+//
+//                         }
+
                         ScrollView { // dedicated to storing the categories list
 
                             id: categoriesItem
 
-
-                            //height: heightScreen
-                            //Layout.preferredHeight: heightScreen
                             Layout.fillHeight: true
-//                             Layout.alignment: Qt.AlignRight
+                            Layout.fillWidth: true
+
                             //Layout.preferredWidth: categoriesModel.count == 0 ? 0 : (customizeCategoriesSidebarSize ? Math.min(categoriesSidebarWidth, Math.floor(widthScreen / 8)) : Math.floor(widthScreen / 8))
-                            Layout.preferredWidth: categoriesModel.count == 0 ? 0 : (customizeCategoriesSidebarSize ? Math.ceil(categoriesSidebarWidth + units.iconSizes.medium) : Math.floor(widthScreen / 8 + units.iconSizes.medium)) // adding up a little bit of "artificial" size to let the category button breathe with respect to the sidebar's scrollbar.
+                            Layout.maximumWidth: categoriesModel.count == 0 ? 0 : (customizeCategoriesSidebarSize ? Math.ceil(categoriesSidebarWidth + units.iconSizes.medium) : Math.floor(widthScreen / 8 + units.iconSizes.medium)) // adding up a little bit of "artificial" size to let the category button breathe with respect to the sidebar's scrollbar.
                             ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
                             ListView {
@@ -435,6 +465,7 @@ Kicker.DashboardWindow {
 
                             }
                         }
+
                     }
 
                     SessionControlBar {
@@ -455,8 +486,8 @@ Kicker.DashboardWindow {
 
     Component.onCompleted: {
         rootModel.pageSize = -1 // this will, somehow, make it show everything -- again, don't ask me!
-        //console.log(systemFavorites.count)
         kicker.reset.connect(reset);
+        //console.log("Número de columnas", columns)
     }
 }
 

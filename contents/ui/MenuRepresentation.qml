@@ -218,11 +218,6 @@ Kicker.DashboardWindow {
 
                         layoutDirection: showCategoriesOnTheRight ? Qt.LeftToRight : Qt.RightToLeft
 
-                        //Item {
-                            //Layout.fillWidth: true
-                            //Layout.maximumWidth: rootWidth-(appsGrid.width + categoriesItem.width)
-                        //}
-
                         Item {
                             id: artifactForProperlyDisplayingEverythingInANiceWay
                             Layout.fillWidth: true
@@ -232,12 +227,6 @@ Kicker.DashboardWindow {
 
                                 id: appsRectangle
                                 anchors.fill: parent
-// anchors.top : parent.top; anchors.bottom: parent.bottom
-// anchors.right: parent.right
-//                                 width: Math.min(columns*cellSize, parent.width)
-//                                 Layout.fillHeight: true
-//                                 Layout.fillWidth: true
-                                //Layout.maximumWidth: columns * cellSize
 
                                 ItemGridView { // this is actually the applications grid
 

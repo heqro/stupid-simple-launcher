@@ -24,6 +24,9 @@ import org.kde.plasma.extras 2.0 as PlasmaExtras
 import org.kde.kquickcontrolsaddons 2.0
 import org.kde.draganddrop 2.0
 
+// vanilla scrollview
+import QtQuick.Controls 2.15
+
 FocusScope {
     id: itemGrid
 
@@ -49,8 +52,8 @@ FocusScope {
     property alias cellWidth: gridView.cellWidth
     property alias cellHeight: gridView.cellHeight
 
-    property alias horizontalScrollBarPolicy: scrollArea.horizontalScrollBarPolicy
-    property alias verticalScrollBarPolicy: scrollArea.verticalScrollBarPolicy
+//     property alias horizontalScrollBarPolicy: scrollArea.horizontalScrollBarPolicy
+    //property alias verticalScrollBarPolicy: scrollArea.verticalScrollBarPolicy
 
     property bool rootVisible: root.visible
 
@@ -157,14 +160,16 @@ FocusScope {
             }
         }
 
-        PlasmaExtras.ScrollArea {
+        ScrollView {
             id: scrollArea
 
             anchors.fill: parent
 
             focus: true
 
-            horizontalScrollBarPolicy: Qt.ScrollBarAlwaysOff
+//             horizontalScrollBarPolicy: Qt.ScrollBarAlwaysOff
+            ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+            ScrollBar.vertical.policy: ScrollBar.AlwaysOff
 
             GridView {
                 //this defines how the icons will look like in our menu

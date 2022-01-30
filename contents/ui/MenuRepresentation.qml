@@ -34,7 +34,9 @@ import "../code/tools.js" as Tools
 import QtQuick.Window 2.0
 import QtQuick.Controls.Styles 1.4
 
-import org.kde.plasma.components 3.0 as PlasmaComponents3
+
+// for vanilla scrollview
+import QtQuick.Controls 2.15
 
 Kicker.DashboardWindow {
     
@@ -231,9 +233,9 @@ Kicker.DashboardWindow {
                                 cellWidth:  cellSize
                                 cellHeight: cellSize
 
-                                verticalScrollBarPolicy: Qt.ScrollBarAlwaysOff // it will look much better without scrollbars (also for some reason it destroys the layout if enabled by making this grid's width much bigger)
+//                                 verticalScrollBarPolicy: Qt.ScrollBarAlwaysOff // it will look much better without scrollbars (also for some reason it destroys the layout if enabled by making this grid's width much bigger)
 
-                                dragEnabled: (index == 0)
+                                //dragEnabled: (index == 0)
 
                                 model: searching ? runnerModel.modelForRow(0) : rootModel.modelForRow(0).modelForRow(1) // if we happen to be searching, then we must show the results of said search. Else, we will default to showing all the applications
 
@@ -400,15 +402,18 @@ Kicker.DashboardWindow {
                             //}
                         //}
 
-                        PlasmaComponents3.ScrollView { // dedicated to storing the categories list
+                        ScrollView { // dedicated to storing the categories list
 
                             id: categoriesItem
+
+
                             //height: heightScreen
                             //Layout.preferredHeight: heightScreen
                             Layout.fillHeight: true
 //                             Layout.alignment: Qt.AlignRight
                             //Layout.preferredWidth: categoriesModel.count == 0 ? 0 : (customizeCategoriesSidebarSize ? Math.min(categoriesSidebarWidth, Math.floor(widthScreen / 8)) : Math.floor(widthScreen / 8))
                             Layout.preferredWidth: categoriesModel.count == 0 ? 0 : (customizeCategoriesSidebarSize ? Math.ceil(categoriesSidebarWidth + units.iconSizes.medium) : Math.floor(widthScreen / 8 + units.iconSizes.medium)) // adding up a little bit of "artificial" size to let the category button breathe with respect to the sidebar's scrollbar.
+                            ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
                             ListView {
 

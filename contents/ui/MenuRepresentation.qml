@@ -34,6 +34,8 @@ import "../code/tools.js" as Tools
 import QtQuick.Window 2.0
 import QtQuick.Controls.Styles 1.4
 
+import org.kde.plasma.components 3.0 as PlasmaComponents3
+
 Kicker.DashboardWindow {
     
     id: root
@@ -398,7 +400,7 @@ Kicker.DashboardWindow {
                             //}
                         //}
 
-                        PlasmaExtras.ScrollArea { // dedicated to storing the categories list
+                        PlasmaComponents3.ScrollView { // dedicated to storing the categories list
 
                             id: categoriesItem
                             //height: heightScreen

@@ -228,6 +228,44 @@ Kicker.DashboardWindow {
                                 id: appsRectangle
                                 anchors.fill: parent
 
+                                ItemGridView { // this is the grid in which we will store the favorites list
+                                    id: myFavorites
+                                    model: globalFavorites
+                                    visible: showFavoritesInGrid && !searching  // TODO this should be tied to whatever SearchBar is doing!!.
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    Layout.maximumHeight: cellSize
+//                                     height: (showFavoritesInGrid && !searching) ? cellSize : 0
+                                    //width: columns * cellSize
+                                    cellWidth:  cellSize
+                                    cellHeight: cellSize
+
+                                    onKeyNavDown: {
+                                        appsGrid.tryActivate(0, 0); // highlight first entry of our "All Applications" grid
+                                    }
+
+                                    onKeyNavUp: {
+                                        searchField.focus = true;
+                                    }
+                                }
+
+                                PlasmaCore.SvgItem { // nice line to separate favorites between all applications
+                                    id: horizontalSeparator
+                                    visible: showFavoritesInGrid && !searching
+                                    Layout.fillHeight: true
+                                    Layout.maximumHeight: (showFavoritesInGrid && !searching) ? Math.floor(PlasmaCore.Units.devicePixelRatio * 4) : 0
+                                    Layout.preferredWidth: Math.round(widthScreen * 0.75)
+                                    elementId: "horizontal-line"
+                                    z: 1
+                                    Layout.alignment: Qt.AlignCenter
+                                    Layout.margins: units.iconSizes.smallMedium
+
+                                    svg: PlasmaCore.Svg {
+                                        imagePath: "widgets/line"
+                                    }
+                                }
+
+
                                 ItemGridView { // this is actually the applications grid
 
                                     id: appsGrid
@@ -280,148 +318,6 @@ Kicker.DashboardWindow {
 
                             }
                         }
-
-
-
-                        //Rectangle { // applications will be inside this
-                            //id: appsRectangle
-                            //Layout.fillHeight: true
-                            //Layout.fillWidth: true
-                            //Layout.preferredWidth: widthScreen
-                            //Layout.preferredHeight: heightScreen
-                                                    //height: heightScreen
-                            //color: "red" //  use "red" to see real dimensions and limits
-
-                            //The following lines are just for me testing stuff for adding cool new designs to the app grid:
-                                                    //border.color: 'red'
-                                                    //border.width: Math.floor(units.smallSpacing/2)
-                                                    //radius: 40
-                            //End of testing ground
-
-                            //ItemGridView { // this is the grid in which we will store the favorites list
-                                //id: myFavorites
-                                //model: globalFavorites
-                                //visible: showFavoritesInGrid && !searching
-                                //height: (showFavoritesInGrid && !searching) ? cellSize : 0
-                                //width: columns * cellSize
-                                //cellWidth:  cellSize
-                                //cellHeight: cellSize
-
-                                //onKeyNavDown: {
-                                    //pageList.currentItem.itemGrid.tryActivate(0, 0); // highlight first entry of our "All Applications" grid
-                                //}
-
-                                //onKeyNavUp: {
-                                    //searchField.focus = true;
-                                //}
-                            //}
-
-                            //PlasmaCore.SvgItem { // nice line to separate favorites between all applications
-                                //id: horizontalSeparator
-                                //visible: showFavoritesInGrid && !searching
-                                //height: (showFavoritesInGrid && !searching) ? PlasmaCore.Units.devicePixelRatio * 4 : 0
-                                //width: Math.round(widthScreen * 0.75)
-                                //elementId: "horizontal-line"
-                                //z: 1
-
-                                //anchors {
-                                    //horizontalCenter: parent.horizontalCenter // center
-                                    //top: myFavorites.bottom // under the favorites menu button
-                                    //topMargin: (showFavoritesInGrid && !searching) ? units.iconSizes.smallMedium : undefined // leave some space to make everything beautiful
-                                //}
-
-                                //Behavior on opacity {
-                                    //NumberAnimation {
-                                        //duration: PlasmaCore.Units.shortDuration
-                                        //easing.type: Easing.InOutQuad
-                                    //}
-                                //}
-
-                                //svg: PlasmaCore.Svg {
-                                    //imagePath: "widgets/line"
-                                //}
-                            //}
-
-                            //ListView {
-                                //id: pageList
-                                //anchors.top: horizontalSeparator.bottom
-                                //anchors.topMargin: (showFavoritesInGrid && !searching) ? units.iconSizes.small : undefined// if favorites are shown, then it all will look beautiful. If they are not shown, the horizontal separator still exists, but will have null height and will be invisible. Therefore, it all will look beautiful as well.
-                                //interactive: false // this fixes a nasty occurrence by which we would have this ListView listed all over again after scrolling for a short while
-
-                                //snapMode:ListView.SnapOneItem
-
-                                //onCurrentItemChanged: { // I don't really understand how this function works, but it's there and apparently does something (I didn't write this one)
-                                    //if (!currentItem) {
-                                        //return;
-                                    //}
-                                                                //if (!searching) {
-                                                                    //currentItem.itemGrid.focus = true;
-                                                                //} else {
-
-                                                                //}
-                                    //currentItem.itemGrid.focus = true;
-                                //}
-                                //onModelChanged: {
-                                //currentIndex = 0
-                                //currentItem.focus = false
-                                //if (searching) {
-                                //currentItem.itemGrid.focus = false;
-                                //}
-                                //console.log("Modelo cambiado")
-                                //}
-
-                                //delegate: Item {
-                                    //width: columns * cellSize
-                                    //height: (!showFavoritesInGrid || searching) ? rows * cellSize : (rows - 1) * cellSize // be extremely careful not to overlap the applications grid with the favorites grid! If such grid is present, then this grid needs to have its row count diminshed by 1 to make room for the favorites grid
-
-                                    //property Item itemGrid: appsGrid
-                                    //focus: true
-
-                                    //ItemGridView { // this is actually the applications grid
-                                        //id: appsGrid
-                                        //visible: model.count > 0
-                                        //anchors.fill: parent
-
-                                        //cellWidth:  cellSize
-                                        //cellHeight: cellSize
-
-                                        //verticalScrollBarPolicy: Qt.ScrollBarAlwaysOff // it will look much better without scrollbars (also for some reason it destroys the layout if enabled by making this grid's width much bigger)
-
-                                        //dragEnabled: (index == 0)
-
-                                        //model: searching ? runnerModel.modelForRow(0) : rootModel.modelForRow(0).modelForRow(1) // if we happen to be searching, then we must show the results of said search. Else, we will default to showing all the applications
-
-                                        //onCountChanged: { // whenever the list of icons has its cardinality modified, account for the change
-                                        //currentIndex = 0
-                                        //itemGrid.tryActivate(0, 0);
-                                        //}
-
-                                        //onKeyNavUp: {
-                                            //currentIndex = -1;
-                                            //if (showFavoritesInGrid && !searching) {
-                                                //myFavorites.tryActivate(0,0)
-                                            //} else {
-                                                //searchField.focus = true;
-                                            //}
-                                        //}
-
-                                        //onKeyNavDown: { //TODO: this needs some work to communicate where to return if we are pressing the "up" key on sessionControlBar
-                                        //currentIndex = -1
-                                        //sessionControlBar.tryActivate(0,0)
-                                        //}
-
-                                        //onModelChanged: { // when we stop searching or start searching, highlight the first item just to give the user a hint that pressing "Enter" will launch the first entry.
-                                            //currentIndex = 0
-                                            //itemGrid.tryActivate(0, 0);
-                                        //}
-                                    //}
-                                //}
-                            //}
-                        //}
-
-//                         RowLayout {
-//
-//                         }
 
                         ScrollView { // dedicated to storing the categories list
 

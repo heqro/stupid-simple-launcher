@@ -235,6 +235,7 @@ Kicker.DashboardWindow {
                                     Layout.fillWidth: true
                                     Layout.fillHeight: true
                                     Layout.maximumHeight: cellSize
+                                    Layout.maximumWidth: rootWidth - categoriesItem.width
 //                                     height: (showFavoritesInGrid && !searching) ? cellSize : 0
                                     //width: columns * cellSize
                                     cellWidth:  cellSize
@@ -254,7 +255,8 @@ Kicker.DashboardWindow {
                                     visible: showFavoritesInGrid && !searching
                                     Layout.fillHeight: true
                                     Layout.maximumHeight: (showFavoritesInGrid && !searching) ? Math.floor(PlasmaCore.Units.devicePixelRatio * 4) : 0
-                                    Layout.preferredWidth: Math.round(widthScreen * 0.75)
+                                    Layout.fillWidth: true
+                                    Layout.maximumWidth: rootWidth - categoriesItem.width
                                     elementId: "horizontal-line"
                                     z: 1
                                     Layout.alignment: Qt.AlignCenter
@@ -272,8 +274,9 @@ Kicker.DashboardWindow {
                                     visible: model.count > 0
                                     Layout.fillHeight: true
                                     Layout.fillWidth: true
-                                    Layout.maximumWidth: columns * cellSize
-                                    Layout.alignment: Qt.AlignCenter
+//                                     Layout.maximumWidth: columns * cellSize
+                                    Layout.maximumWidth: rootWidth - categoriesItem.width
+                                    //Layout.alignment: Qt.AlignCenter
 
                                     //Rectangle { // debugging purposes.
                                         //z: -1

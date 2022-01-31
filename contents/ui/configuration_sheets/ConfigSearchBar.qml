@@ -10,12 +10,10 @@ import org.kde.plasma.extras 2.0 as PlasmaExtras
 Item {
     id: configSidebar
 
-    property alias cfg_searchBarNoDesign: designNull.checked
-    property alias cfg_searchBarUnderline: designUnderline.checked
-    property alias cfg_searchBarFullyFledged: designFullyFledged.checked
-
     property alias cfg_configureOpacity: opacitySetter.checked
     property alias cfg_searchBarOpacity: alphaValue.value
+
+    property alias cfg_searchBarDesign: designChooser.chosenDesignSheetPath
 
     ColumnLayout {
         PlasmaExtras.Heading {
@@ -23,8 +21,11 @@ Item {
         }
 
         GroupBox {
+            id: designChooser
             Layout.fillWidth: true
-            ExclusiveGroup { id: designChoice}
+            ExclusiveGroup { id: designChoice }
+
+            property string chosenDesignSheetPath: plasmoid.configuration.searchBarDesign
 
             ColumnLayout {
                 RadioButton {
@@ -33,6 +34,11 @@ Item {
                     text: i18n("No design")
                     checked: true
                     exclusiveGroup: designChoice
+
+                    onCheckedChanged: {
+                        if (checked)
+                            designChooser.chosenDesignSheetPath = ""
+                    }
                 }
 
                 RadioButton {
@@ -40,6 +46,11 @@ Item {
                     id: designUnderline
                     text: i18n("Underlining")
                     exclusiveGroup: designChoice
+
+                    onCheckedChanged: {
+                        if (checked)
+                            designChooser.chosenDesignSheetPath = "searchbar_designs/Underlining.qml"
+                    }
                 }
 
                 RadioButton {
@@ -47,6 +58,10 @@ Item {
                     id: designFullyFledged
                     text: i18n("Fully-fledged")
                     exclusiveGroup: designChoice
+                    onCheckedChanged: {
+                        if (checked)
+                            designChooser.chosenDesignSheetPath = "searchbar_designs/FullyFledged.qml"
+                    }
                 }
 
             }

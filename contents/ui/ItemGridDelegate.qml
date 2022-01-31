@@ -42,8 +42,8 @@ Item {
                                            || (("hasActionList" in model) && (model.hasActionList == true)))
 
     Accessible.role: Accessible.MenuItem
-    Accessible.name: model.display
-    Accessible.description: model.description
+    Accessible.name: model.display != undefined ? model.display : ""
+    Accessible.description: model.description != undefined ? model.description : ""
 
     function openActionMenu(x, y) {
         var actionList = hasActionList ? model.actionList : [];
@@ -114,13 +114,13 @@ Item {
         elide: Text.ElideRight
         wrapMode: Text.WordWrap
 
-        text: model.display
+        text: model.display != undefined ? model.display : ""
     }
 
     PlasmaCore.ToolTipArea {
         id: delegateTooltip
-        mainText: model.display
-        subText: model.description
+        mainText: model.display != undefined ? model.display : ""
+        subText: model.description != undefined ? model.description : ""
         interactive: false
     }
 

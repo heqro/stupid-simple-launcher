@@ -249,6 +249,7 @@ Kicker.DashboardWindow {
                             id: artifactForProperlyDisplayingEverythingInANiceWay
                             Layout.fillWidth: true
                             Layout.fillHeight: true
+                            Layout.bottomMargin: plasmoid.configuration.showSessionControlBar ? units.iconSizes.medium : units.iconSizes.large
 
                             ColumnLayout {
 
@@ -345,6 +346,7 @@ Kicker.DashboardWindow {
 
                             Layout.fillHeight: true
                             Layout.fillWidth: true
+                            Layout.bottomMargin: plasmoid.configuration.showSessionControlBar ? units.iconSizes.medium : units.iconSizes.large
 
                             //Layout.preferredWidth: categoriesModel.count == 0 ? 0 : (customizeCategoriesSidebarSize ? Math.min(categoriesSidebarWidth, Math.floor(widthScreen / 8)) : Math.floor(widthScreen / 8))
                             Layout.maximumWidth: categoriesModel.count == 0 ? 0 : (customizeCategoriesSidebarSize ? Math.ceil(categoriesSidebarWidth + units.iconSizes.medium) : Math.floor(widthScreen / 8 + units.iconSizes.medium)) // adding up a little bit of "artificial" size to let the category button breathe with respect to the sidebar's scrollbar.
@@ -377,7 +379,7 @@ Kicker.DashboardWindow {
                         id: sessionControlBar
                         Layout.fillWidth: true
                         Layout.alignment: Qt.AlignCenter | Qt.AlignBottom
-                        Layout.topMargin: units.iconSizes.medium
+//                         Layout.topMargin: units.iconSizes.medium
                         Layout.bottomMargin: units.iconSizes.smallMedium
                     }
 

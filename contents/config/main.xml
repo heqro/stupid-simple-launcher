@@ -64,7 +64,7 @@
       <default>5</default>
     </entry>
     <entry name="iconSize" type="Int">
-      <default>64</default>
+      <default>132</default>
     </entry>
     <entry name="startOnFavorites" type="Bool">
         <default>false</default>

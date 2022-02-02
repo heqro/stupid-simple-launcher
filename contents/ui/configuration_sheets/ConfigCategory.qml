@@ -40,6 +40,7 @@ Item {
 
     property alias cfg_showFavoritesCategory: showFavoritesCategory.checked
     property alias cfg_showRecentFilesCategory: showRecentFilesCategory.checked
+    property alias cfg_showRecentAppsCategory: showRecentAppsCategory.checked
 
     ColumnLayout {
         RowLayout {
@@ -277,18 +278,29 @@ Item {
                     text: "Extra categories"
                 }
 
-                RowLayout {
+                ColumnLayout {
                     Layout.fillWidth: true
                     visible: showCategories.checked
+
                     CheckBox {
+                        Layout.fillWidth: true
                         Layout.leftMargin: units.smallSpacing
                         id: showFavoritesCategory
                         text: i18n("Show the 'Favorites' category")
                     }
+
                     CheckBox {
+                        Layout.fillWidth: true
                         Layout.leftMargin: units.smallSpacing
                         id: showRecentFilesCategory
                         text: i18n("Show the 'Recent Files' category")
+                    }
+
+                    CheckBox {
+                        Layout.fillWidth: true
+                        Layout.leftMargin: units.smallSpacing
+                        id: showRecentAppsCategory
+                        text: i18n("Show the 'Recent Applications' category")
                     }
                 }
 

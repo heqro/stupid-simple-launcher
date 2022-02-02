@@ -106,17 +106,18 @@ Rectangle { // rectangle used for marking the bounds for the category button
                 //}
             //}
 
-            if (indexInModel == -1) {
-                appsGrid.model = rootModel.modelForRow(rootModel.showRecentDocs).modelForRow(0) // showRecentFiles = true
-            } else if (indexInModel == -2) {
-                appsGrid.model = rootModel.modelForRow(0)
-            } else {
-                if (rootModel.showRecentDocs && indexInModel == 1) {
-                    appsGrid.model = rootModel.modelForRow(1).modelForRow(1)
-                } else if (!rootModel.showRecentDocs && indexInModel == 0) {
-                    appsGrid.model = rootModel.modelForRow(0).modelForRow(1)
+            if (indexInModel == -1) { // Favorites are hard-tagged as index -1
+                appsGrid.model = rootModel.modelForRow(rootModel.showRecentApps + rootModel.showRecentDocs).modelForRow(0) // showRecentFiles = true
+            } else if (indexInModel == -2) { // Recent Documents are hard-tagged as index -2
+                //appsGrid.model = rootModel.modelForRow(0)
+                appsGrid.model = rootModel.modelForRow(rootModel.showRecentApps)
+            } else if (indexInModel == -3) { // Recent Applications are hard-tagged as index -3
+                appsGrid.model = rootModel.modelForRow(!rootModel.showRecentApps)
+            } else { // Pressed button is either "All Applications" or something else.
+                if (indexInModel == rootModel.showRecentApps + rootModel.showRecentDocs) {
+                    appsGrid.model = rootModel.modelForRow(rootModel.showRecentApps + rootModel.showRecentDocs).modelForRow(1)
                 } else {
-                    appsGrid.model = rootModel.modelForRow(indexInModel).modelForRow(0) // showRecentFiles = true
+                    appsGrid.model = rootModel.modelForRow(indexInModel).modelForRow(0)
                 }
             }
 

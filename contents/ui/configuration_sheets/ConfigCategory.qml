@@ -38,6 +38,9 @@ Item {
     property alias cfg_categoriesButtonHeight: myCategoryTemplateList.buttonHeight
     property alias cfg_categoriesButtonWidth: myCategoryTemplateList.buttonWidth
 
+    property alias cfg_showFavoritesCategory: showFavoritesCategory.checked
+    property alias cfg_showRecentFilesCategory: showRecentFilesCategory.checked
+
     ColumnLayout {
         RowLayout {
             Layout.fillWidth: true
@@ -267,6 +270,25 @@ Item {
                         Layout.leftMargin: units.smallSpacing
                         id: showCategoriesTooltip
                         text: i18n("Show categories' names in a tooltip when the text is elided or when using icons-only menu")
+                    }
+                }
+
+                PlasmaExtras.Heading {
+                    text: "Extra categories"
+                }
+
+                RowLayout {
+                    Layout.fillWidth: true
+                    visible: showCategories.checked
+                    CheckBox {
+                        Layout.leftMargin: units.smallSpacing
+                        id: showFavoritesCategory
+                        text: i18n("Show the 'Favorites' category")
+                    }
+                    CheckBox {
+                        Layout.leftMargin: units.smallSpacing
+                        id: showRecentFilesCategory
+                        text: i18n("Show the 'Recent Files' category")
                     }
                 }
 

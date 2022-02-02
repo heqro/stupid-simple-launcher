@@ -94,16 +94,33 @@ Rectangle { // rectangle used for marking the bounds for the category button
             if (searching) {
                 return
             }
-            if (indexInModel > 0) { // show the category determined by indexInModel
-                appsGrid.model = rootModel.modelForRow(indexInModel).modelForRow(0)
-            } else { // show All Applications
-                if (indexInModel == 0) {
+            //if (indexInModel > 0) { // show the category determined by indexInModel
+                //appsGrid.model = rootModel.modelForRow(indexInModel).modelForRow(0) // showRecentApps = false
+                //appsGrid.model = rootModel.modelForRow(indexInModel).modelForRow(0) // showRecentApps = true
+            //} else { // show All Applications
+                //if (indexInModel == 0) {
+                    //appsGrid.model = rootModel.modelForRow(indexInModel).modelForRow(1) // showRecentFiles = true
+                //}
+                //else { // show Favorites
+                    //appsGrid.model = rootModel.modelForRow(1).modelForRow(0) // showRecentFiles = true
+                //}
+            //}
+
+            if (indexInModel == -1) {
+                appsGrid.model = rootModel.modelForRow(rootModel.showRecentDocs).modelForRow(0) // showRecentFiles = true
+            } else if (indexInModel == -2) {
+                appsGrid.model = rootModel.modelForRow(0)
+            } else {
+                if (rootModel.showRecentDocs && indexInModel == 1) {
+                    appsGrid.model = rootModel.modelForRow(1).modelForRow(1)
+                } else if (!rootModel.showRecentDocs && indexInModel == 0) {
                     appsGrid.model = rootModel.modelForRow(0).modelForRow(1)
-                }
-                else { // show Favorites
-                    appsGrid.model = rootModel.modelForRow(0).modelForRow(0)
+                } else {
+                    appsGrid.model = rootModel.modelForRow(indexInModel).modelForRow(0) // showRecentFiles = true
                 }
             }
+
+
             categoriesList.currentIndex = index
             //                                     containerForCategory.opacity = 1
         }

@@ -75,6 +75,12 @@
     <entry name="hideCategories" type="Bool">
         <default>false</default>
     </entry>
+    <entry name="showFavoritesCategory" type="Bool">
+        <default>true</default>
+    </entry>
+    <entry name="showRecentFilesCategory" type="Bool">
+        <default>true</default>
+    </entry>
     <entry name="showCategoriesTooltip" type="Bool">
         <default>false</default>
     </entry>

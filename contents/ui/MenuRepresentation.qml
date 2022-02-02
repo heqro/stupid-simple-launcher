@@ -113,14 +113,24 @@ Kicker.DashboardWindow {
     }
 
     function updateCategories() { // this function is dedicated to constructing the applications categories list and preemptively updating it, should changes have been applied
-        var categoryStartIndex = 0
+        var categoryStartIndex = rootModel.showRecentDocs ? 1 : 0
         var categoryEndIndex = rootModel.count
         categoriesModel.clear() // given that we feed the model by appending items to it, it's only logical that we have to clear it every time we open the menu (just in case new applications have been installed)
         for (var i = categoryStartIndex; i < categoryEndIndex; i++) { // loop courtesy of Windows 10 inspired menu plasmoid
 
-            if (i == 1 ) { // we are currently adding the category right after "All applications"
+            if (i == 2 && rootModel.showRecentDocs || i == 1 && !rootModel.showRecentDocs) { // we are currently adding the category right after "All applications"
                 // this is a great time to add Favorites support
-                categoriesModel.append({"categoryText": i18n("Favorites"), "categoryIcon": "favorite", "categoryIndex": -1}) // we manually set -1 as category index to distinguish the Favorites category from the rest -- this for loop won't register Favorites as a category.
+                if (plasmoid.configuration.showFavoritesCategory)
+                    categoriesModel.append({"categoryText": i18n("Favorites"), "categoryIcon": "favorite", "categoryIndex": -1}) // we manually set -1 as category index to distinguish the Favorites category from the rest -- this for loop won't register Favorites as a category.
+
+                if (rootModel.showRecentDocs) {
+                    var modelIndex = rootModel.index(0, 0)
+                    var categoryLabel = rootModel.data(modelIndex, Qt.DisplayRole)
+                    var categoryIcon = rootModel.data(modelIndex, Qt.DecorationRole)
+                    var aux = categoryIcon.toString().split('"')
+                    var index = -2
+                    categoriesModel.append({"categoryText": categoryLabel, "categoryIcon": aux[1],"categoryIndex": index})
+                }
             }
 
             var modelIndex = rootModel.index(i, 0) // I don't know how this line works but it does
@@ -129,16 +139,20 @@ Kicker.DashboardWindow {
 
             var aux = categoryIcon.toString().split('"') // the day the way this prints out changes I will have a huge problem
 
-            //console.log("CAT:",categoryIcon)
+            //console.log("Category label:", categoryLabel)
+
 
             var index = i // we will use this index to swap categories inside the model that feeds our applications grid
             categoriesModel.append({"categoryText": categoryLabel, "categoryIcon": aux[1],"categoryIndex": index})
         }
+
     }
 
     function reset() { // return everything to the last known state
         if (!searching) {
-            appsGrid.model = rootModel.modelForRow(0).modelForRow(1) // show all applications
+            appsGrid.model = rootModel.modelForRow(rootModel.showRecentDocs).modelForRow(1)
+            //appsGrid.model = rootModel.modelForRow(0).modelForRow(1) // show all applications with showRecentFiles = false
+
         }
 
         if(showCategories) {
@@ -229,13 +243,14 @@ Kicker.DashboardWindow {
                                 anchors.fill: parent
 
                                 ItemGridView { // this is the grid in which we will store the favorites list
+
                                     id: myFavorites
                                     model: globalFavorites
                                     visible: showFavoritesInGrid && !searching  // TODO this should be tied to whatever SearchBar is doing!!.
                                     Layout.fillWidth: true
                                     Layout.fillHeight: true
                                     Layout.maximumHeight: cellSize
-                                    Layout.maximumWidth: rootWidth - categoriesItem.width
+//                                     Layout.maximumWidth: rootWidth - categoriesItem.width
 //                                     height: (showFavoritesInGrid && !searching) ? cellSize : 0
                                     //width: columns * cellSize
                                     cellWidth:  cellSize
@@ -274,17 +289,6 @@ Kicker.DashboardWindow {
                                     visible: model.count > 0
                                     Layout.fillHeight: true
                                     Layout.fillWidth: true
-//                                     Layout.maximumWidth: columns * cellSize
-                                    Layout.maximumWidth: rootWidth - categoriesItem.width
-                                    //Layout.alignment: Qt.AlignCenter
-
-                                    //Rectangle { // debugging purposes.
-                                        //z: -1
-                                        //color: "red"
-                                        //anchors.fill: parent
-                                    //}
-
-                                    //                                 Layout.preferredWidth: columns * cellSize
 
 
                                     cellWidth:  cellSize
@@ -375,7 +379,6 @@ Kicker.DashboardWindow {
     Component.onCompleted: {
         rootModel.pageSize = -1 // this will, somehow, make it show everything -- again, don't ask me!
         kicker.reset.connect(reset);
-        //console.log("Número de columnas", columns)
     }
 }
 

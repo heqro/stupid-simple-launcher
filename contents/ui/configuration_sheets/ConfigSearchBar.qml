@@ -32,7 +32,7 @@ Item {
                     Layout.fillWidth: true
                     id: designNull
                     text: i18n("No design")
-                    checked: true
+                    checked: plasmoid.configuration.searchBarDesign == ""
                     exclusiveGroup: designChoice
 
                     onCheckedChanged: {
@@ -46,6 +46,7 @@ Item {
                     id: designUnderline
                     text: i18n("Underlining")
                     exclusiveGroup: designChoice
+                    checked: plasmoid.configuration.searchBarDesign == "searchbar_designs/Underlining.qml"
 
                     onCheckedChanged: {
                         if (checked)
@@ -58,6 +59,7 @@ Item {
                     id: designFullyFledged
                     text: i18n("Fully-fledged")
                     exclusiveGroup: designChoice
+                    checked: plasmoid.configuration.searchBarDesign == "searchbar_designs/FullyFledged.qml"
                     onCheckedChanged: {
                         if (checked)
                             designChooser.chosenDesignSheetPath = "searchbar_designs/FullyFledged.qml"

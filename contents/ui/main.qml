@@ -72,8 +72,9 @@ Item {
 
         paginate: true
         showAllApps: true
+//         showRecentApps: false
         showRecentApps: false
-        showRecentDocs: false
+        showRecentDocs: plasmoid.configuration.showRecentFilesCategory
         showRecentContacts: false
         showPowerSession: false
 

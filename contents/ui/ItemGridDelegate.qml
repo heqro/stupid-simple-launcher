@@ -83,11 +83,14 @@ Item {
 
     PlasmaCore.IconItem {
         id: icon
-        y: iconSize*0.02
-        anchors.horizontalCenter: box.horizontalCenter
+//         y: iconSize*0.02
+        //anchors.horizontalCenter: box.horizontalCenter
+        anchors.top: box.top
+        anchors.left: box.left
+        anchors.right: box.right
         //anchors.verticalCenter:   box.verticalCenter
-        width: iconSize
-        height: width
+        //width: iconSize
+        height: iconSize
         animated: false
         usesPlasmaTheme: item.GridView.view.usesPlasmaTheme
         source: model.decoration

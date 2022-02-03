@@ -35,6 +35,8 @@ FocusScope {
     signal keyNavUp
     signal keyNavDown
 
+    //signal menuUpdated
+
     property bool dragEnabled: false
     property bool showLabels: true
     property alias usesPlasmaTheme: gridView.usesPlasmaTheme
@@ -113,7 +115,14 @@ FocusScope {
         id: actionMenu
 
         onActionClicked: {
-            visualParent.actionTriggered(actionId, actionArgument);
+            visualParent.actionTriggered(actionId, actionArgument)
+
+            console.log(actionId)
+
+            if (actionId == "hideApplication") {
+                rootModel.refresh()
+//                 itemGrid.menuUpdated
+            }
         }
     }
 

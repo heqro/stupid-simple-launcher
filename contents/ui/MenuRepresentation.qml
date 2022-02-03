@@ -335,6 +335,10 @@ Kicker.DashboardWindow {
                                         currentIndex = 0
                                         //appsGrid.itemGrid.tryActivate(0, 0);
                                     }
+
+                                    //onMenuUpdated: {
+                                        //console.log("Aquí debería haber un mensajito de an application has been hidden o una animación para construir el modelo")
+                                    //}
                                 }
 
                             }

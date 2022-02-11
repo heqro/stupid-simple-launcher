@@ -261,5 +261,7 @@ Item {
                 text: i18n("Start the menu on the \"Favorites\" category")
             }
         }
+
     }
+
 }

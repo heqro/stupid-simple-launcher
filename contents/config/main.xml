@@ -105,6 +105,18 @@
     <entry name="showSessionControlTooltips" type="Bool">
         <default>true</default>
     </entry>
+    <entry name="hiddenApplicationsName" type="StringList">
+        <default></default>
+    </entry>
+    <entry name="hiddenApplicationsDescription" type="StringList">
+        <default></default>
+    </entry>
+    <entry name="hiddenApplicationsUrl" type="StringList">
+        <default></default>
+    </entry>
+    <entry name="hiddenApplicationsIcon" type="StringList">
+        <default></default>
+    </entry>
     <entry name="spaceWidth" type="Int">
       <default>32</default>
     </entry>

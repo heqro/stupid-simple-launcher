@@ -35,6 +35,16 @@ Item {
 
     function actionTriggered(actionId, actionArgument) {
         Tools.triggerAction(plasmoid, GridView.view.model, model.index, actionId, actionArgument);
+        // We send the information about the name of the app that triggered the action, its description as well as the url for finding it (for restoring)
+        var data = []
+        data["name"] = model.display != undefined ? model.display : ""
+        data["description"] = model.description != undefined ? model.description : ""
+        data["url"] = model.url != undefined ? model.url : ""
+        // horrible line sry
+        var iconString = model.decoration.toString().split('"')
+
+        data["icon"] = iconString[1]
+        return data
     }
 
     function showDelegateToolTip(show, now) {
@@ -105,6 +115,7 @@ Item {
         id: delegateTooltip
         mainText: model.display != undefined ? model.display : ""
         subText: model.description != undefined ? model.description : ""
+        //subText: model.url != undefined ? model.url : "" // debugging option for future stuff.
         interactive: false
     }
 

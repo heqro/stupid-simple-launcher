@@ -115,12 +115,30 @@ FocusScope {
         id: actionMenu
 
         onActionClicked: {
-            visualParent.actionTriggered(actionId, actionArgument)
+            var whoActed = visualParent.actionTriggered(actionId, actionArgument)
 
-            console.log(actionId)
+//             console.log(actionId)
+//
+//             console.log(whoActed["name"], whoActed["description"], whoActed["url"], whoActed["icon"])
 
             if (actionId == "hideApplication") {
-                rootModel.refresh()
+
+                var addName = plasmoid.configuration.hiddenApplicationsName
+                addName.push(whoActed["name"])
+                plasmoid.configuration.hiddenApplicationsName = addName
+
+                var addDesc = plasmoid.configuration.hiddenApplicationsDescription
+                addDesc.push(whoActed["description"])
+                plasmoid.configuration.hiddenApplicationsDescription = addDesc
+
+                var addUrl = plasmoid.configuration.hiddenApplicationsUrl
+                addUrl.push(whoActed["url"])
+                plasmoid.configuration.hiddenApplicationsUrl = addUrl
+
+                var addIcon = plasmoid.configuration.hiddenApplicationsIcon
+                addIcon.push(whoActed["icon"])
+                plasmoid.configuration.hiddenApplicationsIcon = addIcon
+
 //                 itemGrid.menuUpdated
             }
         }

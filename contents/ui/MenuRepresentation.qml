@@ -85,9 +85,12 @@ Kicker.DashboardWindow {
 
     // boolean value to know whether or not the user wants the menu to drop the user right into the favorites section instead of the "All applications" section on startup.
     property bool startOnFavorites: plasmoid.configuration.startOnFavorites
+    property int favoritesCategoryIndex
 
     property bool customizeCategoriesSidebarSize: plasmoid.configuration.customizeCategoriesButtonSize
     property int categoriesSidebarWidth: plasmoid.configuration.categoriesButtonWidth
+
+    property var hiddenApps: plasmoid.configuration.hiddenApplicationsName
 
     // cool function to tweak transparency I took from the original launchpad
     function colorWithAlpha(color, alpha) {
@@ -100,6 +103,11 @@ Kicker.DashboardWindow {
         } else {
             root.toggle()
         }
+    }
+
+    onHiddenAppsChanged: {
+        rootModel.refresh()
+//         console.log("Condition on update hidden apps:",plasmoid.configuration.hiddenApplications.length, plasmoid.configuration.hiddenApplicationsName.length, hiddenApps.length)
     }
 
     onSearchingChanged: {
@@ -125,8 +133,10 @@ Kicker.DashboardWindow {
 
             if (i == categoryStartIndex + 1) { // this goes right after "All applications"
 
-                if (plasmoid.configuration.showFavoritesCategory)
+                if (plasmoid.configuration.showFavoritesCategory) {
+                    favoritesCategoryIndex = categoriesModel.count
                     categoriesModel.append({"categoryText": i18n("Favorites"), "categoryIcon": "favorite", "categoryIndex": -1})
+                }
 
                 if (rootModel.showRecentDocs) {
                     var modelIndex = rootModel.index(rootModel.showRecentApps, 0)
@@ -165,7 +175,6 @@ Kicker.DashboardWindow {
     function reset() { // return everything to the last known state
         if (!searching) {
             appsGrid.model = rootModel.modelForRow(rootModel.showRecentApps + rootModel.showRecentDocs).modelForRow(1)
-
         }
 
         if(showCategories) {
@@ -178,15 +187,17 @@ Kicker.DashboardWindow {
         searchField.text = "" // force placeholder text to be shown
 
         if (startOnFavorites) {
-            //pageList.currentItem.itemGrid.model = rootModel.modelForRow(0).modelForRow(0) // show favorites
+            appsGrid.model = rootModel.modelForRow(rootModel.showRecentApps + rootModel.showRecentDocs).modelForRow(0)
             if (showCategories) {
-                categoriesList.currentIndex = 1 // highlight "Favorites" category
+                if (plasmoid.configuration.showFavoritesCategory)
+                    categoriesList.currentIndex = favoritesCategoryIndex // highlight "Favorites" category
+                else
+                    categoriesList.currentIndex = -1
             }
 
         } else {
-            //pageList.currentItem.itemGrid.model = rootModel.modelForRow(0).modelForRow(1) // show all applications
             if (showCategories) {
-                categoriesList.currentIndex = 0 // highlight "All applications" category
+                categoriesList.currentIndex = 0 // highlight first category on the list (always will be "All applications")
             }
         }
 

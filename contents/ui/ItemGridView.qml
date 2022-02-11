@@ -25,7 +25,7 @@ import org.kde.kquickcontrolsaddons 2.0
 import org.kde.draganddrop 2.0
 
 // vanilla scrollview
-import QtQuick.Controls 2.15
+import QtQuick.Controls 2.2
 
 FocusScope {
     id: itemGrid

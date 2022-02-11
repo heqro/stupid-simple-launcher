@@ -35,14 +35,20 @@ import org.kde.plasma.private.kicker 0.1 as Kicker
 import org.kde.kirigami 2.5 as Kirigami
 
 Item {
-    id: configGeneral
 
+    id: configGeneral
 
     property var cfg_hiddenApplications:            plasmoid.configuration.hiddenApplications
     property var cfg_hiddenApplicationsName:        plasmoid.configuration.hiddenApplicationsName
     property var cfg_hiddenApplicationsDescription: plasmoid.configuration.hiddenApplicationsDescription
     property var cfg_hiddenApplicationsUrl:         plasmoid.configuration.hiddenApplicationsUrl
     property var cfg_hiddenApplicationsIcon:        plasmoid.configuration.hiddenApplicationsIcon
+
+//     property bool cfg_applicationsUnhidden:         plasmoid.configuration.applicationsUnhidden
+
+    //onCfg_hiddenApplicationsNameChanged: {
+        //hiddenAppsView.loadHiddenApps() // extremely edge case - having this page open and at the same time hiding an application.
+    //}
 
     ColumnLayout {
 
@@ -63,7 +69,7 @@ Item {
             Kirigami.InlineMessage { // This will only show for versions of this menu prior to this implementation.
                 id: moduleUnavailableMessage
                 type: Kirigami.MessageType.Error
-                visible: plasmoid.configuration.hiddenApplications.length != plasmoid.configuration.hiddenApplicationsName.length
+                visible: cfg_hiddenApplications.length != cfg_hiddenApplicationsName.length
                 Layout.fillWidth: true
                 text: i18n("Module not available. Please delete the hidden applications list to manage the apps you hide from now on.")
                 actions: [
@@ -187,8 +193,6 @@ Item {
 
                                 var newHiddenApps = cfg_hiddenApplications
                                 newHiddenApps.splice(indexInAppsArray, 1)
-    //                             console.log("hiddenApplications actual: ", newHiddenApps)
-                                cfg_hiddenApplications = newHiddenApps
 
                                 var newHiddenAppsName = cfg_hiddenApplicationsName
                                 newHiddenAppsName.splice(indexInAppsArray, 1)
@@ -207,10 +211,14 @@ Item {
 //                                 plasmoid.configuration.hiddenApplicationsUrl            = newHiddenAppsUrl
 //                                 plasmoid.configuration.hiddenApplicationsIcon           = newHiddenAppsIcon
 
+                                cfg_hiddenApplications              = newHiddenApps
                                 cfg_hiddenApplicationsName          = newHiddenAppsName
                                 cfg_hiddenApplicationsDescription   = newHiddenAppsDescription
                                 cfg_hiddenApplicationsUrl           = newHiddenAppsUrl
                                 cfg_hiddenApplicationsIcon          = newHiddenAppsIcon
+
+
+                                showPassiveNotification("Open this configuration module again to see the changes immediately reflected on the menu")
 
                                 hiddenAppsView.loadHiddenApps()
 
@@ -296,6 +304,9 @@ Item {
                 cfg_hiddenApplicationsDescription   = []
                 cfg_hiddenApplicationsUrl           = []
                 cfg_hiddenApplicationsIcon          = []
+
+
+
                 hiddenApplicationsModel.clear()
 
                 //                 console.log("Extensión: ",plasmoid.configuration.hiddenApplications.length)

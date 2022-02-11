@@ -36,7 +36,7 @@ import QtQuick.Controls.Styles 1.4
 
 
 // for vanilla scrollview
-import QtQuick.Controls 2.15
+import QtQuick.Controls 2.2
 
 Kicker.DashboardWindow {
     
@@ -107,7 +107,6 @@ Kicker.DashboardWindow {
 
     onHiddenAppsChanged: {
         rootModel.refresh()
-//         console.log("Condition on update hidden apps:",plasmoid.configuration.hiddenApplications.length, plasmoid.configuration.hiddenApplicationsName.length, hiddenApps.length)
     }
 
     onSearchingChanged: {
@@ -173,6 +172,7 @@ Kicker.DashboardWindow {
     }
 
     function reset() { // return everything to the last known state
+
         if (!searching) {
             appsGrid.model = rootModel.modelForRow(rootModel.showRecentApps + rootModel.showRecentDocs).modelForRow(1)
         }

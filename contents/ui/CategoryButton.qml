@@ -65,7 +65,7 @@ Rectangle { // rectangle used for marking the bounds for the category button
             text: categoryName
 
             // Using font sizes that are consistent with plasma
-            font.pointSize: customizeCategoriesFontSize ? categoriesFontSize : PlasmaCore.Theme.defaultFont.pointSize * 1.2
+            font.pointSize: customizeCategoriesFontSize ? categoriesFontSize : theme.defaultFont.pointSize * 1.2
             //font.pointSize: customizeCategoriesFontSize ? categoriesFontSize : Math.min(containerForCategory.height, PlasmaCore.Theme.defaultFont.pointSize * 1.2)
             minimumPointSize: containerForCategory.height
 

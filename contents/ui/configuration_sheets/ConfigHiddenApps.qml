@@ -50,6 +50,7 @@ Item {
         //hiddenAppsView.loadHiddenApps() // extremely edge case - having this page open and at the same time hiding an application.
     //}
 
+
     ColumnLayout {
 
         anchors.fill: parent
@@ -111,6 +112,13 @@ Item {
                         }
                     }
                 ]
+            }
+
+
+            property int hiddenAppsLength: plasmoid.configuration.hiddenApplicationsIcon.length // the last modified array is the icons array. Making usage of JavaScript code being executed line by line, by waiting for the last element to be modified we ensure the rest of them will be available.
+
+            onHiddenAppsLengthChanged: {
+                hiddenAppsView.loadHiddenApps()
             }
 
             ListView {
@@ -268,7 +276,7 @@ Item {
                 }
 
                 function loadHiddenApps() {
-                    //if (moduleUnavailableMessage.visible) return;
+                    if (moduleUnavailableMessage.visible) return;
                     hiddenApplicationsModel.clear()
 
                     for (var i = 0; i < plasmoid.configuration.hiddenApplicationsName.length; i++) {

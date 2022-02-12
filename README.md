@@ -18,5 +18,6 @@ to add it to your system.
 
 # Gallery
 
+![alt text](./previews/DarkAllCategoriesRight.png)
+![alt text](./previews/LightAllCategoriesRight.png)
 ![alt text](./previews/NoCategoriesSidebar.png)
-![alt text](./previews/CategoriesIconsOnlyDarkNew.png)

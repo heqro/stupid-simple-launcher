@@ -38,11 +38,11 @@ Item {
 
     id: configGeneral
 
-    property var cfg_hiddenApplications:            plasmoid.configuration.hiddenApplications
-    property var cfg_hiddenApplicationsName:        plasmoid.configuration.hiddenApplicationsName
-    property var cfg_hiddenApplicationsDescription: plasmoid.configuration.hiddenApplicationsDescription
-    property var cfg_hiddenApplicationsUrl:         plasmoid.configuration.hiddenApplicationsUrl
-    property var cfg_hiddenApplicationsIcon:        plasmoid.configuration.hiddenApplicationsIcon
+    //property var cfg_hiddenApplications:            plasmoid.configuration.hiddenApplications
+    //property var cfg_hiddenApplicationsName:        plasmoid.configuration.hiddenApplicationsName
+    //property var cfg_hiddenApplicationsDescription: plasmoid.configuration.hiddenApplicationsDescription
+    //property var cfg_hiddenApplicationsUrl:         plasmoid.configuration.hiddenApplicationsUrl
+    //property var cfg_hiddenApplicationsIcon:        plasmoid.configuration.hiddenApplicationsIcon
 
 //     property bool cfg_applicationsUnhidden:         plasmoid.configuration.applicationsUnhidden
 
@@ -61,7 +61,7 @@ Item {
 
             Kirigami.InlineMessage {
                 type: Kirigami.MessageType.Positive
-                visible: !moduleUnavailableMessage.visible && cfg_hiddenApplications.length == 0
+                visible: !moduleUnavailableMessage.visible && plasmoid.configuration.hiddenApplications.length == 0
                 Layout.fillWidth: true
                 text: i18n("Hide some applications at the dashboard to manage them from this module.")
             }
@@ -69,7 +69,7 @@ Item {
             Kirigami.InlineMessage { // This will only show for versions of this menu prior to this implementation.
                 id: moduleUnavailableMessage
                 type: Kirigami.MessageType.Error
-                visible: cfg_hiddenApplications.length != cfg_hiddenApplicationsName.length
+                visible: plasmoid.configuration.hiddenApplications.length != plasmoid.configuration.hiddenApplicationsName.length
                 Layout.fillWidth: true
                 text: i18n("Module not available. Please delete the hidden applications list to manage the apps you hide from now on.")
                 actions: [
@@ -95,11 +95,18 @@ Item {
 //                             cfg_hiddenApplicationsDescription   = emptyDesc
 //                             cfg_hiddenApplicationsUrl           = emptyUrl
 //                             cfg_hiddenApplicationsIcon          = emptyIcon
-                            cfg_hiddenApplications              = []
-                            cfg_hiddenApplicationsName          = []
-                            cfg_hiddenApplicationsDescription   = []
-                            cfg_hiddenApplicationsUrl           = []
-                            cfg_hiddenApplicationsIcon          = []
+//                             cfg_hiddenApplications              = []
+//                             cfg_hiddenApplicationsName          = []
+//                             cfg_hiddenApplicationsDescription   = []
+//                             cfg_hiddenApplicationsUrl           = []
+//                             cfg_hiddenApplicationsIcon          = []
+
+                            plasmoid.configuration.hiddenApplications              = []
+                            plasmoid.configuration.hiddenApplicationsName          = []
+                            plasmoid.configuration.hiddenApplicationsDescription   = []
+                            plasmoid.configuration.hiddenApplicationsUrl           = []
+                            plasmoid.configuration.hiddenApplicationsIcon          = []
+
                             hiddenAppsView.loadHiddenApps()
                         }
                     }
@@ -191,34 +198,39 @@ Item {
 
                                 var indexInAppsArray = plasmoid.configuration.hiddenApplications.length - indexInList - 1
 
-                                var newHiddenApps = cfg_hiddenApplications
-                                newHiddenApps.splice(indexInAppsArray, 1)
+//                                 var newHiddenApps               = cfg_hiddenApplications
+//                                 var newHiddenAppsName           = cfg_hiddenApplicationsName
+//                                 var newHiddenAppsDescription    = cfg_hiddenApplicationsDescription
+//                                 var newHiddenAppsUrl            = cfg_hiddenApplicationsUrl
+//                                 var newHiddenAppsIcon           = cfg_hiddenApplicationsIcon
 
-                                var newHiddenAppsName = cfg_hiddenApplicationsName
-                                newHiddenAppsName.splice(indexInAppsArray, 1)
 
-                                var newHiddenAppsDescription    = cfg_hiddenApplicationsDescription
+                                var newHiddenApps               = plasmoid.configuration.hiddenApplications
+                                var newHiddenAppsName           = plasmoid.configuration.hiddenApplicationsName
+                                var newHiddenAppsDescription    = plasmoid.configuration.hiddenApplicationsDescription
+                                var newHiddenAppsUrl            = plasmoid.configuration.hiddenApplicationsUrl
+                                var newHiddenAppsIcon           = plasmoid.configuration.hiddenApplicationsIcon
+
+                                newHiddenApps           .splice(indexInAppsArray, 1)
+                                newHiddenAppsName       .splice(indexInAppsArray, 1)
                                 newHiddenAppsDescription.splice(indexInAppsArray, 1)
+                                newHiddenAppsUrl        .splice(indexInAppsArray, 1)
+                                newHiddenAppsIcon       .splice(indexInAppsArray, 1)
 
-                                var newHiddenAppsUrl            = cfg_hiddenApplicationsUrl
-                                newHiddenAppsUrl.splice(indexInAppsArray, 1)
+                                plasmoid.configuration.hiddenApplications               = newHiddenApps
+                                plasmoid.configuration.hiddenApplicationsName           = newHiddenAppsName
+                                plasmoid.configuration.hiddenApplicationsDescription    = newHiddenAppsDescription
+                                plasmoid.configuration.hiddenApplicationsUrl            = newHiddenAppsUrl
+                                plasmoid.configuration.hiddenApplicationsIcon           = newHiddenAppsIcon
 
-                                var newHiddenAppsIcon           = cfg_hiddenApplicationsIcon
-                                newHiddenAppsIcon.splice(indexInAppsArray, 1)
-
-//                                 plasmoid.configuration.hiddenApplicationsName           = newHiddenAppsName
-//                                 plasmoid.configuration.hiddenApplicationsDescription    = newHiddenAppsDescription
-//                                 plasmoid.configuration.hiddenApplicationsUrl            = newHiddenAppsUrl
-//                                 plasmoid.configuration.hiddenApplicationsIcon           = newHiddenAppsIcon
-
-                                cfg_hiddenApplications              = newHiddenApps
-                                cfg_hiddenApplicationsName          = newHiddenAppsName
-                                cfg_hiddenApplicationsDescription   = newHiddenAppsDescription
-                                cfg_hiddenApplicationsUrl           = newHiddenAppsUrl
-                                cfg_hiddenApplicationsIcon          = newHiddenAppsIcon
+//                                 cfg_hiddenApplications              = newHiddenApps
+//                                 cfg_hiddenApplicationsName          = newHiddenAppsName
+//                                 cfg_hiddenApplicationsDescription   = newHiddenAppsDescription
+//                                 cfg_hiddenApplicationsUrl           = newHiddenAppsUrl
+//                                 cfg_hiddenApplicationsIcon          = newHiddenAppsIcon
 
 
-                                showPassiveNotification("Open this configuration module again to see the changes immediately reflected on the menu")
+//                                 showPassiveNotification("Open this configuration module again to see the changes immediately reflected on the menu")
 
                                 hiddenAppsView.loadHiddenApps()
 
@@ -258,16 +270,26 @@ Item {
                 function loadHiddenApps() {
                     //if (moduleUnavailableMessage.visible) return;
                     hiddenApplicationsModel.clear()
-                    for (var i = 0; i < cfg_hiddenApplicationsName.length; i++) {
-                        //                     console.log("Iteración", i)
-                        var name = cfg_hiddenApplicationsName[i]
-                        var description = cfg_hiddenApplicationsDescription[i]
-                        var icon = cfg_hiddenApplicationsIcon[i] == "undefined" ? "unknown" : cfg_hiddenApplicationsIcon[i]
-                        var index = cfg_hiddenApplicationsName.length - i - 1
 
-                        hiddenApplicationsModel.insert(0, {"hiddenAppsName": name, "hiddenAppsDescription": description, "hiddenAppsIcon": icon, "hiddenAppsIndex": index}) // insert items on the list based on recency - latest hidden is shown first.
+                    for (var i = 0; i < plasmoid.configuration.hiddenApplicationsName.length; i++) {
 
+                        var name        = plasmoid.configuration.hiddenApplicationsName[i]
+                        var description = plasmoid.configuration.hiddenApplicationsDescription[i]
+                        var icon        = plasmoid.configuration.hiddenApplicationsIcon[i] == "undefined" ? "unknown" : plasmoid.configuration.hiddenApplicationsIcon[i]
+                        var index       = plasmoid.configuration.hiddenApplicationsName.length - i - 1
+
+                        hiddenApplicationsModel.insert(0, {"hiddenAppsName": name, "hiddenAppsDescription": description, "hiddenAppsIcon": icon, "hiddenAppsIndex": index})
                     }
+
+//                     for (var i = 0; i < cfg_hiddenApplicationsName.length; i++) {
+//                         var name = cfg_hiddenApplicationsName[i]
+//                         var description = cfg_hiddenApplicationsDescription[i]
+//                         var icon = cfg_hiddenApplicationsIcon[i] == "undefined" ? "unknown" : cfg_hiddenApplicationsIcon[i]
+//                         var index = cfg_hiddenApplicationsName.length - i - 1
+//
+//                         hiddenApplicationsModel.insert(0, {"hiddenAppsName": name, "hiddenAppsDescription": description, "hiddenAppsIcon": icon, "hiddenAppsIndex": index}) // insert items on the list based on recency - latest hidden is shown first.
+//
+//                     }
 
     //                 console.log("PLASMOID HIDDEN APPS", plasmoid.configuration.hiddenApplications)
     //                 console.log("PLASMOID HIDDEN ICONS", plasmoid.configuration.hiddenApplicationsIcon)
@@ -282,7 +304,7 @@ Item {
             //Layout.fillWidth: true
             Layout.alignment: Qt.AlignHCenter
             //             Layout.fillHeight: true
-            visible: cfg_hiddenApplications.length != 0
+            visible: plasmoid.configuration.hiddenApplications.length != 0
             text: i18n("Clear hidden apps list")
             iconSource: "edit-clear-history"
 
@@ -299,13 +321,19 @@ Item {
 //                 plasmoid.configuration.hiddenApplicationsDescription = emptyDesc
 //                 plasmoid.configuration.hiddenApplicationsUrl = emptyUrl
 //                 plasmoid.configuration.hiddenApplicationsIcon = emptyIcon
-                cfg_hiddenApplications              = []
-                cfg_hiddenApplicationsName          = []
-                cfg_hiddenApplicationsDescription   = []
-                cfg_hiddenApplicationsUrl           = []
-                cfg_hiddenApplicationsIcon          = []
+//                 cfg_hiddenApplications              = []
+//                 cfg_hiddenApplicationsName          = []
+//                 cfg_hiddenApplicationsDescription   = []
+//                 cfg_hiddenApplicationsUrl           = []
+//                 cfg_hiddenApplicationsIcon          = []
 
 
+
+                plasmoid.configuration.hiddenApplications           = []
+                plasmoid.configuration.hiddenApplicationsName       = []
+                plasmoid.configuration.hiddenApplicationsDescription= []
+                plasmoid.configuration.hiddenApplicationsUrl        = []
+                plasmoid.configuration.hiddenApplicationsIcon       = []
 
                 hiddenApplicationsModel.clear()
 

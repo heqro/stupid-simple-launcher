@@ -34,7 +34,7 @@ Item {
     }
 
     function actionTriggered(actionId, actionArgument) {
-        Tools.triggerAction(plasmoid, GridView.view.model, model.index, actionId, actionArgument);
+
         // We send the information about the name of the app that triggered the action, its description as well as the url for finding it (for restoring)
         var data = []
         data["name"] = model.display != undefined ? model.display : ""
@@ -44,6 +44,9 @@ Item {
         var iconString = model.decoration.toString().split('"')
 
         data["icon"] = iconString[1]
+
+        Tools.triggerAction(plasmoid, GridView.view.model, model.index, actionId, actionArgument);
+
         return data
     }
 

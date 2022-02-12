@@ -173,6 +173,9 @@ Kicker.DashboardWindow {
 
     function reset() { // return everything to the last known state
 
+//         console.log("-----RESET HIDDENAPPS: ", plasmoid.configuration.hiddenApplications)
+//         console.log("-----RESET: HIDDENAPPSNAME", plasmoid.configuration.hiddenApplicationsName)
+
         if (!searching) {
             appsGrid.model = rootModel.modelForRow(rootModel.showRecentApps + rootModel.showRecentDocs).modelForRow(1)
         }

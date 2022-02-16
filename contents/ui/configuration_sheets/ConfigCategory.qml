@@ -143,19 +143,20 @@ Item {
 
                         ListView {
                             id: myCategoryTemplateList
-                            currentIndex: -1
-                            Layout.minimumWidth: contentWidth
-                            Layout.minimumHeight: contentHeight
+                            currentIndex: 0
+                            Layout.minimumWidth: buttonWidth
+                            Layout.minimumHeight: buttonHeight
                             visible: showCategories.checked && customizeCategoriesSize.checked
-                            property int buttonWidth: 0
-                            property int buttonHeight: 0
+
+                            property int buttonWidth: (plasmoid.configuration.categoriesButtonWidth > 0) ? plasmoid.configuration.categoriesButtonWidth : units.iconSizes.huge
+                            property int buttonHeight: (plasmoid.configuration.categoriesButtonHeight > 0) ? plasmoid.configuration.categoriesButtonHeight : units.iconSizes.smallMedium
 
                             highlight: PlasmaComponents.Highlight {}
                             highlightFollowsCurrentItem: true
                             highlightMoveDuration: 0
                             delegate: CategoryButtonTemplate {
                                 id: myCategoryTemplate
-                                opacity: 0.4
+                                opacity: (currentIndex == 0) ? 1 : 0.4
                                 property int rulersSize: 18
                                 showCategoriesIcon: categoriesShowIcon.checked
                                 showCategoriesText: categoriesShowText.checked
@@ -178,29 +179,17 @@ Item {
                                     }
 
                                     onClicked: {
-                                        myCategoryTemplate.opacity = 1
-                                        if (clicked) {
-                                            myCategoryTemplateList.currentIndex = -1
-                                        } else {
-                                            myCategoryTemplateList.currentIndex = 0
-                                        }
-                                        clicked = !clicked
+                                        myCategoryTemplateList.currentIndex = (myCategoryTemplateList.currentIndex == 0) ? -1 : 0
                                     }
 
                                     onEntered: { // highlight item on hovering
-                                        if (!clicked) {
+                                        if (myCategoryTemplateList.currentIndex != 0) { // item is not selected
                                             myCategoryTemplate.opacity = 0.9
                                         }
                                     }
 
                                     onExited: { // reduce opacity on leaving
-//                                     if (categoriesList.currentIndex != index && !searching) {
-//                                         containerForCategory.opacity = 0.4
-//                                     }
-//                                     if (showToolTip) {
-//                                         toolTip.hideToolTip()
-//                                     }
-                                        if (!clicked) {
+                                        if (myCategoryTemplateList.currentIndex != 0) { // item is not selected
                                             myCategoryTemplate.opacity = 0.4
                                         }
                                     }

@@ -30,19 +30,25 @@ Rectangle { // (CONCEPT) Inspired on https://material.io/components/text-fields
 
     Rectangle {
         height: parent.border.width
-        width: Math.ceil(upperSideMetrics.width * 1.25)
+        width: isSearchBarFocused ? Math.ceil(upperSideMetrics.width * 1.25) : 0
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.leftMargin: Math.floor(parent.radius * 1.75)
-        visible: isSearchBarFocused
+//         visible: isSearchBarFocused
 //         anchors.leftMargin: units.largeSpacing
         color: colorWithAlpha(theme.backgroundColor, plasmoid.configuration.opacitySet ? plasmoid.configuration.alphaValue : 0.8)
+
+        Behavior on width { SmoothedAnimation {velocity: 500; easing.type: Easing.OutQuad} }
+
 
         PlasmaComponents.Label {
             id: textOnFocus
             text: "Search"
             anchors.centerIn: parent
-            visible: isSearchBarFocused
+            visible: parent.width == Math.ceil(upperSideMetrics.width * 1.25)
+
+//             Behavior on visible { SmoothedAnimation {velocity: 1000; easing.type: Easing.OutQuad} }
+
         }
 
         TextMetrics {

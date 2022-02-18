@@ -15,6 +15,7 @@ PlasmaComponents.TextField { //searchbar
     id: searchBar
 
     property string myText: text
+    property int usedSpace: designChooser.width
 
     KCoreAddons.KUser { // this is needed for the greeting message (saying hello whatever the user name is)
         id: kuser
@@ -91,6 +92,7 @@ PlasmaComponents.TextField { //searchbar
     }
 
     Loader {
+        id: designChooser
         z: -1 // draw this element under parent (TODO - please fix this shit workaround once you know more about QML)
         active: plasmoid.configuration.searchBarDesign != ""
         anchors {

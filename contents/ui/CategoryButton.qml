@@ -31,10 +31,6 @@ Rectangle { // rectangle used for marking the bounds for the category button
 //     width:  isButtonSizeSet ? Math.min(plasmoid.configuration.categoriesButtonWidth, Math.floor(widthScreen / 8) : units.iconSizes.huge * 32
     width:  isButtonSizeSet ? plasmoid.configuration.categoriesButtonWidth : Math.floor(widthScreen / 8)
 
-
-//     width: height * 32
-    //width: (showCategoriesText || showCategoriesIconAndText) ? Math.floor(widthScreen / 8) : height
-
     opacity: (categoriesList.currentIndex == index && !searching) ? 1 : 0.4
 
     onSelectedItemIndexChanged: {
@@ -91,20 +87,10 @@ Rectangle { // rectangle used for marking the bounds for the category button
         anchors.fill: parent
         hoverEnabled: true
         onClicked: {
-            if (searching) {
+
+            if (searching)
                 return
-            }
-            //if (indexInModel > 0) { // show the category determined by indexInModel
-                //appsGrid.model = rootModel.modelForRow(indexInModel).modelForRow(0) // showRecentApps = false
-                //appsGrid.model = rootModel.modelForRow(indexInModel).modelForRow(0) // showRecentApps = true
-            //} else { // show All Applications
-                //if (indexInModel == 0) {
-                    //appsGrid.model = rootModel.modelForRow(indexInModel).modelForRow(1) // showRecentFiles = true
-                //}
-                //else { // show Favorites
-                    //appsGrid.model = rootModel.modelForRow(1).modelForRow(0) // showRecentFiles = true
-                //}
-            //}
+
 
             if (indexInModel == -1) { // Favorites are hard-tagged as index -1
                 appsGrid.model = rootModel.modelForRow(rootModel.showRecentApps + rootModel.showRecentDocs).modelForRow(0) // showRecentFiles = true

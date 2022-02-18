@@ -12,16 +12,12 @@ Rectangle { // (CONCEPT) Inspired on https://material.io/components/text-fields
     border.width: Math.floor(units.smallSpacing/2)
 
     radius: Math.ceil(1.75 * units.smallSpacing)
-
-//     color: isSearchBarFocused ? colorWithAlpha(theme.buttonFocusColor, 1) : colorWithAlpha(theme.highlightColor, 1)
-    //width: (t_metrics.width > 0) ? t_metrics.width + Math.ceil(1.25 * units.smallSpacing) : units.largeSpacing // if the user has written something, then make this rectangle surround it. If the user has not written anything, leave some room for the design to "breathe".
     width: t_metrics.width + Math.ceil(1.25 * units.largeSpacing)
 
     Behavior on width { SmoothedAnimation {velocity: 2500; easing.type: Easing.OutQuad} } // setting both duration and velocity helps when the user cancels out his search and the greeting text is too long for the velocity to catch up in a good fashion.
 
     TextMetrics { // this elements allows us to read the width of the user's input text
         id: t_metrics
-//         text: isSearchBarFocused ? myText : placeholderText
         text: placeholderText
         font.pointSize: PlasmaCore.Theme.defaultFont.pointSize * 2 // account for the arbitrary font size chosen in the parent object.
     }
@@ -34,8 +30,6 @@ Rectangle { // (CONCEPT) Inspired on https://material.io/components/text-fields
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.leftMargin: Math.floor(parent.radius * 1.75)
-//         visible: isSearchBarFocused
-//         anchors.leftMargin: units.largeSpacing
         color: colorWithAlpha(theme.backgroundColor, plasmoid.configuration.opacitySet ? plasmoid.configuration.alphaValue : 0.8)
 
         Behavior on width { SmoothedAnimation {velocity: 500; easing.type: Easing.OutQuad} }
@@ -46,9 +40,6 @@ Rectangle { // (CONCEPT) Inspired on https://material.io/components/text-fields
             text: "Search"
             anchors.centerIn: parent
             visible: parent.width == Math.ceil(upperSideMetrics.width * 1.25)
-
-//             Behavior on visible { SmoothedAnimation {velocity: 1000; easing.type: Easing.OutQuad} }
-
         }
 
         TextMetrics {

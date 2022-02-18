@@ -66,6 +66,18 @@ Item {
                     }
                 }
 
+                RadioButton {
+                    Layout.fillWidth: true
+                    id: designMaterial
+                    text: i18n("Material")
+                    exclusiveGroup: designChoice
+                    checked: plasmoid.configuration.searchBarDesign == "searchbar_designs/MaterialOutlined.qml"
+                    onCheckedChanged: {
+                        if (checked)
+                            designChooser.chosenDesignSheetPath = "searchbar_designs/MaterialOutlined.qml"
+                    }
+                }
+
             }
         }
 

@@ -16,10 +16,6 @@ PlasmaComponents.TextField { //searchbar
 
     property string myText: text
 
-//     property bool noDesignChosen: plasmoid.configuration.searchBarNoDesign
-    //property bool underlineDesign: plasmoid.configuration.searchBarUnderline
-    //property bool fullyFledgedDesign: plasmoid.configuration.searchBarFullyFledged
-
     KCoreAddons.KUser { // this is needed for the greeting message (saying hello whatever the user name is)
         id: kuser
     }
@@ -106,6 +102,5 @@ PlasmaComponents.TextField { //searchbar
         property bool isSearchBarFocused: parent.activeFocus || myText != ""
 
         source: plasmoid.configuration.searchBarDesign
-//         source: underlineDesign ? "searchbar_designs/Underlining.qml" : (fullyFledgedDesign ? "searchbar_designs/FullyFledged.qml" : "")
     }
 }

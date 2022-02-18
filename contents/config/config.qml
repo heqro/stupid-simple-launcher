@@ -50,6 +50,5 @@ ConfigModel {
         name: i18n("Hidden apps management")
         icon: "applications-all"
         source: "configuration_sheets/ConfigHiddenApps.qml"
-        //visible: plasmoid.configuration.hiddenApplications.length != 0
     }
 }

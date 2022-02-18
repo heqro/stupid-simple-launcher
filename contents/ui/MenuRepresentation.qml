@@ -249,6 +249,8 @@ Kicker.DashboardWindow {
                         Layout.fillWidth: true
                         Layout.topMargin: units.iconSizes.large
                         Layout.bottomMargin: units.iconSizes.medium
+                        Layout.maximumWidth: searchField.usedSpace // expand the search field's width as much as the design requires space work with. Some designs are dynamic when it comes to their width, thus we need to account for this change.
+
                     }
 
                     RowLayout {
@@ -379,7 +381,7 @@ Kicker.DashboardWindow {
                                     id: categoriesModel
                                 }
                                 delegate: CategoryButton {}
-                                focus: true
+                                //focus: true
                                 // only add some fancy spacing between the buttons if they are only icons.
                                 spacing: (showCategoriesText || showCategoriesIconAndText) ? 0 : units.iconSizes.small
 

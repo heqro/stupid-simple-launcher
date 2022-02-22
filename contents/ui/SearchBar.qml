@@ -27,19 +27,21 @@ PlasmaComponents.TextField { //searchbar
     property bool hasNewTextBeenWritten: false // stupid binding to know if the user has been introduced new text. That way, we update foundNewApps to force a runnerModel update (if new results were found).
     property bool foundNewApps: hasNewTextBeenWritten && runnerModel.count == 1
 
+    property var appsGrid
+
     font.pointSize: PlasmaCore.Theme.defaultFont.pointSize * 2
     placeholderText: plasmoid.configuration.writeSomething ? plasmoid.configuration.greetingText : "Howdy, " + kuser.loginName + "! Type to start searching..."
     horizontalAlignment: TextInput.AlignHCenter
 
     onFoundNewAppsChanged: {
         if (foundNewApps) {
-            appsGrid.model = runnerModel.modelForRow(0)
+            appsGrid.showSearchResults()
             hasNewTextBeenWritten = false
         }
     }
 
     onTextChanged: { // start searching
-        runnerModel.query = text
+        appsGrid.updateQuery(text)
         hasNewTextBeenWritten = true
     }
 

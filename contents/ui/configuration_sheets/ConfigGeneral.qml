@@ -18,7 +18,7 @@
  ***************************************************************************/
 
 import QtQuick 2.0
-import QtQuick.Controls 1.0
+//import QtQuick.Controls 1.0
 import QtQuick.Dialogs 1.2
 import QtQuick.Layouts 1.0
 
@@ -31,6 +31,9 @@ import org.kde.kquickcontrolsaddons 2.0 as KQuickAddons
 import org.kde.draganddrop 2.0 as DragDrop
 
 import org.kde.plasma.private.kicker 0.1 as Kicker
+
+// SwipeView and Spinbox values
+import QtQuick.Controls 2.2
 
 Item {
     id: configGeneral
@@ -182,8 +185,8 @@ Item {
             }
             SpinBox{
                 id: iconSize
-                minimumValue: 24
-                maximumValue: 256
+                from: 24
+                to: 256
                 stepSize: 4
             }
         }
@@ -261,6 +264,36 @@ Item {
                 text: i18n("Start the menu on the \"Favorites\" category")
             }
         }
+
+
+        //SwipeView {
+            //id: view
+
+            //currentIndex: 1
+            ////anchors.fill: parent
+            //Layout.minimumWidth: 100
+            //Layout.minimumHeight: 300
+            //orientation: Qt.Vertical
+
+            //Item {
+                //id: firstPage
+                //PlasmaComponents.Label {
+                    //text: "Hola"
+                //}
+            //}
+            //Item {
+                //id: secondPage
+                //PlasmaComponents.Label {
+                    //text: "Hola 2"
+                //}
+            //}
+            //Item {
+                //id: thirdPage
+                //PlasmaComponents.Label {
+                    //text: "Hola 3"
+                //}
+            //}
+        //}
 
     }
 

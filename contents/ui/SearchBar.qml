@@ -15,7 +15,7 @@ PlasmaComponents.TextField { //searchbar
     id: searchBar
 
     property string myText: text
-    property int usedSpace: designChooser.width
+    property int usedSpace: designChooser.active ? designChooser.width : parent.width
 
     KCoreAddons.KUser { // this is needed for the greeting message (saying hello whatever the user name is)
         id: kuser

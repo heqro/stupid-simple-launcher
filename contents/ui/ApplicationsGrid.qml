@@ -32,17 +32,24 @@ Item {
     }
 
     function changeCategory(indexInModel) {
-        if (indexInModel == -1) { // Favorites are hard-tagged as index -1
-            appsGrid.model = rootModel.modelForRow(rootModel.showRecentApps + rootModel.showRecentDocs).modelForRow(0) // showRecentFiles = true
-        } else if (indexInModel == -2) { // Recent Documents are hard-tagged as index -2
-            //appsGrid.model = rootModel.modelForRow(0)
-            appsGrid.model = rootModel.modelForRow(rootModel.showRecentApps)
-        } else if (indexInModel == -3) { // Recent Applications are hard-tagged as index -3
-            appsGrid.model = rootModel.modelForRow(!rootModel.showRecentApps)
-        } else { // Pressed button is either "All Applications" or something else.
-            if (indexInModel == rootModel.showRecentApps + rootModel.showRecentDocs) {
+        switch (indexInModel) {
+            case -1: { // Favorites are hard-tagged as index -1
+                appsGrid.model = rootModel.modelForRow(rootModel.showRecentApps + rootModel.showRecentDocs).modelForRow(0)
+                break
+            }
+            case -2: { // Recent documents are hard-tagged as index -2
+                appsGrid.model = rootModel.modelForRow(rootModel.showRecentApps)
+                break
+            }
+            case -3: { // Recent Applications are hard-tagged as index -3
+                appsGrid.model = rootModel.modelForRow(!rootModel.showRecentApps)
+                break
+            }
+            case rootModel.showRecentApps + rootModel.showRecentDocs: { // All Applications
                 appsGrid.model = rootModel.modelForRow(rootModel.showRecentApps + rootModel.showRecentDocs).modelForRow(1)
-            } else {
+                break
+            }
+            default: { // Show generic category
                 appsGrid.model = rootModel.modelForRow(indexInModel).modelForRow(0)
             }
         }

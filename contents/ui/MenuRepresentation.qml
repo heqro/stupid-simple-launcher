@@ -135,7 +135,7 @@ Kicker.DashboardWindow {
 
                 if (plasmoid.configuration.showFavoritesCategory) {
                     favoritesCategoryIndex = categoriesModel.count
-                    categoriesModel.append({"categoryText": i18n("Favorites"), "categoryIcon": "favorite", "categoryIndex": -1, "appsGrid": applicationsGrid})
+                    categoriesModel.append({"categoryText": i18n("Favorites"), "categoryIcon": "favorite", "categoryIndex": -1})
                 }
 
                 if (rootModel.showRecentDocs) {

@@ -12,6 +12,8 @@ Rectangle { // rectangle used for marking the bounds for the category button
 
     id: containerForCategory
 
+    property var appsGrid: undefined
+
     property int indexInModel: categoryIndex
     property string iconName: categoryIcon
     property string categoryName: categoryText
@@ -88,24 +90,27 @@ Rectangle { // rectangle used for marking the bounds for the category button
         hoverEnabled: true
         onClicked: {
 
+
             if (searching)
                 return
 
+            appsGrid.changeCategory(indexInModel)
 
-            if (indexInModel == -1) { // Favorites are hard-tagged as index -1
-                appsGrid.model = rootModel.modelForRow(rootModel.showRecentApps + rootModel.showRecentDocs).modelForRow(0) // showRecentFiles = true
-            } else if (indexInModel == -2) { // Recent Documents are hard-tagged as index -2
-                //appsGrid.model = rootModel.modelForRow(0)
-                appsGrid.model = rootModel.modelForRow(rootModel.showRecentApps)
-            } else if (indexInModel == -3) { // Recent Applications are hard-tagged as index -3
-                appsGrid.model = rootModel.modelForRow(!rootModel.showRecentApps)
-            } else { // Pressed button is either "All Applications" or something else.
-                if (indexInModel == rootModel.showRecentApps + rootModel.showRecentDocs) {
-                    appsGrid.model = rootModel.modelForRow(rootModel.showRecentApps + rootModel.showRecentDocs).modelForRow(1)
-                } else {
-                    appsGrid.model = rootModel.modelForRow(indexInModel).modelForRow(0)
-                }
-            }
+
+//             if (indexInModel == -1) { // Favorites are hard-tagged as index -1
+//                 appsGrid.model = rootModel.modelForRow(rootModel.showRecentApps + rootModel.showRecentDocs).modelForRow(0) // showRecentFiles = true
+//             } else if (indexInModel == -2) { // Recent Documents are hard-tagged as index -2
+//                 //appsGrid.model = rootModel.modelForRow(0)
+//                 appsGrid.model = rootModel.modelForRow(rootModel.showRecentApps)
+//             } else if (indexInModel == -3) { // Recent Applications are hard-tagged as index -3
+//                 appsGrid.model = rootModel.modelForRow(!rootModel.showRecentApps)
+//             } else { // Pressed button is either "All Applications" or something else.
+//                 if (indexInModel == rootModel.showRecentApps + rootModel.showRecentDocs) {
+//                     appsGrid.model = rootModel.modelForRow(rootModel.showRecentApps + rootModel.showRecentDocs).modelForRow(1)
+//                 } else {
+//                     appsGrid.model = rootModel.modelForRow(indexInModel).modelForRow(0)
+//                 }
+//             }
 
 
             categoriesList.currentIndex = index

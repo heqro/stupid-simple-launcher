@@ -251,6 +251,7 @@ Kicker.DashboardWindow {
                         Layout.topMargin: units.iconSizes.large
                         Layout.bottomMargin: units.iconSizes.medium
                         Layout.maximumWidth: searchField.usedSpace // expand the search field's width as much as the design requires space work with. Some designs are dynamic when it comes to their width, thus we need to account for this change.
+                        appsGrid: applicationsGrid // connect search field with our applications grid.
 
                     }
 
@@ -276,8 +277,6 @@ Kicker.DashboardWindow {
                             Layout.fillWidth: true
                             Layout.bottomMargin: plasmoid.configuration.showSessionControlBar ? units.iconSizes.medium : units.iconSizes.large
 
-
-                            property var applAux: applicationsGrid
 
                             //Layout.preferredWidth: categoriesModel.count == 0 ? 0 : (customizeCategoriesSidebarSize ? Math.min(categoriesSidebarWidth, Math.floor(widthScreen / 8)) : Math.floor(widthScreen / 8))
                             Layout.maximumWidth: categoriesModel.count == 0 ? 0 : (customizeCategoriesSidebarSize ? Math.ceil(categoriesSidebarWidth + units.iconSizes.medium) : Math.floor(widthScreen / 8 + units.iconSizes.medium)) // adding up a little bit of "artificial" size to let the category button breathe with respect to the sidebar's scrollbar.

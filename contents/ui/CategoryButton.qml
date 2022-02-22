@@ -12,7 +12,8 @@ Rectangle { // rectangle used for marking the bounds for the category button
 
     id: containerForCategory
 
-    property var appsGrid: undefined
+    // appsGrid is a reference to the grid in which we will store all the applications. That way, we can call its "changeCategory()" method from here.
+    property var appsGrid
 
     property int indexInModel: categoryIndex
     property string iconName: categoryIcon
@@ -89,32 +90,10 @@ Rectangle { // rectangle used for marking the bounds for the category button
         anchors.fill: parent
         hoverEnabled: true
         onClicked: {
-
-
             if (searching)
                 return
-
             appsGrid.changeCategory(indexInModel)
-
-
-//             if (indexInModel == -1) { // Favorites are hard-tagged as index -1
-//                 appsGrid.model = rootModel.modelForRow(rootModel.showRecentApps + rootModel.showRecentDocs).modelForRow(0) // showRecentFiles = true
-//             } else if (indexInModel == -2) { // Recent Documents are hard-tagged as index -2
-//                 //appsGrid.model = rootModel.modelForRow(0)
-//                 appsGrid.model = rootModel.modelForRow(rootModel.showRecentApps)
-//             } else if (indexInModel == -3) { // Recent Applications are hard-tagged as index -3
-//                 appsGrid.model = rootModel.modelForRow(!rootModel.showRecentApps)
-//             } else { // Pressed button is either "All Applications" or something else.
-//                 if (indexInModel == rootModel.showRecentApps + rootModel.showRecentDocs) {
-//                     appsGrid.model = rootModel.modelForRow(rootModel.showRecentApps + rootModel.showRecentDocs).modelForRow(1)
-//                 } else {
-//                     appsGrid.model = rootModel.modelForRow(indexInModel).modelForRow(0)
-//                 }
-//             }
-
-
-            categoriesList.currentIndex = index
-            //                                     containerForCategory.opacity = 1
+            categoriesList.currentIndex = index // highlight current category to give the feeling of responsiveness.
         }
 
         onEntered: { // highlight item on hovering

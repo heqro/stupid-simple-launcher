@@ -22,7 +22,6 @@ import QtQuick.Controls 2.2
 Item {
 
     function resetAppsGrid() {
-
         appsGrid.focus = true
         if (startOnFavorites) {
             appsGrid.model = rootModel.modelForRow(rootModel.showRecentApps + rootModel.showRecentDocs).modelForRow(0)
@@ -53,6 +52,15 @@ Item {
                 appsGrid.model = rootModel.modelForRow(indexInModel).modelForRow(0)
             }
         }
+    }
+
+    // Functions to call from our search bar to manage this grid.
+    function showSearchResults() {
+        appsGrid.model = runnerModel.modelForRow(0)
+    }
+
+    function updateQuery(text) {
+        runnerModel.query = text
     }
 
     id: artifactForProperlyDisplayingEverythingInANiceWay
@@ -152,54 +160,3 @@ Item {
 
     }
 }
-
-
-//SwipeView {
-    //id: view
-
-    //currentIndex: 1
-    //Layout.fillWidth: true
-    //Layout.minimumWidth: 300
-    //Layout.fillHeight: true
-    ////                         orientation: Qt.Vertical
-
-    //Item {
-        //id: firstPage
-        //Rectangle {
-            //color: "red"
-            //anchors.fill: parent
-            //MouseArea {
-                //anchors.fill: parent
-                //onClicked: {
-                    //view.interactive = !view.interactive
-                //}
-            //}
-        //}
-    //}
-    //Item {
-        //id: secondPage
-        //Rectangle {
-            //color: "blue"
-            //anchors.fill: parent
-            //MouseArea {
-                //anchors.fill: parent
-                //onClicked: {
-                    //view.interactive = !view.interactive
-                //}
-            //}
-        //}
-    //}
-    //Item {
-        //id: thirdPage
-        //Rectangle {
-            //color: "orange"
-            //anchors.fill: parent
-            //MouseArea {
-                //anchors.fill: parent
-                //onClicked: {
-                    //view.interactive = !view.interactive
-                //}
-            //}
-        //}
-    //}
-//}

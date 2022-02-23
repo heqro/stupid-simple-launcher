@@ -251,9 +251,23 @@ Kicker.DashboardWindow {
                         Layout.topMargin: units.iconSizes.large
                         Layout.bottomMargin: units.iconSizes.medium
                         Layout.maximumWidth: searchField.usedSpace // expand the search field's width as much as the design requires space work with. Some designs are dynamic when it comes to their width, thus we need to account for this change.
-                        appsGrid: applicationsGrid // connect search field with our applications grid.
+                        appsGrid: applicationsGrid // connect search field with our applications grid. TODO - make this line disappear and tell the apps grid to just do its thing
+
+                        onMyTextChanged: { // update query on applications grid
+                            applicationsGrid.updateQuery(searchField.text)
+                            hasNewTextBeenWritten = true
+                        }
+
+                        onFoundNewAppsChanged: {
+                            if (foundNewApps) {
+                                applicationsGrid.showSearchResults()
+                                hasNewTextBeenWritten = false
+                            }
+                        }
 
                     }
+
+
 
                     RowLayout {
 
@@ -282,6 +296,8 @@ Kicker.DashboardWindow {
                             Layout.maximumWidth: categoriesModel.count == 0 ? 0 : (customizeCategoriesSidebarSize ? Math.ceil(categoriesSidebarWidth + units.iconSizes.medium) : Math.floor(widthScreen / 8 + units.iconSizes.medium)) // adding up a little bit of "artificial" size to let the category button breathe with respect to the sidebar's scrollbar.
                             ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
+
+
                             ListView {
 
                                 id: categoriesList
@@ -290,12 +306,21 @@ Kicker.DashboardWindow {
 
                                 model: ListModel {
                                     id: categoriesModel
-
-
                                 }
+
                                 delegate: CategoryButton {
+                                    id: categoryButton
                                     appsGrid: applicationsGrid
+                                    onAttemptedToChangeCategoryChanged: {
+                                        if (attemptedToChangeCategory) {
+                                            applicationsGrid.changeCategory(indexInModel)
+                                            attemptedToChangeCategory = false
+                                        }
+
+                                    }
                                 }
+
+
                                 //focus: true
                                 // only add some fancy spacing between the buttons if they are only icons.
                                 spacing: (showCategoriesText || showCategoriesIconAndText) ? 0 : units.iconSizes.small

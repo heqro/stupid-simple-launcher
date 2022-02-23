@@ -28,6 +28,8 @@ Rectangle { // rectangle used for marking the bounds for the category button
 
     property bool isButtonSizeSet: plasmoid.configuration.customizeCategoriesButtonSize
 
+    property bool attemptedToChangeCategory: false
+
     color: "transparent"
 //     height: units.iconSizes.huge
     height: isButtonSizeSet ? plasmoid.configuration.categoriesButtonHeight : units.iconSizes.huge
@@ -92,7 +94,8 @@ Rectangle { // rectangle used for marking the bounds for the category button
         onClicked: {
             if (searching)
                 return
-            appsGrid.changeCategory(indexInModel)
+            attemptedToChangeCategory = true
+//             appsGrid.changeCategory(indexInModel)
             categoriesList.currentIndex = index // highlight current category to give the feeling of responsiveness.
         }
 

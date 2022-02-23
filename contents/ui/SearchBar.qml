@@ -33,18 +33,6 @@ PlasmaComponents.TextField { //searchbar
     placeholderText: plasmoid.configuration.writeSomething ? plasmoid.configuration.greetingText : "Howdy, " + kuser.loginName + "! Type to start searching..."
     horizontalAlignment: TextInput.AlignHCenter
 
-    onFoundNewAppsChanged: {
-        if (foundNewApps) {
-            appsGrid.showSearchResults()
-            hasNewTextBeenWritten = false
-        }
-    }
-
-    onTextChanged: { // start searching
-        appsGrid.updateQuery(text)
-        hasNewTextBeenWritten = true
-    }
-
     style: TextFieldStyle {
 
         textColor: Qt.rgba(PlasmaCore.Theme.headerTextColor.r, PlasmaCore.Theme.headerTextColor.g, PlasmaCore.Theme.headerTextColor.b,1)

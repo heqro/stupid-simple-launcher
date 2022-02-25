@@ -63,6 +63,13 @@ Item {
         runnerModel.query = text
     }
 
+    function highlightItemAt(row, column) {
+        if (myFavorites.visible)
+            myFavorites.tryActivate(row, column)
+        else
+            appsGrid.tryActivate(row, column)
+    }
+
     id: artifactForProperlyDisplayingEverythingInANiceWay
     Layout.fillWidth: true
     Layout.fillHeight: true

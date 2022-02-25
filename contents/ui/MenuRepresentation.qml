@@ -251,7 +251,6 @@ Kicker.DashboardWindow {
                         Layout.topMargin: units.iconSizes.large
                         Layout.bottomMargin: units.iconSizes.medium
                         Layout.maximumWidth: searchField.usedSpace // expand the search field's width as much as the design requires space work with. Some designs are dynamic when it comes to their width, thus we need to account for this change.
-                        appsGrid: applicationsGrid // connect search field with our applications grid. TODO - make this line disappear and tell the apps grid to just do its thing
 
                         onMyTextChanged: { // update query on applications grid
                             applicationsGrid.updateQuery(searchField.text)
@@ -264,6 +263,23 @@ Kicker.DashboardWindow {
                                 hasNewTextBeenWritten = false
                             }
                         }
+
+                        Keys.onPressed: {
+                            if (event.key == Qt.Key_Down || event.key == Qt.Key_Right) {
+                                event.accepted = true
+                                applicationsGrid.highlightItemAt(0, 0)
+                            } else if (event.key == Qt.Key_Return || event.key == Qt.Key_Enter) {
+                                if (searching && runnerModel.count >= 1) {
+                                    event.accepted = true
+                                    applicationsGrid.highlightItemAt(0,0)
+                                    applicationsGrid.itemGrid.model.trigger(0, "", null);
+                                    root.toggle()
+                                }
+
+                            }
+
+                        }
+
 
                     }
 

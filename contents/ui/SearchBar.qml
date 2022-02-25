@@ -27,8 +27,6 @@ PlasmaComponents.TextField { //searchbar
     property bool hasNewTextBeenWritten: false // stupid binding to know if the user has been introduced new text. That way, we update foundNewApps to force a runnerModel update (if new results were found).
     property bool foundNewApps: hasNewTextBeenWritten && runnerModel.count == 1
 
-    property var appsGrid
-
     font.pointSize: PlasmaCore.Theme.defaultFont.pointSize * 2
     placeholderText: plasmoid.configuration.writeSomething ? plasmoid.configuration.greetingText : "Howdy, " + kuser.loginName + "! Type to start searching..."
     horizontalAlignment: TextInput.AlignHCenter
@@ -42,43 +40,6 @@ PlasmaComponents.TextField { //searchbar
             color: "transparent"
         }
 
-    }
-
-    Keys.onPressed: {
-        if (event.key == Qt.Key_Down) {
-            event.accepted = true;
-            //pageList.currentIndex = 0 // "return to the grid"
-            if (!searching) {
-                if (!showFavoritesInGrid) {
-                    appsGrid.tryActivate(0, 0); // highlight
-                } else {
-                    myFavorites.tryActivate(0,0) // highlight first entry of favoritesGrid
-                }
-            } else {
-                appsGrid.tryActivate(1, 0); // highlight first item - second row
-            }
-        } else if (event.key == Qt.Key_Right) {
-            if (cursorPosition == length) {
-                event.accepted = true;
-                //pageList.currentIndex = 0 // "return to the grid"
-                if (!searching) {
-                    if (!showFavoritesInGrid) {
-                       appsGrid.tryActivate(0, 0) // highlight
-                    } else {
-                        myFavorites.tryActivate(0,0) // highlight first entry of favoritesGrid
-                    }
-                } else {
-                    appsGrid.tryActivate(0, 1); // highlight second item - first row
-                }
-            }
-        } else if (event.key == Qt.Key_Return || event.key == Qt.Key_Enter) {
-            if (text != "" && appsGrid.itemGrid.count > 0) {
-                event.accepted = true;
-                appsGrid.tryActivate(0, 0);
-                appsGrid.itemGrid.model.trigger(0, "", null);
-                root.toggle();
-            }
-        }
     }
 
     Loader {

@@ -184,13 +184,10 @@ Kicker.DashboardWindow {
         } else {
             categoriesModel.clear() // always preemptively clean the categories model
         }
-
-        //appsGrid.focus = true
         applicationsGrid.resetAppsGrid()
 
 
         if (startOnFavorites) {
-            //appsGrid.model = rootModel.modelForRow(rootModel.showRecentApps + rootModel.showRecentDocs).modelForRow(0)
             if (showCategories) {
                 if (plasmoid.configuration.showFavoritesCategory)
                     categoriesList.currentIndex = favoritesCategoryIndex // highlight "Favorites" category
@@ -202,7 +199,6 @@ Kicker.DashboardWindow {
             if (showCategories) {
                 categoriesList.currentIndex = 0 // highlight first category on the list (always will be "All applications")
             }
-            //appsGrid.model = rootModel.modelForRow(rootModel.showRecentApps + rootModel.showRecentDocs).modelForRow(1)
         }
 
     }
@@ -326,7 +322,6 @@ Kicker.DashboardWindow {
 
                                 delegate: CategoryButton {
                                     id: categoryButton
-                                    appsGrid: applicationsGrid
                                     onAttemptedToChangeCategoryChanged: {
                                         if (attemptedToChangeCategory) {
                                             applicationsGrid.changeCategory(indexInModel)

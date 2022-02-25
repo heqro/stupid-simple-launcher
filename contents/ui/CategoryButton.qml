@@ -12,9 +12,6 @@ Rectangle { // rectangle used for marking the bounds for the category button
 
     id: containerForCategory
 
-    // appsGrid is a reference to the grid in which we will store all the applications. That way, we can call its "changeCategory()" method from here.
-    property var appsGrid
-
     property int indexInModel: categoryIndex
     property string iconName: categoryIcon
     property string categoryName: categoryText
@@ -95,7 +92,6 @@ Rectangle { // rectangle used for marking the bounds for the category button
             if (searching)
                 return
             attemptedToChangeCategory = true
-//             appsGrid.changeCategory(indexInModel)
             categoriesList.currentIndex = index // highlight current category to give the feeling of responsiveness.
         }
 

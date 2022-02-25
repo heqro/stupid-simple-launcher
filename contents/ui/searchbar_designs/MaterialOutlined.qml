@@ -25,21 +25,24 @@ Rectangle { // (CONCEPT) Inspired on https://material.io/components/text-fields
     anchors.bottom: parent.top
 
     Rectangle {
+
         height: parent.border.width
-        width: isSearchBarFocused ? Math.ceil(upperSideMetrics.width * 1.25) : 0
+        width: Math.ceil(upperSideMetrics.width * 1.25)
+        opacity: isSearchBarFocused
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.leftMargin: Math.floor(parent.radius * 1.75)
         color: colorWithAlpha(theme.backgroundColor, plasmoid.configuration.opacitySet ? plasmoid.configuration.alphaValue : 0.8)
 
-        Behavior on width { SmoothedAnimation {velocity: 500; easing.type: Easing.OutQuad} }
+        Behavior on opacity { SmoothedAnimation {velocity: 3; easing.type: Easing.OutQuad} }
 
 
         PlasmaComponents.Label {
             id: textOnFocus
             text: "Search"
             anchors.centerIn: parent
-            visible: parent.width == Math.ceil(upperSideMetrics.width * 1.25)
+            opacity: parent.opacity
+            //Behavior on opacity { SmoothedAnimation {velocity: 100; easing.type: Easing.OutQuad} }
         }
 
         TextMetrics {

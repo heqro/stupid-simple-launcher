@@ -187,20 +187,24 @@ FocusScope {
             }
         }
 
-        ScrollView {
-            id: scrollArea
-
-            anchors.fill: parent
-
-            focus: true
-
-//             horizontalScrollBarPolicy: Qt.ScrollBarAlwaysOff
-            ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-            ScrollBar.vertical.policy: ScrollBar.AlwaysOff
+//         ScrollView {
+//             id: scrollArea
+//
+//             anchors.fill: parent
+//
+//             focus: true
+//
+//             wheelEnabled: false
+//
+// //             horizontalScrollBarPolicy: Qt.ScrollBarAlwaysOff
+//             ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+//             ScrollBar.vertical.policy: ScrollBar.AlwaysOff
 
             GridView {
                 //this defines how the icons will look like in our menu
                 id: gridView
+                anchors.fill: parent
+                interactive: false
 
                 property bool usesPlasmaTheme: false
 
@@ -331,7 +335,7 @@ FocusScope {
                 }
 
             }
-        }
+        //}
 
         MouseArea {
             id: mouseAreaView
@@ -383,10 +387,10 @@ FocusScope {
             }
 
             onWheel: {
-                wheel.accepted = false // prevents scrollArea from breaking.
-                if (currentIndex != -1 && currentItem) {
-                    currentItem.showDelegateToolTip(false, true)
-                }
+              wheel.accepted = false // prevents scrollArea from breaking.
+              if (currentIndex != -1 && currentItem) {
+                currentItem.showDelegateToolTip(false, true)
+              }
             }
 
             onPressed: {

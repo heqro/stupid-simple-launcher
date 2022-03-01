@@ -93,6 +93,17 @@ Kicker.DashboardWindow {
 
     property var hiddenApps: plasmoid.configuration.hiddenApplicationsName
 
+    property int wAux: applicationsGrid.width
+    onWAuxChanged: { // HACK - force update the menu width at the first time the menu is launched
+        var w_Aux = Math.floor(applicationsGrid.width / cellSize)
+        var h_Aux = Math.floor(applicationsGrid.height / cellSize)
+        rootModel.pageSize = w_Aux * h_Aux
+        applicationsGrid.pageCount = Math.ceil(applicationsGrid.allAppsCount / rootModel.pageSize)
+        console.log("PAGE COUNT", applicationsGrid.pageCount)
+        console.log("wAux updated",w_Aux, h_Aux, rootModel.pageSize)
+        reset()
+    }
+
     // cool function to tweak transparency I took from the original launchpad
     function colorWithAlpha(color, alpha) {
         return Qt.rgba(color.r, color.g, color.b, alpha)
@@ -177,6 +188,9 @@ Kicker.DashboardWindow {
 //         console.log("-----RESET HIDDENAPPS: ", plasmoid.configuration.hiddenApplications)
 //         console.log("-----RESET: HIDDENAPPSNAME", plasmoid.configuration.hiddenApplicationsName)
 
+
+//         rootModel.refresh()
+
         searchField.text = "" // force placeholder text to be shown
 
         if(showCategories) {
@@ -200,6 +214,8 @@ Kicker.DashboardWindow {
                 categoriesList.currentIndex = 0 // highlight first category on the list (always will be "All applications")
             }
         }
+
+
 
     }
 
@@ -290,7 +306,7 @@ Kicker.DashboardWindow {
                         layoutDirection: showCategoriesOnTheRight ? Qt.LeftToRight : Qt.RightToLeft
 
 
-                        ApplicationsGrid {
+                        PaginatedApplicationsGrid {
                             id: applicationsGrid
                             //userIsSearching: searching
                         }
@@ -364,6 +380,9 @@ Kicker.DashboardWindow {
 
     Component.onCompleted: {
         rootModel.pageSize = -1 // this will, somehow, make it show everything -- again, don't ask me!
+        console.log("ALL APPS NUMBER: ",rootModel.modelForRow(0).modelForRow(1).count)
+        applicationsGrid.allAppsCount = rootModel.modelForRow(0).modelForRow(1).count
+
         kicker.reset.connect(reset);
     }
 }

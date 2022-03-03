@@ -51,6 +51,7 @@ Item {
                 break
         }
         pageCount-- // There is an extra page in the "All Applications" category dedicated to the "Favorites" category. We account for that decreasing the index by an unit.
+        appsSwipeview.interactive = true
         console.log("calculateNumberOfPages(",categoryIndex,") returns",pageCount)
     }
 
@@ -60,6 +61,8 @@ Item {
         var w_Aux = Math.floor(width / cellSize)
         var h_Aux = Math.floor(height / cellSize)
         rootModel.pageSize = w_Aux * h_Aux
+        appsSwipeview.interactive = true
+
         if(plasmoid.configuration.startOnFavorites)
             changeCategory(-1) // start on "Favorites" category
         else
@@ -97,7 +100,8 @@ Item {
 
     // Functions to call from our search bar to manage this grid.
     function showSearchResults() {
-        appsGridPagesRepeater.model = 1 // create a dedicated page for showing the search results
+        //appsGridPagesRepeater.model = 1 // create a dedicated page for showing the search results
+        appsSwipeview.interactive = false
         appsSwipeview.changeToSearchModel()
     }
 
@@ -144,6 +148,7 @@ Item {
                     Connections {
                         target: appsSwipeview
                         onUpdateCoso: {
+
                             if (myCategoryIndex == rootModel.showRecentApps + rootModel.showRecentDocs && !isFavorite) // shift first "All applications" index to account for the "Favorites" category
                                 appsGridPage.model = rootModel.modelForRow(myCategoryIndex).modelForRow(index + 1)
                             else

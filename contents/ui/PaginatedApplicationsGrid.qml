@@ -92,7 +92,7 @@ Item {
         //TODO - -2 -3 no funciona
         calculateNumberOfPages(categoryIndexToDoStuffWith, isCategoryFavorites)
         appsGridPagesRepeater.model = pageCount
-        appsSwipeview.updateCoso(categoryIndexToDoStuffWith, isCategoryFavorites)
+        appsSwipeview.updateGridWithCategory(categoryIndexToDoStuffWith, isCategoryFavorites)
     }
 
     // Functions to call from our search bar to manage this grid.
@@ -117,7 +117,7 @@ Item {
 
             id: appsSwipeview
 
-            signal updateCoso(int myCategoryIndex, bool isFavorite)
+            signal updateGridWithCategory(int myCategoryIndex, bool isFavorite)
             signal changeToSearchModel()
 
             anchors.fill: parent
@@ -143,7 +143,7 @@ Item {
 
                     Connections {
                         target: appsSwipeview
-                        onUpdateCoso: {
+                        onUpdateGridWithCategory: {
                             if (myCategoryIndex == rootModel.showRecentApps + rootModel.showRecentDocs && !isFavorite) // shift first "All applications" index to account for the "Favorites" category
                                 appsGridPage.model = rootModel.modelForRow(myCategoryIndex).modelForRow(index + 1)
                             else

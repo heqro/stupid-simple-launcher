@@ -22,6 +22,7 @@ import QtQuick.Controls 2.2
 Item {
 
     function resetAppsGrid() {
+        rootModel.pageSize = -1
         appsGrid.focus = true
         if (startOnFavorites) {
             appsGrid.model = rootModel.modelForRow(rootModel.showRecentApps + rootModel.showRecentDocs).modelForRow(0)
@@ -71,9 +72,10 @@ Item {
     }
 
     id: artifactForProperlyDisplayingEverythingInANiceWay
-    Layout.fillWidth: true
-    Layout.fillHeight: true
-    Layout.bottomMargin: plasmoid.configuration.showSessionControlBar ? units.iconSizes.medium : units.iconSizes.large
+    anchors.fill: parent
+    //Layout.fillWidth: true
+    //Layout.fillHeight: true
+    //Layout.bottomMargin: plasmoid.configuration.showSessionControlBar ? units.iconSizes.medium : units.iconSizes.large
 
     ColumnLayout {
 

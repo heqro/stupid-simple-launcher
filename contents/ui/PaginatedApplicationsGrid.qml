@@ -27,8 +27,10 @@ Item {
 
 
     id: artifactForProperlyDisplayingEverythingInANiceWay
-    Layout.fillWidth: true
-    Layout.fillHeight: true
+
+    anchors.fill: parent
+    //Layout.fillWidth: true
+    //Layout.fillHeight: true
 
     onWidthChanged: {
         resetAppsGrid()
@@ -47,23 +49,26 @@ Item {
         while (1) {
             if(rootModel.modelForRow(categoryIndex).modelForRow(pageCount))
                 pageCount++
-            else
-                break
+                else
+                    break
         }
         pageCount-- // There is an extra page in the "All Applications" category dedicated to the "Favorites" category. We account for that decreasing the index by an unit.
+        appsSwipeview.interactive = true
         console.log("calculateNumberOfPages(",categoryIndex,") returns",pageCount)
     }
 
 
     function resetAppsGrid() {
-//         appsGrid.focus = true
+        //         appsGrid.focus = true
         var w_Aux = Math.floor(width / cellSize)
         var h_Aux = Math.floor(height / cellSize)
         rootModel.pageSize = w_Aux * h_Aux
+        appsSwipeview.interactive = true
+
         if(plasmoid.configuration.startOnFavorites)
             changeCategory(-1) // start on "Favorites" category
-        else
-            changeCategory(rootModel.showRecentApps + rootModel.showRecentDocs) // TODO - swap this for the Favorites category should the user choose to start the menu off it.
+            else
+                changeCategory(rootModel.showRecentApps + rootModel.showRecentDocs) // TODO - swap this for the Favorites category should the user choose to start the menu off it.
     }
 
     function changeCategory(indexInModel) {
@@ -92,12 +97,13 @@ Item {
         //TODO - -2 -3 no funciona
         calculateNumberOfPages(categoryIndexToDoStuffWith, isCategoryFavorites)
         appsGridPagesRepeater.model = pageCount
-        appsSwipeview.updateGridWithCategory(categoryIndexToDoStuffWith, isCategoryFavorites)
+        appsSwipeview.updateCoso(categoryIndexToDoStuffWith, isCategoryFavorites)
     }
 
     // Functions to call from our search bar to manage this grid.
     function showSearchResults() {
-        appsGridPagesRepeater.model = 1 // create a dedicated page for showing the search results
+        //appsGridPagesRepeater.model = 1 // create a dedicated page for showing the search results
+        appsSwipeview.interactive = false
         appsSwipeview.changeToSearchModel()
     }
 
@@ -106,65 +112,66 @@ Item {
     }
 
     function highlightItemAt(row, column) {
-//         if (myFavorites.visible)
-//             myFavorites.tryActivate(row, column)
-//         else
+        //         if (myFavorites.visible)
+        //             myFavorites.tryActivate(row, column)
+        //         else
 
-            //appsGrid.tryActivate(row, column)
+        //appsGrid.tryActivate(row, column)
     }
 
-        SwipeView {
+    SwipeView {
 
-            id: appsSwipeview
+        id: appsSwipeview
 
-            signal updateGridWithCategory(int myCategoryIndex, bool isFavorite)
-            signal changeToSearchModel()
+        signal updateCoso(int myCategoryIndex, bool isFavorite)
+        signal changeToSearchModel()
 
-            anchors.fill: parent
-            clip: true
+        anchors.fill: parent
+        clip: true
 
-            Repeater {
+        Repeater {
 
-                id: appsGridPagesRepeater
-                model: pageCount
-                ItemGridView {
-                    id: appsGridPage
-                    cellWidth:  cellSize
-                    cellHeight: cellSize
-                    //onKeyNavUp: {
-                        //console.log("MODEL COUNT",model.count)
-                        //currentIndex = -1;
-                        //if (showFavoritesInGrid && !searching) {
-                            //myFavorites.tryActivate(0,0)
-                        //} else {
-                            //searchField.focus = true;
-                        //}
-                    //}
+            id: appsGridPagesRepeater
+            model: pageCount
+            ItemGridView {
+                id: appsGridPage
+                cellWidth:  cellSize
+                cellHeight: cellSize
+                //onKeyNavUp: {
+                //console.log("MODEL COUNT",model.count)
+                //currentIndex = -1;
+                //if (showFavoritesInGrid && !searching) {
+                //myFavorites.tryActivate(0,0)
+                //} else {
+                //searchField.focus = true;
+                //}
+                //}
 
-                    Connections {
-                        target: appsSwipeview
-                        onUpdateGridWithCategory: {
-                            if (myCategoryIndex == rootModel.showRecentApps + rootModel.showRecentDocs && !isFavorite) // shift first "All applications" index to account for the "Favorites" category
-                                appsGridPage.model = rootModel.modelForRow(myCategoryIndex).modelForRow(index + 1)
+                Connections {
+                    target: appsSwipeview
+                    onUpdateCoso: {
+
+                        if (myCategoryIndex == rootModel.showRecentApps + rootModel.showRecentDocs && !isFavorite) // shift first "All applications" index to account for the "Favorites" category
+                            appsGridPage.model = rootModel.modelForRow(myCategoryIndex).modelForRow(index + 1)
                             else
                                 appsGridPage.model = rootModel.modelForRow(myCategoryIndex).modelForRow(index)
 
-                        }
-                        onChangeToSearchModel: {
-                            appsGridPage.model = runnerModel.modelForRow(0)
-                        }
                     }
-                    //Rectangle {
-                        //anchors.fill: parent
-                        //color: "transparent"
-                        //border.color: colorWithAlpha(theme.buttonFocusColor, 1)
-                        //border.width: Math.floor(units.smallSpacing/4)
-                        //radius: 40
-                    //}
+                    onChangeToSearchModel: {
+                        appsGridPage.model = runnerModel.modelForRow(0)
+                    }
                 }
+                //Rectangle {
+                //anchors.fill: parent
+                //color: "transparent"
+                //border.color: colorWithAlpha(theme.buttonFocusColor, 1)
+                //border.width: Math.floor(units.smallSpacing/4)
+                //radius: 40
+                //}
             }
-
         }
+
+    }
 
 
     //}

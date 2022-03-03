@@ -23,51 +23,82 @@ Item {
 
     property int allAppsCount
     property int pageCount
+    readonly property int currentIndex: appsSwipeview.currentIndex
 
-    //property int allAppsCount: rootModel.modelForRow(0).count
-    //onAllAppsCountChanged: {
-        //console.log("Updated model as new stuff was added.")
-        //console.log("All apps count", allAppsCount)
-    //}
+
+    id: artifactForProperlyDisplayingEverythingInANiceWay
+    Layout.fillWidth: true
+    Layout.fillHeight: true
+
+    onWidthChanged: {
+        resetAppsGrid()
+    }
+
+    onHeightChanged: {
+        resetAppsGrid()
+    }
+
+    function calculateNumberOfPages(categoryIndex, isFavoritePage) {
+        if ((categoryIndex != rootModel.showRecentApps + rootModel.showRecentDocs) || isFavoritePage) { // only calculate pages when we are in the "All Applications" category. Else, rootModel defaults to just using a page for some reason.
+            pageCount = 1
+            return
+        }
+
+        while (1) {
+            if(rootModel.modelForRow(categoryIndex).modelForRow(pageCount))
+                pageCount++
+            else
+                break
+        }
+        pageCount-- // There is an extra page in the "All Applications" category dedicated to the "Favorites" category. We account for that decreasing the index by an unit.
+        console.log("calculateNumberOfPages(",categoryIndex,") returns",pageCount)
+    }
+
 
     function resetAppsGrid() {
 //         appsGrid.focus = true
-//         if (startOnFavorites) {
-//             appsGrid.model = rootModel.modelForRow(rootModel.showRecentApps + rootModel.showRecentDocs).modelForRow(0)
-//         } else {
-//             appsGrid.model = rootModel.modelForRow(rootModel.showRecentApps + rootModel.showRecentDocs).modelForRow(1)
-//         }
-        //appsGrid.model = rootModel.modelForRow(0).modelForRow(1)
-        appsRectangle.updateCoso()
+        var w_Aux = Math.floor(width / cellSize)
+        var h_Aux = Math.floor(height / cellSize)
+        rootModel.pageSize = w_Aux * h_Aux
+        if(plasmoid.configuration.startOnFavorites)
+            changeCategory(-1) // start on "Favorites" category
+        else
+            changeCategory(rootModel.showRecentApps + rootModel.showRecentDocs) // TODO - swap this for the Favorites category should the user choose to start the menu off it.
     }
 
     function changeCategory(indexInModel) {
+        var categoryIndexToDoStuffWith
+        var isCategoryFavorites = false
         switch (indexInModel) {
+
             case -1: { // Favorites are hard-tagged as index -1
-                appsGrid.model = rootModel.modelForRow(rootModel.showRecentApps + rootModel.showRecentDocs).modelForRow(0)
+                categoryIndexToDoStuffWith = rootModel.showRecentApps + rootModel.showRecentDocs
+                isCategoryFavorites = true
                 break
             }
             case -2: { // Recent documents are hard-tagged as index -2
-                appsGrid.model = rootModel.modelForRow(rootModel.showRecentApps)
+                categoryIndexToDoStuffWith = rootModel.showRecentApps
                 break
             }
             case -3: { // Recent Applications are hard-tagged as index -3
-                appsGrid.model = rootModel.modelForRow(!rootModel.showRecentApps)
+                categoryIndexToDoStuffWith = !rootModel.showRecentApps
                 break
             }
-            case rootModel.showRecentApps + rootModel.showRecentDocs: { // All Applications
-                appsGrid.model = rootModel.modelForRow(rootModel.showRecentApps + rootModel.showRecentDocs).modelForRow(1)
-                break
-            }
-            default: { // Show generic category
-                appsGrid.model = rootModel.modelForRow(indexInModel).modelForRow(0)
+            default: { // Generic category or All applications
+                categoryIndexToDoStuffWith = indexInModel
             }
         }
+
+        //TODO - -2 -3 no funciona
+        calculateNumberOfPages(categoryIndexToDoStuffWith, isCategoryFavorites)
+        appsGridPagesRepeater.model = pageCount
+        appsSwipeview.updateCoso(categoryIndexToDoStuffWith, isCategoryFavorites)
     }
 
     // Functions to call from our search bar to manage this grid.
     function showSearchResults() {
-        appsGrid.model = runnerModel.modelForRow(0)
+        appsGridPagesRepeater.model = 1 // create a dedicated page for showing the search results
+        appsSwipeview.changeToSearchModel()
     }
 
     function updateQuery(text) {
@@ -79,40 +110,27 @@ Item {
 //             myFavorites.tryActivate(row, column)
 //         else
 
-            appsGrid.tryActivate(row, column)
+            //appsGrid.tryActivate(row, column)
     }
-
-    id: artifactForProperlyDisplayingEverythingInANiceWay
-    Layout.fillWidth: true
-    Layout.fillHeight: true
-    Layout.bottomMargin: plasmoid.configuration.showSessionControlBar ? units.iconSizes.medium : units.iconSizes.large
-
-
-    ColumnLayout {
-
-        id: appsStuff
-
-        anchors.fill: parent
 
         SwipeView {
 
-            id: appsRectangle
+            id: appsSwipeview
 
-            Layout.fillWidth: true
-            Layout.fillHeight: true
+            signal updateCoso(int myCategoryIndex, bool isFavorite)
+            signal changeToSearchModel()
 
-            signal updateCoso()
-
+            anchors.fill: parent
             clip: true
 
-            // akí va un ripíter como una casa. hay tantos model como pageCount
             Repeater {
+
+                id: appsGridPagesRepeater
                 model: pageCount
                 ItemGridView {
                     id: appsGridPage
                     cellWidth:  cellSize
                     cellHeight: cellSize
-//                     model: rootModel.modelForRow(0).modelForRow(index)
                     //onKeyNavUp: {
                         //console.log("MODEL COUNT",model.count)
                         //currentIndex = -1;
@@ -123,18 +141,34 @@ Item {
                         //}
                     //}
 
-                    Connections{
-                        target: appsRectangle
+                    Connections {
+                        target: appsSwipeview
                         onUpdateCoso: {
-                            console.log("UPDATIADO")
-                            appsGridPage.model = rootModel.modelForRow(0).modelForRow(index + 1)
+                            if (myCategoryIndex == rootModel.showRecentApps + rootModel.showRecentDocs && !isFavorite) // shift first "All applications" index to account for the "Favorites" category
+                                appsGridPage.model = rootModel.modelForRow(myCategoryIndex).modelForRow(index + 1)
+                            else
+                                appsGridPage.model = rootModel.modelForRow(myCategoryIndex).modelForRow(index)
+
+                        }
+                        onChangeToSearchModel: {
+                            appsGridPage.model = runnerModel.modelForRow(0)
                         }
                     }
+                    //Rectangle {
+                        //anchors.fill: parent
+                        //color: "transparent"
+                        //border.color: colorWithAlpha(theme.buttonFocusColor, 1)
+                        //border.width: Math.floor(units.smallSpacing/4)
+                        //radius: 40
+                    //}
                 }
             }
 
         }
 
 
-    }
+    //}
+
+
+
 }

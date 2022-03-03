@@ -212,7 +212,7 @@ FocusScope {
                 property int animationDuration: dragEnabled ? resetAnimationDurationTimer.interval : 0
 
                 focus: true
-                visible: model.count > 0
+//                 visible: model.count > 0
                 //enabled: visible
                 currentIndex: -1
 

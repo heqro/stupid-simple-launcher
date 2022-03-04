@@ -67,8 +67,8 @@ Item {
         if(plasmoid.configuration.startOnFavorites)
             changeCategory(-1) // start on "Favorites" category
         else
-            changeCategory(rootModel.showRecentApps + rootModel.showRecentDocs) // TODO - swap this for the Favorites category should the user choose to start the menu off it.
-            highlightItemAt(0,0)
+            changeCategory(rootModel.showRecentApps + rootModel.showRecentDocs)
+            highlightItemAt(0,0) // preemptively focus first item
     }
 
     function changeCategory(indexInModel) { // this function receives the "change category!" order from the category buttons and translates the index from said button into an order the paginated applications grid can understand.
@@ -93,7 +93,6 @@ Item {
             }
         }
 
-        //TODO - -2 -3 no funciona
         calculateNumberOfPages(categoryIndexToDoStuffWith, isCategoryFavorites)
         appsGridPagesRepeater.model = pageCount
         appsSwipeview.updateGridModel(categoryIndexToDoStuffWith, isCategoryFavorites)
@@ -142,7 +141,6 @@ Item {
                     searchField.focus = true
                 }
 
-                //TODO - onKeyNavLeft + onKeyNavRight to swap pages via keyboard.
                 onKeyNavRight: {
                     if ((index == appsSwipeview.currentIndex) && (appsSwipeview.currentIndex < appsSwipeview.count - 1)) { // there are more items on our right
                         var rowToHighlight = currentRow()

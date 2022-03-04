@@ -49,8 +49,8 @@ Item {
         while (1) {
             if(rootModel.modelForRow(categoryIndex).modelForRow(pageCount))
                 pageCount++
-                else
-                    break
+            else
+                break
         }
         pageCount-- // There is an extra page in the "All Applications" category dedicated to the "Favorites" category. We account for that decreasing the index by an unit.
         appsSwipeview.interactive = true
@@ -67,8 +67,8 @@ Item {
 
         if(plasmoid.configuration.startOnFavorites)
             changeCategory(-1) // start on "Favorites" category
-            else
-                changeCategory(rootModel.showRecentApps + rootModel.showRecentDocs) // TODO - swap this for the Favorites category should the user choose to start the menu off it.
+        else
+            changeCategory(rootModel.showRecentApps + rootModel.showRecentDocs) // TODO - swap this for the Favorites category should the user choose to start the menu off it.
     }
 
     function changeCategory(indexInModel) {
@@ -151,10 +151,15 @@ Item {
                     target: appsSwipeview
                     onUpdateCoso: {
 
-                        if (myCategoryIndex == rootModel.showRecentApps + rootModel.showRecentDocs && !isFavorite) // shift first "All applications" index to account for the "Favorites" category
-                            appsGridPage.model = rootModel.modelForRow(myCategoryIndex).modelForRow(index + 1)
+                        if (myCategoryIndex == rootModel.showRecentApps + rootModel.showRecentDocs)  // we are either going to show favorites or all apps
+                            if (isFavorite)
+                                appsGridPage.model = rootModel.modelForRow(myCategoryIndex).modelForRow(0)
                             else
-                                appsGridPage.model = rootModel.modelForRow(myCategoryIndex).modelForRow(index)
+                                appsGridPage.model = rootModel.modelForRow(myCategoryIndex).modelForRow(index + 1)// shift first "All applications" index to account for the "Favorites" category
+                        else if (myCategoryIndex <= rootModel.showRecentApps + rootModel.showRecentDocs) // show either recent docs or recent apps
+                            appsGridPage.model = rootModel.modelForRow(myCategoryIndex)
+                        else // show a generic category
+                            appsGridPage.model = rootModel.modelForRow(myCategoryIndex).modelForRow(index)
 
                     }
                     onChangeToSearchModel: {

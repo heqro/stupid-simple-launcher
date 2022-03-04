@@ -68,6 +68,7 @@ Item {
             changeCategory(-1) // start on "Favorites" category
         else
             changeCategory(rootModel.showRecentApps + rootModel.showRecentDocs) // TODO - swap this for the Favorites category should the user choose to start the menu off it.
+            highlightItemAt(0,0)
     }
 
     function changeCategory(indexInModel) { // this function receives the "change category!" order from the category buttons and translates the index from said button into an order the paginated applications grid can understand.
@@ -142,6 +143,22 @@ Item {
                 }
 
                 //TODO - onKeyNavLeft + onKeyNavRight to swap pages via keyboard.
+                onKeyNavRight: {
+                    if ((index == appsSwipeview.currentIndex) && (appsSwipeview.currentIndex < appsSwipeview.count)) { // there are more items on our right
+                        var rowToHighlight = currentRow()
+                        appsSwipeview.incrementCurrentIndex()
+                        appsSwipeview.tryActivateItemAt(rowToHighlight, 0) // highlight item at the corresponding row of the first column
+                    }
+                }
+
+                onKeyNavLeft: {
+                    if ((index == appsSwipeview.currentIndex) && (appsSwipeview.currentIndex > 0)) { // there are more items on our left
+                        var numberOfColumns = Math.floor(appsGridPage.width / cellWidth)
+                        var rowToHighlight = currentRow()
+                        appsSwipeview.decrementCurrentIndex()
+                        appsSwipeview.tryActivateItemAt(rowToHighlight, numberOfColumns - 1)
+                    }
+                }
 
                 Connections {
                     target: appsSwipeview

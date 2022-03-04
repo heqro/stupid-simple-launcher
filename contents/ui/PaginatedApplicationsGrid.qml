@@ -144,7 +144,7 @@ Item {
 
                 //TODO - onKeyNavLeft + onKeyNavRight to swap pages via keyboard.
                 onKeyNavRight: {
-                    if ((index == appsSwipeview.currentIndex) && (appsSwipeview.currentIndex < appsSwipeview.count)) { // there are more items on our right
+                    if ((index == appsSwipeview.currentIndex) && (appsSwipeview.currentIndex < appsSwipeview.count - 1)) { // there are more items on our right
                         var rowToHighlight = currentRow()
                         appsSwipeview.incrementCurrentIndex()
                         appsSwipeview.tryActivateItemAt(rowToHighlight, 0) // highlight item at the corresponding row of the first column

@@ -54,7 +54,6 @@ Item {
         }
         pageCount-- // There is an extra page in the "All Applications" category dedicated to the "Favorites" category. We account for that decreasing the index by an unit.
         appsSwipeview.interactive = true
-        console.log("calculateNumberOfPages(",categoryIndex,") returns",pageCount)
     }
 
 
@@ -71,11 +70,10 @@ Item {
             changeCategory(rootModel.showRecentApps + rootModel.showRecentDocs) // TODO - swap this for the Favorites category should the user choose to start the menu off it.
     }
 
-    function changeCategory(indexInModel) {
+    function changeCategory(indexInModel) { // this function receives the "change category!" order from the category buttons and translates the index from said button into an order the paginated applications grid can understand.
         var categoryIndexToDoStuffWith
         var isCategoryFavorites = false
         switch (indexInModel) {
-
             case -1: { // Favorites are hard-tagged as index -1
                 categoryIndexToDoStuffWith = rootModel.showRecentApps + rootModel.showRecentDocs
                 isCategoryFavorites = true
@@ -97,7 +95,7 @@ Item {
         //TODO - -2 -3 no funciona
         calculateNumberOfPages(categoryIndexToDoStuffWith, isCategoryFavorites)
         appsGridPagesRepeater.model = pageCount
-        appsSwipeview.updateCoso(categoryIndexToDoStuffWith, isCategoryFavorites)
+        appsSwipeview.updateGridModel(categoryIndexToDoStuffWith, isCategoryFavorites)
     }
 
     // Functions to call from our search bar to manage this grid.
@@ -112,19 +110,17 @@ Item {
     }
 
     function highlightItemAt(row, column) {
-        //         if (myFavorites.visible)
-        //             myFavorites.tryActivate(row, column)
-        //         else
-
-        //appsGrid.tryActivate(row, column)
+//         appsSwipeview.currentItem.item.tryActivate(row, column)
+        appsSwipeview.tryActivateItemAt(row, column)
     }
 
     SwipeView {
 
         id: appsSwipeview
 
-        signal updateCoso(int myCategoryIndex, bool isFavorite)
+        signal updateGridModel(int myCategoryIndex, bool isFavorite)
         signal changeToSearchModel()
+        signal tryActivateItemAt(int row, int column)
 
         anchors.fill: parent
         clip: true
@@ -133,23 +129,23 @@ Item {
 
             id: appsGridPagesRepeater
             model: pageCount
+
             ItemGridView {
+
                 id: appsGridPage
                 cellWidth:  cellSize
                 cellHeight: cellSize
-                //onKeyNavUp: {
-                //console.log("MODEL COUNT",model.count)
-                //currentIndex = -1;
-                //if (showFavoritesInGrid && !searching) {
-                //myFavorites.tryActivate(0,0)
-                //} else {
-                //searchField.focus = true;
-                //}
-                //}
+
+                onKeyNavUp: {
+                    currentIndex = -1
+                    searchField.focus = true
+                }
+
+                //TODO - onKeyNavLeft + onKeyNavRight to swap pages via keyboard.
 
                 Connections {
                     target: appsSwipeview
-                    onUpdateCoso: {
+                    onUpdateGridModel: {
 
                         if (myCategoryIndex == rootModel.showRecentApps + rootModel.showRecentDocs)  // we are either going to show favorites or all apps
                             if (isFavorite)
@@ -164,6 +160,12 @@ Item {
                     }
                     onChangeToSearchModel: {
                         appsGridPage.model = runnerModel.modelForRow(0)
+                    }
+
+                    onTryActivateItemAt: { // highlight item at coordinates (row, column) in the visible grid
+                        if (appsSwipeview.currentIndex == index)
+                            appsGridPage.tryActivate(row, column)
+                            
                     }
                 }
                 //Rectangle {

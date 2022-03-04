@@ -174,19 +174,15 @@ Kicker.DashboardWindow {
 
     function reset() { // return everything to the last known state
 
-//         console.log("-----RESET HIDDENAPPS: ", plasmoid.configuration.hiddenApplications)
-//         console.log("-----RESET: HIDDENAPPSNAME", plasmoid.configuration.hiddenApplicationsName)
-
-
-//         rootModel.refresh()
-
         searchField.text = "" // force placeholder text to be shown
+        searchField.focus = false
 
         if(showCategories) {
             updateCategories()
         } else {
             categoriesModel.clear() // always preemptively clean the categories model
         }
+
         appsGridLoader.item.resetAppsGrid()
 
 

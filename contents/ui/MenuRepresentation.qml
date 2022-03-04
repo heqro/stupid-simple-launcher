@@ -187,7 +187,7 @@ Kicker.DashboardWindow {
         } else {
             categoriesModel.clear() // always preemptively clean the categories model
         }
-        applicationsGrid.resetAppsGrid()
+        appsGridLoader.item.resetAppsGrid()
 
 
         if (startOnFavorites) {
@@ -254,13 +254,13 @@ Kicker.DashboardWindow {
                         Layout.maximumWidth: searchField.usedSpace // expand the search field's width as much as the design requires space work with. Some designs are dynamic when it comes to their width, thus we need to account for this change.
 
                         onMyTextChanged: { // update query on applications grid
-                            applicationsGrid.updateQuery(searchField.text)
+                            appsGridLoader.item.updateQuery(searchField.text)
                             hasNewTextBeenWritten = true
                         }
 
                         onFoundNewAppsChanged: {
                             if (foundNewApps) {
-                                applicationsGrid.showSearchResults()
+                                appsGridLoader.item.showSearchResults()
                                 hasNewTextBeenWritten = false
                             }
                         }
@@ -268,12 +268,12 @@ Kicker.DashboardWindow {
                         Keys.onPressed: {
                             if (event.key == Qt.Key_Down || event.key == Qt.Key_Right) {
                                 event.accepted = true
-                                applicationsGrid.highlightItemAt(0, 0)
+                                appsGridLoader.item.highlightItemAt(0, 0)
                             } else if (event.key == Qt.Key_Return || event.key == Qt.Key_Enter) {
                                 if (searching && runnerModel.count >= 1) {
                                     event.accepted = true
-                                    applicationsGrid.highlightItemAt(0,0)
-                                    applicationsGrid.itemGrid.model.trigger(0, "", null);
+                                    appsGridLoader.item.highlightItemAt(0,0)
+                                    appsGridLoader.item.itemGrid.model.trigger(0, "", null);
                                     root.toggle()
                                 }
 
@@ -297,9 +297,11 @@ Kicker.DashboardWindow {
                         layoutDirection: showCategoriesOnTheRight ? Qt.LeftToRight : Qt.RightToLeft
 
 
-                        PaginatedApplicationsGrid {
-                            id: applicationsGrid
-                            //userIsSearching: searching
+                        Loader {
+                            id: appsGridLoader
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            source: plasmoid.configuration.paginateGrid ? "PaginatedApplicationsGrid.qml" : "ApplicationsGrid.qml"
                         }
 
                         PlasmaComponents3.ScrollView { // dedicated to storing the categories list
@@ -331,7 +333,7 @@ Kicker.DashboardWindow {
                                     id: categoryButton
                                     onAttemptedToChangeCategoryChanged: {
                                         if (attemptedToChangeCategory) {
-                                            applicationsGrid.changeCategory(indexInModel)
+                                            appsGridLoader.item.changeCategory(indexInModel)
                                             attemptedToChangeCategory = false
                                         }
 
@@ -353,29 +355,34 @@ Kicker.DashboardWindow {
 
                     }
 
-                    PageIndicator {
-
-                        id: currentPageIndicator
-
-                        count: !searching ? applicationsGrid.pageCount : 1
-                        currentIndex: applicationsGrid.currentIndex
-
+                    Loader {
+                        active: plasmoid.configuration.paginateGrid
                         Layout.alignment: Qt.AlignCenter
-                        Layout.bottomMargin: units.iconSizes.small / 2
+                        sourceComponent: PageIndicator {
 
-                        delegate: Rectangle {
+                            id: currentPageIndicator
 
-                            color: theme.headerTextColor
-                            opacity: index === currentPageIndicator.currentIndex ? 0.75 : 0.35
-                            height: index === currentPageIndicator.currentIndex ? units.iconSizes.smallMedium : units.iconSizes.small
-                            width:  index === currentPageIndicator.currentIndex ? units.iconSizes.smallMedium : units.iconSizes.small
-                            radius: width / 2
-                            anchors.verticalCenter: parent.verticalCenter // align all indicators
+                            visible: count != 1
 
-                            Behavior on width { SmoothedAnimation {velocity: 12; easing.type: Easing.OutQuad} }
+                            count: !searching ? appsGridLoader.item.pageCount : 1
+                            currentIndex: appsGridLoader.item.currentIndex
 
+                            delegate: Rectangle {
+
+                                color: theme.headerTextColor
+                                opacity: index === currentPageIndicator.currentIndex ? 0.75 : 0.35
+                                height: index === currentPageIndicator.currentIndex ? units.iconSizes.smallMedium : units.iconSizes.small
+                                width:  index === currentPageIndicator.currentIndex ? units.iconSizes.smallMedium : units.iconSizes.small
+                                radius: width / 2
+                                anchors.verticalCenter: parent.verticalCenter // align all indicators
+
+                                Behavior on width { SmoothedAnimation {velocity: 12; easing.type: Easing.OutQuad} }
+
+                            }
                         }
                     }
+
+
 
                     SessionControlBar {
                         id: sessionControlBar
@@ -395,7 +402,7 @@ Kicker.DashboardWindow {
     Component.onCompleted: {
 //         rootModel.pageSize = -1 // this will, somehow, make it show everything -- again, don't ask me!
 //         console.log("ALL APPS NUMBER: ",rootModel.modelForRow(0).modelForRow(1).count)
-//         applicationsGrid.allAppsCount = rootModel.modelForRow(0).modelForRow(1).count
+//         appsGridLoader.item.allAppsCount = rootModel.modelForRow(0).modelForRow(1).count
 
         kicker.reset.connect(reset);
     }

@@ -65,6 +65,8 @@ Item {
 
     property alias cfg_startOnFavorites: startOnFavorites.checked
 
+    property alias cfg_paginateGrid: paginateGrid.checked
+
     ColumnLayout {
         anchors.horizontalCenter: parent.horizontalCenter
 
@@ -210,6 +212,7 @@ Item {
             CheckBox{
                 id: favoritesInGrid
                 text: i18n("Show favorite applications at the top of the grid")
+                enabled: !paginateGrid.checked
             }
         }
 
@@ -224,6 +227,13 @@ Item {
                 id: greetingText
                 enabled: writeSomething.checked
             }
+        }
+
+        CheckBox {
+            Layout.fillWidth: true
+            Layout.leftMargin: units.smallSpacing
+            id: paginateGrid
+            text: i18n("Paginate the applications grid")
         }
 
         RowLayout {
@@ -264,36 +274,6 @@ Item {
                 text: i18n("Start the menu on the \"Favorites\" category")
             }
         }
-
-
-        //SwipeView {
-            //id: view
-
-            //currentIndex: 1
-            ////anchors.fill: parent
-            //Layout.minimumWidth: 100
-            //Layout.minimumHeight: 300
-            //orientation: Qt.Vertical
-
-            //Item {
-                //id: firstPage
-                //PlasmaComponents.Label {
-                    //text: "Hola"
-                //}
-            //}
-            //Item {
-                //id: secondPage
-                //PlasmaComponents.Label {
-                    //text: "Hola 2"
-                //}
-            //}
-            //Item {
-                //id: thirdPage
-                //PlasmaComponents.Label {
-                    //text: "Hola 3"
-                //}
-            //}
-        //}
 
     }
 

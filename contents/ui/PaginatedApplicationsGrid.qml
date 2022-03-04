@@ -27,8 +27,10 @@ Item {
 
 
     id: artifactForProperlyDisplayingEverythingInANiceWay
-    Layout.fillWidth: true
-    Layout.fillHeight: true
+
+    anchors.fill: parent
+    //Layout.fillWidth: true
+    //Layout.fillHeight: true
 
     onWidthChanged: {
         resetAppsGrid()
@@ -52,12 +54,15 @@ Item {
         }
         pageCount-- // There is an extra page in the "All Applications" category dedicated to the "Favorites" category. We account for that decreasing the index by an unit.
         appsSwipeview.interactive = true
+<<<<<<< HEAD
         console.log("calculateNumberOfPages(",categoryIndex,") returns",pageCount)
+=======
+>>>>>>> paginatePlusScroll
     }
 
 
     function resetAppsGrid() {
-//         appsGrid.focus = true
+        //         appsGrid.focus = true
         var w_Aux = Math.floor(width / cellSize)
         var h_Aux = Math.floor(height / cellSize)
         rootModel.pageSize = w_Aux * h_Aux
@@ -66,14 +71,14 @@ Item {
         if(plasmoid.configuration.startOnFavorites)
             changeCategory(-1) // start on "Favorites" category
         else
-            changeCategory(rootModel.showRecentApps + rootModel.showRecentDocs) // TODO - swap this for the Favorites category should the user choose to start the menu off it.
+            changeCategory(rootModel.showRecentApps + rootModel.showRecentDocs)
+            highlightItemAt(0,0) // preemptively focus first item
     }
 
-    function changeCategory(indexInModel) {
+    function changeCategory(indexInModel) { // this function receives the "change category!" order from the category buttons and translates the index from said button into an order the paginated applications grid can understand.
         var categoryIndexToDoStuffWith
         var isCategoryFavorites = false
         switch (indexInModel) {
-
             case -1: { // Favorites are hard-tagged as index -1
                 categoryIndexToDoStuffWith = rootModel.showRecentApps + rootModel.showRecentDocs
                 isCategoryFavorites = true
@@ -92,10 +97,9 @@ Item {
             }
         }
 
-        //TODO - -2 -3 no funciona
         calculateNumberOfPages(categoryIndexToDoStuffWith, isCategoryFavorites)
         appsGridPagesRepeater.model = pageCount
-        appsSwipeview.updateCoso(categoryIndexToDoStuffWith, isCategoryFavorites)
+        appsSwipeview.updateGridModel(categoryIndexToDoStuffWith, isCategoryFavorites)
     }
 
     // Functions to call from our search bar to manage this grid.
@@ -110,66 +114,89 @@ Item {
     }
 
     function highlightItemAt(row, column) {
-//         if (myFavorites.visible)
-//             myFavorites.tryActivate(row, column)
-//         else
-
-            //appsGrid.tryActivate(row, column)
+//         appsSwipeview.currentItem.item.tryActivate(row, column)
+        appsSwipeview.tryActivateItemAt(row, column)
     }
 
-        SwipeView {
+    SwipeView {
 
-            id: appsSwipeview
+        id: appsSwipeview
 
-            signal updateCoso(int myCategoryIndex, bool isFavorite)
-            signal changeToSearchModel()
+        signal updateGridModel(int myCategoryIndex, bool isFavorite)
+        signal changeToSearchModel()
+        signal tryActivateItemAt(int row, int column)
 
-            anchors.fill: parent
-            clip: true
+        anchors.fill: parent
+        clip: true
 
-            Repeater {
+        Repeater {
 
-                id: appsGridPagesRepeater
-                model: pageCount
-                ItemGridView {
-                    id: appsGridPage
-                    cellWidth:  cellSize
-                    cellHeight: cellSize
-                    //onKeyNavUp: {
-                        //console.log("MODEL COUNT",model.count)
-                        //currentIndex = -1;
-                        //if (showFavoritesInGrid && !searching) {
-                            //myFavorites.tryActivate(0,0)
-                        //} else {
-                            //searchField.focus = true;
-                        //}
-                    //}
+            id: appsGridPagesRepeater
+            model: pageCount
+            ItemGridView {
 
-                    Connections {
-                        target: appsSwipeview
-                        onUpdateCoso: {
+                id: appsGridPage
+                cellWidth:  cellSize
+                cellHeight: cellSize
 
-                            if (myCategoryIndex == rootModel.showRecentApps + rootModel.showRecentDocs && !isFavorite) // shift first "All applications" index to account for the "Favorites" category
-                                appsGridPage.model = rootModel.modelForRow(myCategoryIndex).modelForRow(index + 1)
-                            else
-                                appsGridPage.model = rootModel.modelForRow(myCategoryIndex).modelForRow(index)
-
-                        }
-                        onChangeToSearchModel: {
-                            appsGridPage.model = runnerModel.modelForRow(0)
-                        }
-                    }
-                    //Rectangle {
-                        //anchors.fill: parent
-                        //color: "transparent"
-                        //border.color: colorWithAlpha(theme.buttonFocusColor, 1)
-                        //border.width: Math.floor(units.smallSpacing/4)
-                        //radius: 40
-                    //}
+                onKeyNavUp: {
+                    currentIndex = -1
+                    searchField.focus = true
                 }
-            }
 
+                onKeyNavRight: {
+                    if ((index == appsSwipeview.currentIndex) && (appsSwipeview.currentIndex < appsSwipeview.count - 1)) { // there are more items on our right
+                        var rowToHighlight = currentRow()
+                        appsSwipeview.incrementCurrentIndex()
+                        appsSwipeview.tryActivateItemAt(rowToHighlight, 0) // highlight item at the corresponding row of the first column
+                    }
+                }
+
+                onKeyNavLeft: {
+                    if ((index == appsSwipeview.currentIndex) && (appsSwipeview.currentIndex > 0)) { // there are more items on our left
+                        var numberOfColumns = Math.floor(appsGridPage.width / cellWidth)
+                        var rowToHighlight = currentRow()
+                        appsSwipeview.decrementCurrentIndex()
+                        appsSwipeview.tryActivateItemAt(rowToHighlight, numberOfColumns - 1)
+                    }
+                }
+
+                Connections {
+                    target: appsSwipeview
+                    onUpdateGridModel: {
+
+                        if (myCategoryIndex == rootModel.showRecentApps + rootModel.showRecentDocs)  // we are either going to show favorites or all apps
+                            if (isFavorite)
+                                appsGridPage.model = rootModel.modelForRow(myCategoryIndex).modelForRow(0)
+                            else
+                                appsGridPage.model = rootModel.modelForRow(myCategoryIndex).modelForRow(index + 1)// shift first "All applications" index to account for the "Favorites" category
+                        else if (myCategoryIndex <= rootModel.showRecentApps + rootModel.showRecentDocs) // show either recent docs or recent apps
+                            appsGridPage.model = rootModel.modelForRow(myCategoryIndex)
+                        else // show a generic category
+                            appsGridPage.model = rootModel.modelForRow(myCategoryIndex).modelForRow(index)
+
+                    }
+                    onChangeToSearchModel: {
+                        appsGridPage.model = runnerModel.modelForRow(0)
+                    }
+
+                    onTryActivateItemAt: { // highlight item at coordinates (row, column) in the visible grid
+                        if (appsSwipeview.currentIndex == index)
+                            appsGridPage.tryActivate(row, column)
+                            
+                    }
+                }
+                //Rectangle {
+                //anchors.fill: parent
+                //color: "transparent"
+                //border.color: colorWithAlpha(theme.buttonFocusColor, 1)
+                //border.width: Math.floor(units.smallSpacing/4)
+                //radius: 40
+                //}
+            }
         }
+
+    }
 
 
     //}

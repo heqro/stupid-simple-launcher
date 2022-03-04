@@ -105,6 +105,9 @@
     <entry name="showSessionControlTooltips" type="Bool">
         <default>true</default>
     </entry>
+    <entry name="paginateGrid" type="Bool">
+      <default>false</default>
+    </entry>
     <entry name="hiddenApplicationsName" type="StringList">
         <default></default>
     </entry>

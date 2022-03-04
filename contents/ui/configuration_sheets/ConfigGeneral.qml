@@ -212,6 +212,7 @@ Item {
             CheckBox{
                 id: favoritesInGrid
                 text: i18n("Show favorite applications at the top of the grid")
+                enabled: !paginateGrid.checked
             }
         }
 

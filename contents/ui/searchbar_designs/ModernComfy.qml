@@ -64,8 +64,6 @@ Rectangle { // Inspired by modern, cool, responsive search bars
             hoverEnabled: true
             property bool hoverAreaClicked: false
             onClicked: {
-                console.log(isSearchBarFocused)
-                console.log(myText)
                 hoverAreaClicked = !hoverAreaClicked
             }
 

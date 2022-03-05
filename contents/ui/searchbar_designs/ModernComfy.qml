@@ -7,7 +7,7 @@ import org.kde.plasma.components 2.0 as PlasmaComponents
 // user information is called by using this
 import org.kde.kcoreaddons 1.0 as KCoreAddons
 
-Rectangle {
+Rectangle { // Inspired by modern, cool, responsive search bars
 
     height: parentHeight
     color: "transparent"
@@ -34,7 +34,7 @@ Rectangle {
 
         Behavior on color {
             ColorAnimation {
-                duration: 300
+                duration: 30
             }
         }
 
@@ -50,6 +50,21 @@ Rectangle {
             height: Math.floor(4 * parent.height / 5)
             width:  Math.floor(4 * parent.height / 5)
             anchors.centerIn: parent
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            hoverEnabled: true
+            onClicked: {
+                parentText = isSearchBarFocused ? "" : " " // preemptively empty query text (we won't need it under any case). If the search bar is not focused we force it to be focused by manually adding a whitespace that won't interfere with the search results and is not registered by the textfield anyway.
+            }
+            onEntered: {
+                parent.color = isSearchBarFocused ? colorWithAlpha(theme.buttonHoverColor, 0.5) : colorWithAlpha(theme.buttonBackgroundColor, 0.5)
+            }
+            onExited: {
+                parent.color = isSearchBarFocused ? colorWithAlpha(theme.buttonHoverColor, 1) : colorWithAlpha(theme.buttonBackgroundColor, 1)
+            }
+
         }
 
     }

@@ -31,6 +31,8 @@ Rectangle { // Inspired by modern, cool, responsive search bars
         Behavior on height { SmoothedAnimation {duration: 300; easing.type: Easing.OutQuad} }
 
         color: isSearchBarFocused ? colorWithAlpha(theme.buttonHoverColor, 1) : colorWithAlpha(theme.buttonBackgroundColor, 1)
+        border.color: hoverArea.containsMouse ? colorWithAlpha(theme.highlightColor, 1) : "transparent"
+        border.width: units.smallSpacing
 
         Behavior on color {
             ColorAnimation {
@@ -53,16 +55,11 @@ Rectangle { // Inspired by modern, cool, responsive search bars
         }
 
         MouseArea {
+            id: hoverArea
             anchors.fill: parent
             hoverEnabled: true
             onClicked: {
                 parentText = isSearchBarFocused ? "" : " " // preemptively empty query text (we won't need it under any case). If the search bar is not focused we force it to be focused by manually adding a whitespace that won't interfere with the search results and is not registered by the textfield anyway.
-            }
-            onEntered: {
-                parent.color = isSearchBarFocused ? colorWithAlpha(theme.buttonHoverColor, 0.5) : colorWithAlpha(theme.buttonBackgroundColor, 0.5)
-            }
-            onExited: {
-                parent.color = isSearchBarFocused ? colorWithAlpha(theme.buttonHoverColor, 1) : colorWithAlpha(theme.buttonBackgroundColor, 1)
             }
 
         }

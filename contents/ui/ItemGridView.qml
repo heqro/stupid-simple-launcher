@@ -191,7 +191,7 @@ FocusScope {
             //this defines how the icons will look like in our menu
             id: gridView
             anchors.fill: parent
-//                 interactive: false
+            interactive: !plasmoid.configuration.paginateGrid
             clip: true
 
             property bool usesPlasmaTheme: false

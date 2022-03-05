@@ -28,13 +28,16 @@ PlasmaComponents.TextField { //searchbar
     property bool foundNewApps: hasNewTextBeenWritten && runnerModel.count == 1
 
     font.pointSize: PlasmaCore.Theme.defaultFont.pointSize * 2
-    placeholderText: plasmoid.configuration.writeSomething ? plasmoid.configuration.greetingText : "Howdy, " + kuser.loginName + "! Type to start searching..."
-    horizontalAlignment: TextInput.AlignHCenter
+
+    placeholderText: designChooser.active ? designChooser.item.getPlaceHolderText() : (plasmoid.configuration.writeSomething ? plasmoid.configuration.greetingText : "Howdy, " + kuser.loginName + "! Type to start searching...")
+
+    horizontalAlignment: designChooser.active ? designChooser.item.getHorizontalAlignment() : TextInput.AlignHCenter
 
     style: TextFieldStyle {
 
         textColor: Qt.rgba(PlasmaCore.Theme.headerTextColor.r, PlasmaCore.Theme.headerTextColor.g, PlasmaCore.Theme.headerTextColor.b,1)
         placeholderTextColor: colorWithAlpha(PlasmaCore.Theme.headerTextColor, 0.8)
+
 
         background: Rectangle {
             color: "transparent"

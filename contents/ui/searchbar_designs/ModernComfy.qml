@@ -30,7 +30,7 @@ Rectangle { // Inspired by modern, cool, responsive search bars
         Behavior on width { SmoothedAnimation {duration: 300; easing.type: Easing.OutQuad} }
         Behavior on height { SmoothedAnimation {duration: 300; easing.type: Easing.OutQuad} }
 
-        color: isSearchBarFocused ? colorWithAlpha(theme.buttonHoverColor, Math.min(!hoverArea.containsMouse + 0.75, 1)) : colorWithAlpha(theme.buttonBackgroundColor, Math.min(!hoverArea.containsMouse + 0.75, 1))
+        color: isSearchBarFocused ? colorWithAlpha(theme.highlightColor, Math.min(!hoverArea.containsMouse + 0.75, 1)) : colorWithAlpha(theme.buttonBackgroundColor, Math.min(!hoverArea.containsMouse + 0.75, 1))
 
         Behavior on color {
             ColorAnimation {
@@ -71,12 +71,12 @@ Rectangle { // Inspired by modern, cool, responsive search bars
 
         anchors.left: parent.left
 
-        width: parent.width + searchIconContainer.width + units.iconSizes.small
+        width: parent.width + searchIconContainer.width + units.iconSizes.small * Math.min(isSearchBarFocused, parent.width)
 
         radius: width/2
 
         color: colorWithAlpha(theme.backgroundColor, 1)
-        opacity: isSearchBarFocused
+        opacity: parent.width > 0
 
     }
 

@@ -183,13 +183,6 @@ Item {
                             
                     }
                 }
-                //Rectangle {
-                //anchors.fill: parent
-                //color: "transparent"
-                //border.color: colorWithAlpha(theme.buttonFocusColor, 1)
-                //border.width: Math.floor(units.smallSpacing/4)
-                //radius: 40
-                //}
             }
         }
 

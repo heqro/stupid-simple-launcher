@@ -11,10 +11,16 @@ Rectangle { // Inspired by modern, cool, responsive search bars
 
     height: parentHeight
     color: "transparent"
-    width: isSearchBarFocused ? t_metrics.width + Math.ceil(1.25 * units.largeSpacing) : 0
+    width: (parentText != "" || (parentText == "" && hoverArea.hoverAreaClicked)) ? t_metrics.width + Math.ceil(1.25 * units.largeSpacing) : 0
     anchors.bottom: parent.top
 
     Behavior on width { SmoothedAnimation {velocity: 1000; easing.type: Easing.OutQuad} }
+
+    readonly property string queryCopy: parentText
+    onQueryCopyChanged: { // this signal slot ensures the prompt is collapsed if it was previously opened by the user by clicking the search icon.
+        if (queryCopy == "" && hoverArea.hoverAreaClicked)
+            hoverArea.hoverAreaClicked = false
+    }
 
     TextMetrics { // this elements allows us to read the width of the user's input text
         id: t_metrics
@@ -25,12 +31,12 @@ Rectangle { // Inspired by modern, cool, responsive search bars
     Rectangle {
 
         id: searchIconContainer
-        height: isSearchBarFocused ? Math.floor(9 * parent.height / 11) : parent.height
-        width:  isSearchBarFocused ? Math.floor(9 * parent.height / 11) : parent.height
+        height: parent.width > 0 ? Math.floor(9 * parent.height / 11) : parent.height
+        width:  parent.width > 0 ? Math.floor(9 * parent.height / 11) : parent.height
         Behavior on width { SmoothedAnimation {duration: 300; easing.type: Easing.OutQuad} }
         Behavior on height { SmoothedAnimation {duration: 300; easing.type: Easing.OutQuad} }
 
-        color: isSearchBarFocused ? colorWithAlpha(theme.highlightColor, Math.min(!hoverArea.containsMouse + 0.75, 1)) : colorWithAlpha(theme.buttonBackgroundColor, Math.min(!hoverArea.containsMouse + 0.75, 1))
+        color: parent.width > 0 ? colorWithAlpha(theme.highlightColor, Math.min(!hoverArea.containsMouse + 0.75, 1)) : colorWithAlpha(theme.buttonBackgroundColor, Math.min(!hoverArea.containsMouse + 0.75, 1))
 
         Behavior on color {
             ColorAnimation {
@@ -56,8 +62,11 @@ Rectangle { // Inspired by modern, cool, responsive search bars
             id: hoverArea
             anchors.fill: parent
             hoverEnabled: true
+            property bool hoverAreaClicked: false
             onClicked: {
-                parentText = isSearchBarFocused ? "" : " " // preemptively empty query text (we won't need it under any case). If the search bar is not focused we force it to be focused by manually adding a whitespace that won't interfere with the search results and is not registered by the textfield anyway.
+                console.log(isSearchBarFocused)
+                console.log(myText)
+                hoverAreaClicked = !hoverAreaClicked
             }
 
         }
@@ -71,7 +80,7 @@ Rectangle { // Inspired by modern, cool, responsive search bars
 
         anchors.left: parent.left
 
-        width: parent.width + searchIconContainer.width + units.iconSizes.small * Math.min(isSearchBarFocused, parent.width)
+        width: parent.width + searchIconContainer.width + units.iconSizes.small * (parent.width > 0)
 
         radius: width/2
 

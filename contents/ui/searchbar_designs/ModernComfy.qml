@@ -11,16 +11,16 @@ Rectangle { // Inspired by modern, cool, responsive search bars
 
     height: parentHeight
     color: "transparent"
-    width: (parentText != "" || (parentText == "" && hoverArea.hoverAreaClicked)) ? t_metrics.width + Math.ceil(1.25 * units.largeSpacing) : 0
+    width: isSearchBarFocused ? t_metrics.width + Math.ceil(1.25 * units.largeSpacing) : 0
     anchors.bottom: parent.top
 
     Behavior on width { SmoothedAnimation {velocity: 1000; easing.type: Easing.OutQuad} }
 
-    readonly property string queryCopy: parentText
-    onQueryCopyChanged: { // this signal slot ensures the prompt is collapsed if it was previously opened by the user by clicking the search icon.
-        if (queryCopy == "" && hoverArea.hoverAreaClicked)
-            hoverArea.hoverAreaClicked = false
-    }
+    //readonly property string queryCopy: parentText
+    //onQueryCopyChanged: { // this signal slot ensures the prompt is collapsed if it was previously opened by the user by clicking the search icon.
+        //if (queryCopy == "" && hoverArea.hoverAreaClicked)
+            //hoverArea.hoverAreaClicked = false
+    //}
 
     TextMetrics { // this elements allows us to read the width of the user's input text
         id: t_metrics
@@ -62,9 +62,9 @@ Rectangle { // Inspired by modern, cool, responsive search bars
             id: hoverArea
             anchors.fill: parent
             hoverEnabled: true
-            property bool hoverAreaClicked: false
+//             property bool hoverAreaClicked: false
             onClicked: {
-                hoverAreaClicked = !hoverAreaClicked
+                toggleFocus()
             }
 
         }

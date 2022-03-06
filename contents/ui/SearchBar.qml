@@ -59,5 +59,10 @@ PlasmaComponents.TextField { //searchbar
         property alias parentText: searchBar.text // we want parentText to be exactly the same as the search bar's text. I am using this property alias because some search bar designs make use of it for their buttons & functionality (such as clearing the query text).
 
         source: plasmoid.configuration.searchBarDesign
+
+        function toggleFocus() { // This function is called to request toggling focus from certain search bar designs (say, those featuring a button to collapse the search bar)
+            parent.focus = !parent.focus
+            parentText = ""
+        }
     }
 }

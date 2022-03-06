@@ -28,13 +28,16 @@ PlasmaComponents.TextField { //searchbar
     property bool foundNewApps: hasNewTextBeenWritten && runnerModel.count == 1
 
     font.pointSize: PlasmaCore.Theme.defaultFont.pointSize * 2
-    placeholderText: plasmoid.configuration.writeSomething ? plasmoid.configuration.greetingText : "Howdy, " + kuser.loginName + "! Type to start searching..."
-    horizontalAlignment: TextInput.AlignHCenter
+
+    placeholderText: designChooser.active ? designChooser.item.getPlaceHolderText() : (plasmoid.configuration.writeSomething ? plasmoid.configuration.greetingText : "Howdy, " + kuser.loginName + "! Type to start searching...")
+
+    horizontalAlignment: designChooser.active ? designChooser.item.getHorizontalAlignment() : TextInput.AlignHCenter
 
     style: TextFieldStyle {
 
         textColor: Qt.rgba(PlasmaCore.Theme.headerTextColor.r, PlasmaCore.Theme.headerTextColor.g, PlasmaCore.Theme.headerTextColor.b,1)
         placeholderTextColor: colorWithAlpha(PlasmaCore.Theme.headerTextColor, 0.8)
+
 
         background: Rectangle {
             color: "transparent"
@@ -53,7 +56,13 @@ PlasmaComponents.TextField { //searchbar
 
         property int parentHeight: parent.height // propagate this property so that each and every design can make use of it (without explicitly assigning a value to the Loader element because it will affect loaded elements' dimensions.)
         property bool isSearchBarFocused: parent.activeFocus || myText != ""
+        property alias parentText: searchBar.text // we want parentText to be exactly the same as the search bar's text. I am using this property alias because some search bar designs make use of it for their buttons & functionality (such as clearing the query text).
 
         source: plasmoid.configuration.searchBarDesign
+
+        function toggleFocus() { // This function is called to request toggling focus from certain search bar designs (say, those featuring a button to collapse the search bar)
+            parent.focus = !parent.focus
+            parentText = ""
+        }
     }
 }

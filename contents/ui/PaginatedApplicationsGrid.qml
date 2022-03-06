@@ -104,9 +104,10 @@ Item {
 
     // Functions to call from our search bar to manage this grid.
     function showSearchResults() {
-        //appsGridPagesRepeater.model = 1 // create a dedicated page for showing the search results
-        appsSwipeview.interactive = false
+        calculateNumberOfPages(-1, false)
+        appsGridPagesRepeater.model = pageCount
         appsSwipeview.changeToSearchModel()
+        appsSwipeview.interactive = false
     }
 
     function updateQuery(text) {
@@ -186,13 +187,6 @@ Item {
                             
                     }
                 }
-                //Rectangle {
-                //anchors.fill: parent
-                //color: "transparent"
-                //border.color: colorWithAlpha(theme.buttonFocusColor, 1)
-                //border.width: Math.floor(units.smallSpacing/4)
-                //radius: 40
-                //}
             }
         }
 

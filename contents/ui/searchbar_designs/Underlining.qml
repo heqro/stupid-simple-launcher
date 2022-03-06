@@ -4,6 +4,9 @@ import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 2.0 as PlasmaComponents
 
+// user information is called by using this
+import org.kde.kcoreaddons 1.0 as KCoreAddons
+
 Rectangle { // (CONCEPT) line under search field. This should be loaded on demand by the Loader QML type.
     height: Math.floor(units.smallSpacing / 2)
     color: isSearchBarFocused ? colorWithAlpha(theme.buttonFocusColor, 1) : colorWithAlpha(theme.highlightColor, 1)
@@ -18,4 +21,18 @@ Rectangle { // (CONCEPT) line under search field. This should be loaded on deman
     }
 
     anchors.top: parent.bottom
+
+    KCoreAddons.KUser { // this is needed for the greeting message (saying hello whatever the user name is)
+        id: kuser
+    }
+
+    // Send visual info to the SearchBar so as to customize it
+    function getPlaceHolderText() {
+        var text = plasmoid.configuration.writeSomething ? plasmoid.configuration.greetingText : "Howdy, " + kuser.loginName + "! Type to start searching..."
+        return text
+    }
+
+    function getHorizontalAlignment() {
+        return TextInput.AlignHCenter
+    }
 }

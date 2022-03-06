@@ -98,8 +98,10 @@ Kicker.DashboardWindow {
         return Qt.rgba(color.r, color.g, color.b, alpha)
     }
 
-    onKeyEscapePressed: { // using escape for both closing the menu and stopping the search
-        if (searching) {
+    onKeyEscapePressed: { // using escape for either closing the menu or stopping the search
+
+        if (searchField.activeFocus || searching) { // unfocus when escape key is pressed
+            searchField.focus = false
             searchField.text = ""
         } else {
             root.toggle()
@@ -113,6 +115,10 @@ Kicker.DashboardWindow {
     onSearchingChanged: {
         if (!searching)
             reset()
+        else {
+            appsGridLoader.item.updateQuery(searchField.text)
+            appsGridLoader.item.showSearchResults()
+        }
     }
 
     onVisibleChanged: { // start fancy animation and preemptively return to a known state
@@ -249,17 +255,20 @@ Kicker.DashboardWindow {
                         Layout.bottomMargin: units.iconSizes.medium
                         Layout.maximumWidth: searchField.usedSpace // expand the search field's width as much as the design requires space work with. Some designs are dynamic when it comes to their width, thus we need to account for this change.
 
-                        onMyTextChanged: { // update query on applications grid
-                            appsGridLoader.item.updateQuery(searchField.text)
-                            hasNewTextBeenWritten = true
-                        }
+                        //onMyTextChanged: { // update query on applications grid
+                            //if (searching) {
+                                //appsGridLoader.item.showSearchResults()
+                                //appsGridLoader.item.updateQuery(searchField.text)
+                            //}
+////                             hasNewTextBeenWritten = true
+                        //}
 
-                        onFoundNewAppsChanged: {
-                            if (foundNewApps) {
-                                appsGridLoader.item.showSearchResults()
-                                hasNewTextBeenWritten = false
-                            }
-                        }
+                        //onFoundNewAppsChanged: {
+                            //if (foundNewApps) {
+                                //appsGridLoader.item.showSearchResults()
+                                //hasNewTextBeenWritten = false
+                            //}
+                        //}
 
                         Keys.onPressed: {
                             if (event.key == Qt.Key_Down || event.key == Qt.Key_Right) {
@@ -396,9 +405,9 @@ Kicker.DashboardWindow {
         }
 
     Component.onCompleted: {
-//         rootModel.pageSize = -1 // this will, somehow, make it show everything -- again, don't ask me!
-//         console.log("ALL APPS NUMBER: ",rootModel.modelForRow(0).modelForRow(1).count)
-//         appsGridLoader.item.allAppsCount = rootModel.modelForRow(0).modelForRow(1).count
+        // Dummy query to preload runner model
+        appsGridLoader.item.updateQuery("k")
+        appsGridLoader.item.showSearchResults()
 
         kicker.reset.connect(reset);
     }

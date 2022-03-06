@@ -78,6 +78,18 @@ Item {
                     }
                 }
 
+                RadioButton {
+                    Layout.fillWidth: true
+                    id: designModernComfy
+                    text: i18n("Modern comfy")
+                    exclusiveGroup: designChoice
+                    checked: plasmoid.configuration.searchBarDesign == "searchbar_designs/ModernComfy.qml"
+                    onCheckedChanged: {
+                        if (checked)
+                            designChooser.chosenDesignSheetPath = "searchbar_designs/ModernComfy.qml"
+                    }
+                }
+
             }
         }
 

@@ -99,7 +99,9 @@ Kicker.DashboardWindow {
     }
 
     onKeyEscapePressed: { // using escape for both closing the menu and stopping the search
-        if (searching) {
+
+        if (searchField.activeFocus || searching) { // unfocus when escape key is pressed
+            searchField.focus = false
             searchField.text = ""
         } else {
             root.toggle()

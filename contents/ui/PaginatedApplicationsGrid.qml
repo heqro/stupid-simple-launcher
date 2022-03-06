@@ -29,8 +29,6 @@ Item {
     id: artifactForProperlyDisplayingEverythingInANiceWay
 
     anchors.fill: parent
-    //Layout.fillWidth: true
-    //Layout.fillHeight: true
 
     onWidthChanged: {
         resetAppsGrid()
@@ -111,7 +109,6 @@ Item {
     }
 
     function highlightItemAt(row, column) {
-//         appsSwipeview.currentItem.item.tryActivate(row, column)
         appsSwipeview.tryActivateItemAt(row, column)
     }
 

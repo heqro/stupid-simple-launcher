@@ -16,15 +16,9 @@ Rectangle { // Inspired by modern, cool, responsive search bars
 
     Behavior on width { SmoothedAnimation {velocity: 1000; easing.type: Easing.OutQuad} }
 
-    //readonly property string queryCopy: parentText
-    //onQueryCopyChanged: { // this signal slot ensures the prompt is collapsed if it was previously opened by the user by clicking the search icon.
-        //if (queryCopy == "" && hoverArea.hoverAreaClicked)
-            //hoverArea.hoverAreaClicked = false
-    //}
-
     TextMetrics { // this elements allows us to read the width of the user's input text
         id: t_metrics
-        text: "Some query I would make"
+        text: "Some query I would make" // use a text long enough to hold a meaningful query
         font.pointSize: PlasmaCore.Theme.defaultFont.pointSize * 2 // account for the arbitrary font size chosen in the parent object.
     }
 
@@ -58,11 +52,10 @@ Rectangle { // Inspired by modern, cool, responsive search bars
             anchors.centerIn: parent
         }
 
-        MouseArea {
+        MouseArea { // this is for making the search icon act as some kind of button to collapse the current search or launch a new query
             id: hoverArea
             anchors.fill: parent
             hoverEnabled: true
-//             property bool hoverAreaClicked: false
             onClicked: {
                 toggleFocus()
             }
@@ -92,6 +85,7 @@ Rectangle { // Inspired by modern, cool, responsive search bars
         return ""
     }
 
+    // Send text alignment to customize SearchBar
     function getHorizontalAlignment() {
         return TextInput.AlignLeft
     }

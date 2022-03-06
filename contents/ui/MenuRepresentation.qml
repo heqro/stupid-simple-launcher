@@ -98,7 +98,7 @@ Kicker.DashboardWindow {
         return Qt.rgba(color.r, color.g, color.b, alpha)
     }
 
-    onKeyEscapePressed: { // using escape for both closing the menu and stopping the search
+    onKeyEscapePressed: { // using escape for either closing the menu or stopping the search
 
         if (searchField.activeFocus || searching) { // unfocus when escape key is pressed
             searchField.focus = false

@@ -47,7 +47,7 @@ PlasmaComponents.TextField { //searchbar
 
     Loader {
         id: designChooser
-        z: -1 // draw this element under parent (TODO - please fix this shit workaround once you know more about QML)
+        z: -1 // draw everything under the parent
         active: plasmoid.configuration.searchBarDesign != ""
         anchors {
             horizontalCenter: parent.horizontalCenter

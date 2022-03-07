@@ -21,7 +21,6 @@ import QtQuick.Controls 2.2
 
 Item {
 
-    property int allAppsCount
     property int pageCount
     readonly property int currentIndex: appsSwipeview.currentIndex
 

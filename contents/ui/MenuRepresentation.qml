@@ -348,7 +348,7 @@ Kicker.DashboardWindow {
 
                                 //focus: true
                                 // only add some fancy spacing between the buttons if they are only icons.
-                                spacing: (showCategoriesText || showCategoriesIconAndText) ? 0 : units.iconSizes.small
+                                spacing: showCategoriesIcon ? units.iconSizes.small : 0
 
                                 // the following lines help maintaining consistency in highlighting with respect to whatever you have set in your Plasma Style. (This is taken from ItemGridDelegate.qml)
                                 highlight: PlasmaComponents.Highlight {}

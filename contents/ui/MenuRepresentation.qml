@@ -255,21 +255,6 @@ Kicker.DashboardWindow {
                         Layout.bottomMargin: units.iconSizes.medium
                         Layout.maximumWidth: searchField.usedSpace // expand the search field's width as much as the design requires space work with. Some designs are dynamic when it comes to their width, thus we need to account for this change.
 
-                        //onMyTextChanged: { // update query on applications grid
-                            //if (searching) {
-                                //appsGridLoader.item.showSearchResults()
-                                //appsGridLoader.item.updateQuery(searchField.text)
-                            //}
-////                             hasNewTextBeenWritten = true
-                        //}
-
-                        //onFoundNewAppsChanged: {
-                            //if (foundNewApps) {
-                                //appsGridLoader.item.showSearchResults()
-                                //hasNewTextBeenWritten = false
-                            //}
-                        //}
-
                         Keys.onPressed: {
                             if (event.key == Qt.Key_Down || event.key == Qt.Key_Right) {
                                 event.accepted = true
@@ -285,8 +270,6 @@ Kicker.DashboardWindow {
                             }
 
                         }
-
-
                     }
 
 

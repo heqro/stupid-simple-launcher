@@ -38,9 +38,6 @@ Rectangle { // rectangle used for marking the bounds for the category button
     property bool isCategoriesFontSizeSet: plasmoid.configuration.customizeCategoriesFontSize
     property int fontSize: isCategoriesFontSizeSet ? plasmoid.configuration.categoriesFontSize : parent.height
 
-//     property int buttonHeight:  parent.height
-    //property int buttonWidth:   parent.width
-
     height: myCategoryTemplateList.buttonHeight
     width:  myCategoryTemplateList.buttonWidth
 
@@ -48,9 +45,7 @@ Rectangle { // rectangle used for marking the bounds for the category button
 
     RowLayout {
         anchors.fill: parent
-        //         anchors.leftMargin: highlightItemSvg.margins.left
         anchors.leftMargin: 2 * units.smallSpacing
-        //         anchors.rightMargin: highlightItemSvg.margins.right
         anchors.rightMargin: 2 * units.smallSpacing
 
         layoutDirection: isSidebarOnTheRight ? Qt.RightToLeft : Qt.LeftToRight

@@ -125,31 +125,27 @@ Item {
                     Layout.fillWidth: true
 
                     ColumnLayout {
+                        Layout.fillWidth: true
                         CheckBox {
                             Layout.leftMargin: units.smallSpacing
                             id: customizeCategoriesSize
                             text: i18n("Customize categories' size")
                             visible: showCategories.checked
-                        }
-
-                        Kirigami.InlineMessage {
-                            id: changingSidebarSizeWarning
-                            type: Kirigami.MessageType.Warning
-                            visible: customizeCategoriesSize.checked && showCategories.checked
-                            showCloseButton: true
                             Layout.fillWidth: true
-                            text: i18n("Manually setting the categories sidebar buttons' size may place different elements of the menu out of your screen.")
                         }
 
                         ListView {
                             id: myCategoryTemplateList
                             currentIndex: 0
-                            Layout.minimumWidth: buttonWidth
-                            Layout.minimumHeight: buttonHeight
+                            Layout.fillWidth: true
+                            Layout.minimumHeight: (plasmoid.configuration.categoriesButtonHeight > 0) ? plasmoid.configuration.categoriesButtonHeight : contentHeight
+                            Layout.fillHeight: true
+                            Layout.minimumWidth: (plasmoid.configuration.categoriesButtonWidth > 0) ? plasmoid.configuration.categoriesButtonWidth : units.iconSizes.huge
+//                             Layout.minimumHeight: (plasmoid.configuration.categoriesButtonHeight > 0) ? plasmoid.configuration.categoriesButtonHeight : units.iconSizes.smallMedium
                             visible: showCategories.checked && customizeCategoriesSize.checked
 
-                            property int buttonWidth: (plasmoid.configuration.categoriesButtonWidth > 0) ? plasmoid.configuration.categoriesButtonWidth : units.iconSizes.huge
-                            property int buttonHeight: (plasmoid.configuration.categoriesButtonHeight > 0) ? plasmoid.configuration.categoriesButtonHeight : units.iconSizes.smallMedium
+                            property int buttonWidth: width
+                            property int buttonHeight: height
 
                             highlight: PlasmaComponents.Highlight {}
                             highlightFollowsCurrentItem: true

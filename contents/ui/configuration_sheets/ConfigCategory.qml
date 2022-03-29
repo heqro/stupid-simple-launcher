@@ -137,10 +137,16 @@ Item {
                         ListView {
                             id: myCategoryTemplateList
                             currentIndex: 0
+
                             Layout.fillWidth: true
-                            Layout.minimumHeight: (plasmoid.configuration.categoriesButtonHeight > 0) ? plasmoid.configuration.categoriesButtonHeight : contentHeight
+                            Layout.minimumHeight: (plasmoid.configuration.categoriesButtonHeight > 0) ? contentHeight : 0
+
+
                             Layout.fillHeight: true
                             Layout.minimumWidth: (plasmoid.configuration.categoriesButtonWidth > 0) ? plasmoid.configuration.categoriesButtonWidth : units.iconSizes.huge
+
+
+
 //                             Layout.minimumHeight: (plasmoid.configuration.categoriesButtonHeight > 0) ? plasmoid.configuration.categoriesButtonHeight : units.iconSizes.smallMedium
                             visible: showCategories.checked && customizeCategoriesSize.checked
 

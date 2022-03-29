@@ -27,17 +27,11 @@ Rectangle { // Inspired by modern, cool, responsive search bars
         id: searchIconContainer
         height: parent.width > 0 ? Math.floor(9 * parent.height / 11) : parent.height
         width:  parent.width > 0 ? Math.floor(9 * parent.height / 11) : parent.height
-        Behavior on width { SmoothedAnimation {duration: 300; easing.type: Easing.OutQuad} }
-        Behavior on height { SmoothedAnimation {duration: 300; easing.type: Easing.OutQuad} }
+        //Behavior on width { SmoothedAnimation {duration: 300; easing.type: Easing.OutQuad} }
+        //Behavior on height { SmoothedAnimation {duration: 300; easing.type: Easing.OutQuad} }
 
-        color: parent.width > 0 ? colorWithAlpha(theme.highlightColor, Math.min(!hoverArea.containsMouse + 0.75, 1)) : colorWithAlpha(theme.buttonBackgroundColor, Math.min(!hoverArea.containsMouse + 0.75, 1))
 
-        Behavior on color {
-            ColorAnimation {
-                duration: 30
-            }
-        }
-
+        color: colorWithAlpha(theme.highlightColor, Math.min(!hoverArea.containsMouse + 0.75, 1))
         radius: width / 2
 
         anchors {
@@ -46,7 +40,7 @@ Rectangle { // Inspired by modern, cool, responsive search bars
         }
 
         PlasmaCore.IconItem { // search icon
-            source: "search" // symbolic-like. I enjoy much more this one than a detailed one.
+            source: "system-search-symbolic" // symbolic-like. I enjoy much more this one than a detailed one.
             height: Math.floor(4 * parent.height / 5)
             width:  Math.floor(4 * parent.height / 5)
             anchors.centerIn: parent

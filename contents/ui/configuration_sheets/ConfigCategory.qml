@@ -144,10 +144,6 @@ Item {
 
                             Layout.fillHeight: true
                             Layout.minimumWidth: (plasmoid.configuration.categoriesButtonWidth > 0) ? plasmoid.configuration.categoriesButtonWidth : units.iconSizes.huge
-
-
-
-//                             Layout.minimumHeight: (plasmoid.configuration.categoriesButtonHeight > 0) ? plasmoid.configuration.categoriesButtonHeight : units.iconSizes.smallMedium
                             visible: showCategories.checked && customizeCategoriesSize.checked
 
                             property int buttonWidth: width

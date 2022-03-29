@@ -322,14 +322,12 @@ Kicker.DashboardWindow {
                                     onAttemptedToChangeCategoryChanged: {
                                         if (attemptedToChangeCategory) {
                                             appsGridLoader.item.changeCategory(indexInModel)
+                                            appsGridLoader.item.highlightItemAt(0, 0)
                                             attemptedToChangeCategory = false
                                         }
 
                                     }
                                 }
-
-
-                                //focus: true
                                 // only add some fancy spacing between the buttons if they are only icons.
                                 spacing: showCategoriesIcon ? units.iconSizes.small : 0
 

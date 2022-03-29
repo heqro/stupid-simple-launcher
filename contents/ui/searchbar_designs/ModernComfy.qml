@@ -14,7 +14,7 @@ Rectangle { // Inspired by modern, cool, responsive search bars
     width: isSearchBarFocused ? t_metrics.width + Math.ceil(1.25 * units.largeSpacing) : 0
     anchors.bottom: parent.top
 
-    Behavior on width { SmoothedAnimation {velocity: 1000; easing.type: Easing.OutQuad} }
+    Behavior on width { SmoothedAnimation {duration: 500; easing.type: Easing.OutQuad} }
 
     TextMetrics { // this elements allows us to read the width of the user's input text
         id: t_metrics
@@ -25,12 +25,8 @@ Rectangle { // Inspired by modern, cool, responsive search bars
     Rectangle {
 
         id: searchIconContainer
-        height: parent.width > 0 ? Math.floor(9 * parent.height / 11) : parent.height
-        width:  parent.width > 0 ? Math.floor(9 * parent.height / 11) : parent.height
-        //Behavior on width { SmoothedAnimation {duration: 300; easing.type: Easing.OutQuad} }
-        //Behavior on height { SmoothedAnimation {duration: 300; easing.type: Easing.OutQuad} }
-
-
+        height:Math.floor(9 * parent.height / 11)
+        width: Math.floor(9 * parent.height / 11)
         color: colorWithAlpha(theme.highlightColor, Math.min(!hoverArea.containsMouse + 0.75, 1))
         radius: width / 2
 
@@ -61,16 +57,51 @@ Rectangle { // Inspired by modern, cool, responsive search bars
     Rectangle { // this is the real rectangle that draws the border around every element in the menu.
         id: borderingRectangle
         z: -1 // set this element under the parent element
-        height: parentHeight
+        height: parent.width > 0 ?  parentHeight : Math.floor(9 * parent.height / 11)
 
-        anchors.left: parent.left
+        anchors.right: searchIconContainer.right
+        anchors.rightMargin: -units.iconSizes.small * (parent.width > 0)
 
-        width: parent.width + searchIconContainer.width + units.iconSizes.small * (parent.width > 0)
+        states: [
+            State {
+                name: "increaseMargin"
+                when: isSearchBarFocused
+                PropertyChanges {
+                    target: borderingRectangle
+                    anchors.rightMargin: -units.iconSizes.small
+                }
+            },
+            State {
+                name: "decreaseMargin"
+                when: !isSearchBarFocused
+                PropertyChanges {
+                    target: borderingRectangle
+                    anchors.rightMargin: 0
+                }
+            }
+        ]
+
+        transitions: [
+            Transition {
+                to: "increaseMargin"
+                NumberAnimation { properties:"anchors.rightMargin"; easing.type: Easing.OutQuad;duration: 750 }
+            },
+            Transition {
+                to: "decreaseMargin"
+                NumberAnimation { properties:"anchors.rightMargin"; easing.type: Easing.OutQuad;duration: 750 }
+            }
+        ]
+
+        anchors.verticalCenter: parent.verticalCenter
+
+        width: isSearchBarFocused ? t_metrics.width + Math.ceil(1.25 * units.largeSpacing) + searchIconContainer.width + units.iconSizes.small : searchIconContainer.width // calculating our own width instead of using this element's parent. This allows to launch both the parent and this element's animation at the same time. (HACK?)
+
+        Behavior on width { SmoothedAnimation {duration: 500; easing.type: Easing.OutQuad} }
 
         radius: width/2
 
+        //color: "red" // for debugging purposes
         color: colorWithAlpha(theme.backgroundColor, 1)
-        opacity: parent.width > 0
 
     }
 

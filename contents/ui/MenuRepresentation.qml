@@ -65,7 +65,7 @@ Kicker.DashboardWindow {
     property int widthScreen:  columns * cellSize
     property int heightScreen: rows    * cellSize
 
-    // this property is exposed because it will determine the behavior of the grid - whenenver we are searching, we will have only a grid dedicated to it. However, when we aren't, we may have two (if favorites support is enabled). It also determines which model we feed to the applications grid.
+    // this property is exposed because it will determine the behavior of the grid - whenever we are searching, we will have only a grid dedicated to it. However, when we aren't, we may have two (if favorites support is enabled). It also determines which model we feed to the applications grid.
     property bool searching: searchField.text != ""
 
     // we will only show a grid dedicated towards favorites when the user tells us to do so and we have at least an application checked as favorite

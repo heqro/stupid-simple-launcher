@@ -15,7 +15,6 @@ Rectangle { // rectangle used for marking the bounds for the category button
     property int indexInModel: categoryIndex
     property string iconName: categoryIcon
     property string categoryName: categoryText
-    property int selectedItemIndex: categoriesList.currentIndex
 
     property bool showToolTip: (categoryTextId.truncated || showCategoriesIcon) && showCategoriesTooltip
 
@@ -34,10 +33,6 @@ Rectangle { // rectangle used for marking the bounds for the category button
     width:  isButtonSizeSet ? plasmoid.configuration.categoriesButtonWidth : Math.floor(widthScreen / 8)
 
     opacity: (!searching && (categoriesList.currentIndex == index || mouseArea.containsMouse)) ? 1 : 0.4
-
-    //onSelectedItemIndexChanged: {
-        //opacity = (categoriesList.currentIndex == index && !searching) ? 1 : 0.4
-    //}
 
     RowLayout {
         anchors.fill: parent

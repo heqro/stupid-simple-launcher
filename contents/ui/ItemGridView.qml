@@ -204,7 +204,11 @@ FocusScope {
             //enabled: visible
             currentIndex: -1
 
-            maximumFlickVelocity: height * 1.5
+            maximumFlickVelocity: height * 1.65
+            flickDeceleration: 3500
+            //ScrollBar.vertical: ScrollBar {
+                //visible: false    // hides scrollbar
+            //}
 
 
             move: Transition {

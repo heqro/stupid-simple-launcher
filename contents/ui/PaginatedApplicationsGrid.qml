@@ -51,10 +51,7 @@ Item {
         }
         pageCount-- // There is an extra page in the "All Applications" category dedicated to the "Favorites" category. We account for that decreasing the index by an unit.
         appsSwipeview.interactive = true
-<<<<<<< HEAD
-        console.log("calculateNumberOfPages(",categoryIndex,") returns",pageCount)
-=======
->>>>>>> paginatePlusScroll
+
     }
 
 

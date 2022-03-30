@@ -21,7 +21,6 @@ import QtQuick.Controls 2.2
 
 Item {
 
-    property int allAppsCount
     property int pageCount
     readonly property int currentIndex: appsSwipeview.currentIndex
 
@@ -29,8 +28,6 @@ Item {
     id: artifactForProperlyDisplayingEverythingInANiceWay
 
     anchors.fill: parent
-    //Layout.fillWidth: true
-    //Layout.fillHeight: true
 
     onWidthChanged: {
         resetAppsGrid()
@@ -62,7 +59,7 @@ Item {
 
 
     function resetAppsGrid() {
-        //         appsGrid.focus = true
+
         var w_Aux = Math.floor(width / cellSize)
         var h_Aux = Math.floor(height / cellSize)
         rootModel.pageSize = w_Aux * h_Aux
@@ -72,7 +69,7 @@ Item {
             changeCategory(-1) // start on "Favorites" category
         else
             changeCategory(rootModel.showRecentApps + rootModel.showRecentDocs)
-            highlightItemAt(0,0) // preemptively focus first item
+        highlightItemAt(0,0) // preemptively focus first item
     }
 
     function changeCategory(indexInModel) { // this function receives the "change category!" order from the category buttons and translates the index from said button into an order the paginated applications grid can understand.
@@ -115,7 +112,6 @@ Item {
     }
 
     function highlightItemAt(row, column) {
-//         appsSwipeview.currentItem.item.tryActivate(row, column)
         appsSwipeview.tryActivateItemAt(row, column)
     }
 

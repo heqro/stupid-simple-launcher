@@ -23,10 +23,6 @@ PlasmaComponents.TextField { //searchbar
 
     property string greetingMessage: plasmoid.configuration.greetingText
 
-
-    property bool hasNewTextBeenWritten: false // stupid binding to know if the user has been introduced new text. That way, we update foundNewApps to force a runnerModel update (if new results were found).
-    property bool foundNewApps: hasNewTextBeenWritten && runnerModel.count == 1
-
     font.pointSize: PlasmaCore.Theme.defaultFont.pointSize * 2
 
     placeholderText: designChooser.active ? designChooser.item.getPlaceHolderText() : (plasmoid.configuration.writeSomething ? plasmoid.configuration.greetingText : "Howdy, " + kuser.loginName + "! Type to start searching...")
@@ -47,7 +43,7 @@ PlasmaComponents.TextField { //searchbar
 
     Loader {
         id: designChooser
-        z: -1 // draw this element under parent (TODO - please fix this shit workaround once you know more about QML)
+        z: -1 // draw everything under the parent
         active: plasmoid.configuration.searchBarDesign != ""
         anchors {
             horizontalCenter: parent.horizontalCenter

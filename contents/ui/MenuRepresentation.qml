@@ -65,7 +65,7 @@ Kicker.DashboardWindow {
     property int widthScreen:  columns * cellSize
     property int heightScreen: rows    * cellSize
 
-    // this property is exposed because it will determine the behavior of the grid - whenenver we are searching, we will have only a grid dedicated to it. However, when we aren't, we may have two (if favorites support is enabled). It also determines which model we feed to the applications grid.
+    // this property is exposed because it will determine the behavior of the grid - whenever we are searching, we will have only a grid dedicated to it. However, when we aren't, we may have two (if favorites support is enabled). It also determines which model we feed to the applications grid.
     property bool searching: searchField.text != ""
 
     // we will only show a grid dedicated towards favorites when the user tells us to do so and we have at least an application checked as favorite
@@ -255,21 +255,6 @@ Kicker.DashboardWindow {
                         Layout.bottomMargin: units.iconSizes.medium
                         Layout.maximumWidth: searchField.usedSpace // expand the search field's width as much as the design requires space work with. Some designs are dynamic when it comes to their width, thus we need to account for this change.
 
-                        //onMyTextChanged: { // update query on applications grid
-                            //if (searching) {
-                                //appsGridLoader.item.showSearchResults()
-                                //appsGridLoader.item.updateQuery(searchField.text)
-                            //}
-////                             hasNewTextBeenWritten = true
-                        //}
-
-                        //onFoundNewAppsChanged: {
-                            //if (foundNewApps) {
-                                //appsGridLoader.item.showSearchResults()
-                                //hasNewTextBeenWritten = false
-                            //}
-                        //}
-
                         Keys.onPressed: {
                             if (event.key == Qt.Key_Down || event.key == Qt.Key_Right) {
                                 event.accepted = true
@@ -285,8 +270,6 @@ Kicker.DashboardWindow {
                             }
 
                         }
-
-
                     }
 
 
@@ -339,16 +322,14 @@ Kicker.DashboardWindow {
                                     onAttemptedToChangeCategoryChanged: {
                                         if (attemptedToChangeCategory) {
                                             appsGridLoader.item.changeCategory(indexInModel)
+                                            appsGridLoader.item.highlightItemAt(0, 0)
                                             attemptedToChangeCategory = false
                                         }
 
                                     }
                                 }
-
-
-                                //focus: true
                                 // only add some fancy spacing between the buttons if they are only icons.
-                                spacing: (showCategoriesText || showCategoriesIconAndText) ? 0 : units.iconSizes.small
+                                spacing: showCategoriesIcon ? units.iconSizes.small : 0
 
                                 // the following lines help maintaining consistency in highlighting with respect to whatever you have set in your Plasma Style. (This is taken from ItemGridDelegate.qml)
                                 highlight: PlasmaComponents.Highlight {}

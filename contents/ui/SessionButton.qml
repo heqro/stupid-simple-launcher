@@ -22,9 +22,19 @@ PlasmaComponents.Button {
         active: plasmoid.configuration.showSessionControlTooltips
         anchors.fill: parent
         sourceComponent: Component {
-            PlasmaCore.ToolTipArea {
-                mainText: actionName
-//                 anchors.fill: parent
+            MouseArea {
+                anchors.fill: parent
+                hoverEnabled: true
+
+                onContainsMouseChanged: {
+                    if (containsMouse && plasmoid.configuration.showSessionControlTooltips) toolTip.showToolTip()
+                    if (!containsMouse && plasmoid.configuration.showSessionControlTooltips) toolTip.hideToolTip()
+                }
+
+                PlasmaCore.ToolTipArea {
+                    id: toolTip
+                    mainText: actionName
+                }
             }
         }
     }

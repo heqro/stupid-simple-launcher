@@ -1,9 +1,12 @@
-import QtQuick 2.0
+import QtQuick 2.4
 
 import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 2.0 as PlasmaComponents
 import org.kde.kquickcontrolsaddons 2.0
+
+// for using ColumnLayout
+import QtQuick.Layouts 1.1
 
 import "../code/tools.js" as Tools
 
@@ -64,54 +67,56 @@ Item {
         }
     }
 
-    Rectangle{
-        id: box
-        height: parent.height // - 10
-        width:  parent.width  // - 10
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.horizontalCenter: parent.horizontalCenter
-        //color:"red"
-        //opacity: 0.4
-        color:"transparent"
-    }
+    ColumnLayout {
 
-    PlasmaCore.IconItem {
-        id: icon
-//         y: iconSize*0.02
-        //anchors.horizontalCenter: box.horizontalCenter
-        anchors.top: box.top
-        anchors.left: box.left
-        anchors.right: box.right
-        //anchors.verticalCenter:   box.verticalCenter
-        //width: iconSize
-        height: iconSize
-        animated: false
-        usesPlasmaTheme: item.GridView.view.usesPlasmaTheme
-        source: model.decoration
-    }
+        id: myColumnLayout
+        anchors.fill: parent
 
-    PlasmaComponents.Label {
-        id: label
+        PlasmaCore.IconItem {
+            id: icon
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            animated: false
+            usesPlasmaTheme: item.GridView.view.usesPlasmaTheme
+            source: model.decoration
 
-        visible: showLabel
-
-        anchors {
-            top: icon.bottom
-            topMargin: units.smallSpacing
-            left: box.left
-            leftMargin: highlightItemSvg.margins.left
-            right: box.right
-            rightMargin: highlightItemSvg.margins.right
-            bottom: box.bottom
-            bottomMargin:highlightItemSvg.margins.bottom
         }
 
-        horizontalAlignment: Text.AlignHCenter
+        Rectangle {
 
-        elide: Text.ElideRight
-        wrapMode: Text.WordWrap
+            id: labelBoundary
+            color: "transparent"
+            Layout.preferredHeight: t_metrics.height * label.maximumLineCount + units.smallSpacing/3 // allow a maximum of three lines per label
+            Layout.fillWidth: true
+            PlasmaComponents.Label {
 
-        text: model.display != undefined ? model.display : ""
+                id: label
+                visible: showLabel
+
+                anchors.fill: parent
+                anchors.leftMargin:     units.smallSpacing/2
+                anchors.rightMargin:    units.smallSpacing/2
+                anchors.bottomMargin:   units.smallSpacing/3
+
+
+                horizontalAlignment: Text.AlignHCenter
+
+                elide: Text.ElideRight
+                wrapMode: Text.WordWrap
+                maximumLineCount: 2
+
+                text: model.display != undefined ? model.display : ""
+            }
+
+
+            TextMetrics { // tool get font's height so as to define rectangle's height
+                id: t_metrics
+                text: label.text // use a text long enough to hold a meaningful query
+                font.pointSize: label.font.pointSize
+            }
+
+        }
+
     }
 
     PlasmaCore.ToolTipArea {

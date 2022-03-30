@@ -28,16 +28,16 @@ Rectangle { // rectangle used for marking the bounds for the category button
     property bool attemptedToChangeCategory: false
 
     color: "transparent"
-//     height: units.iconSizes.huge
+
     height: isButtonSizeSet ? plasmoid.configuration.categoriesButtonHeight : units.iconSizes.huge
-//     width:  isButtonSizeSet ? Math.min(plasmoid.configuration.categoriesButtonWidth, Math.floor(widthScreen / 8) : units.iconSizes.huge * 32
+
     width:  isButtonSizeSet ? plasmoid.configuration.categoriesButtonWidth : Math.floor(widthScreen / 8)
 
-    opacity: (categoriesList.currentIndex == index && !searching) ? 1 : 0.4
+    opacity: (!searching && (categoriesList.currentIndex == index || mouseArea.containsMouse)) ? 1 : 0.4
 
-    onSelectedItemIndexChanged: {
-        opacity = (categoriesList.currentIndex == index && !searching) ? 1 : 0.4
-    }
+    //onSelectedItemIndexChanged: {
+        //opacity = (categoriesList.currentIndex == index && !searching) ? 1 : 0.4
+    //}
 
     RowLayout {
         anchors.fill: parent
@@ -64,7 +64,6 @@ Rectangle { // rectangle used for marking the bounds for the category button
 
             // Using font sizes that are consistent with plasma
             font.pointSize: customizeCategoriesFontSize ? categoriesFontSize : theme.defaultFont.pointSize * 1.2
-            //font.pointSize: customizeCategoriesFontSize ? categoriesFontSize : Math.min(containerForCategory.height, PlasmaCore.Theme.defaultFont.pointSize * 1.2)
             minimumPointSize: containerForCategory.height
 
             visible: showCategoriesText || showCategoriesIconAndText
@@ -86,6 +85,7 @@ Rectangle { // rectangle used for marking the bounds for the category button
     }
 
     MouseArea { // I am using this MouseArea to recreate how a button would behave (just using Buttons didn't entirely work the way I intended.)
+        id: mouseArea
         anchors.fill: parent
         hoverEnabled: true
         onClicked: {
@@ -95,21 +95,13 @@ Rectangle { // rectangle used for marking the bounds for the category button
             categoriesList.currentIndex = index // highlight current category to give the feeling of responsiveness.
         }
 
-        onEntered: { // highlight item on hovering
-            if (categoriesList.currentIndex != index && !searching) {
-                containerForCategory.opacity = 0.9
-            }
+        onEntered: { // show tooltips if the user wanted to.
             if (showToolTip) {
                 toolTip.showToolTip()
             }
-
-
         }
 
-        onExited: { // reduce opacity on leaving
-            if (categoriesList.currentIndex != index && !searching) {
-                containerForCategory.opacity = 0.4
-            }
+        onExited: { // immediately hide tooltips if the user wanted them to be shown.
             if (showToolTip) {
                 toolTip.hideToolTip()
             }

@@ -11,12 +11,8 @@ PlasmaComponents.Button {
     property string actionName
     flat: true
     icon.name: iconUrl
-    icon.height: PlasmaCore.Units.iconSizes.large
-    icon.width: PlasmaCore.Units.iconSizes.large
-    onClicked: {
-        root.toggle() // make sure we hide this application prior to showing the fullscreen leave menu (or leave, this will depend on whether or not the user has set in its settings to skip the fullscreen leave menu)
-        executable.exec(commandToLaunch)
-    }
+    icon.height: units.iconSizes.large
+    icon.width: units.iconSizes.large
 
     Loader { // only try to load tooltips when the user wants them to load.
         active: plasmoid.configuration.showSessionControlTooltips
@@ -29,6 +25,12 @@ PlasmaComponents.Button {
                 onContainsMouseChanged: {
                     if (containsMouse && plasmoid.configuration.showSessionControlTooltips) toolTip.showToolTip()
                     if (!containsMouse && plasmoid.configuration.showSessionControlTooltips) toolTip.hideToolTip()
+                }
+
+                onClicked: {
+                    root.toggle() // make sure we hide this application prior to showing the fullscreen leave menu (or leave, this will depend on whether or not the user has set in its settings to skip the fullscreen leave menu)
+                    toolTip.hideToolTip()
+                    executable.exec(commandToLaunch)
                 }
 
                 PlasmaCore.ToolTipArea {

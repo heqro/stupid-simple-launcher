@@ -67,6 +67,7 @@ Kicker.DashboardWindow {
 
     // this property is exposed because it will determine the behavior of the grid - whenever we are searching, we will have only a grid dedicated to it. However, when we aren't, we may have two (if favorites support is enabled). It also determines which model we feed to the applications grid.
     property bool searching: searchField.text != ""
+    property string searchText: searchField.text
 
     // we will only show a grid dedicated towards favorites when the user tells us to do so and we have at least an application checked as favorite
     property bool showFavoritesInGrid: plasmoid.configuration.favoritesInGrid && globalFavorites.count > 0
@@ -75,7 +76,7 @@ Kicker.DashboardWindow {
 
     property real alphaValue: plasmoid.configuration.opacitySet ? plasmoid.configuration.alphaValue : 0.8
 
-    // boolean values to manage how to show categories in their corresponing sidebar
+    // boolean values to manage how to show categories in their corresponding sidebar
     property bool showCategoriesIcon: plasmoid.configuration.categoriesIcon
     property bool showCategoriesText: plasmoid.configuration.categoriesText
     property bool showCategoriesIconAndText: plasmoid.configuration.categoriesIconAndText
@@ -115,7 +116,10 @@ Kicker.DashboardWindow {
     onSearchingChanged: {
         if (!searching)
             reset()
-        else {
+    }
+
+    onSearchTextChanged: {
+        if (searchField.text != "") {
             appsGridLoader.item.updateQuery(searchField.text)
             appsGridLoader.item.showSearchResults()
         }

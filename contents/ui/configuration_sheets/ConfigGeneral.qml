@@ -49,6 +49,7 @@ Item {
 
 //     property alias cfg_useCustomSizeGrid: useCustomSizeGrid.checked
     property alias cfg_iconSize:      iconSize.value
+    property alias cfg_favoritesIconSize: favoritesIconSize.value
 //     property alias cfg_numberColumns: numberColumns.value
     //property alias cfg_numberRows:    numberRows.value
     //property alias cfg_spaceWidth:    spaceWidth.value
@@ -211,8 +212,21 @@ Item {
             Layout.leftMargin: units.smallSpacing
             CheckBox{
                 id: favoritesInGrid
-                text: i18n("Show favorite applications at the top of the grid")
-                enabled: !paginateGrid.checked
+                text: i18n("Show favorite applications")
+            }
+        }
+
+        RowLayout{
+            Layout.fillWidth: true
+            Label {
+                Layout.leftMargin: units.smallSpacing
+                text: i18n("Size of favorite icons")
+            }
+            SpinBox{
+                id: favoritesIconSize
+                from: 24
+                to: 256
+                stepSize: 4
             }
         }
 

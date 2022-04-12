@@ -102,6 +102,8 @@ Rectangle { // Inspired by modern, cool, responsive search bars
 
         //color: "red" // for debugging purposes
         color: colorWithAlpha(theme.backgroundColor, 1)
+        border.color: colorWithAlpha(theme.highlightColor, 1)
+        border.width: Math.floor(units.smallSpacing/2)
 
     }
 

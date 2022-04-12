@@ -66,6 +66,9 @@
     <entry name="iconSize" type="Int">
       <default>132</default>
     </entry>
+    <entry name="favoritesIconSize" type="Int">
+      <default>108</default>
+    </entry>
     <entry name="startOnFavorites" type="Bool">
         <default>false</default>
     </entry>

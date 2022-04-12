@@ -76,46 +76,53 @@ Item {
             id: icon
             Layout.fillWidth: true
             Layout.fillHeight: true
+            Layout.margins: showLabel ? 0 : units.largeSpacing
             animated: false
             usesPlasmaTheme: item.GridView.view.usesPlasmaTheme
             source: model.decoration
 
         }
 
-        Rectangle {
+        Loader {
+            id: labelLoader
+            active: showLabel
+            Layout.preferredHeight: active ? t_metrics.height * 2 + units.smallSpacing/3 : 0// allow a maximum of three lines per label
+            Layout.fillWidth: active
 
-            id: labelBoundary
-            color: "transparent"
-            Layout.preferredHeight: t_metrics.height * label.maximumLineCount + units.smallSpacing/3 // allow a maximum of three lines per label
-            Layout.fillWidth: true
-            PlasmaComponents.Label {
+            sourceComponent: Rectangle {
 
-                id: label
-                visible: showLabel
-
+                id: labelBoundary
+                color: "transparent"
                 anchors.fill: parent
-                anchors.leftMargin:     units.smallSpacing/2
-                anchors.rightMargin:    units.smallSpacing/2
-                anchors.bottomMargin:   units.smallSpacing/3
+                PlasmaComponents.Label {
+
+                    id: label
+                    visible: showLabel
+
+                    anchors.fill: parent
+                    anchors.leftMargin:     units.smallSpacing/2
+                    anchors.rightMargin:    units.smallSpacing/2
+                    anchors.bottomMargin:   units.smallSpacing/3
 
 
-                horizontalAlignment: Text.AlignHCenter
+                    horizontalAlignment: Text.AlignHCenter
 
-                elide: Text.ElideRight
-                wrapMode: Text.WordWrap
-                maximumLineCount: 2
+                    elide: Text.ElideRight
+                    wrapMode: Text.WordWrap
+                    maximumLineCount: 2
 
-                text: model.display != undefined ? model.display : ""
+                    text: model.display != undefined ? model.display : ""
+                }
+
             }
-
 
             TextMetrics { // tool get font's height so as to define rectangle's height
                 id: t_metrics
-                text: label.text // use a text long enough to hold a meaningful query
-                font.pointSize: label.font.pointSize
+                text: model.display != undefined ? model.display : "" // use a text long enough to hold a meaningful query
             }
-
         }
+
+
 
     }
 

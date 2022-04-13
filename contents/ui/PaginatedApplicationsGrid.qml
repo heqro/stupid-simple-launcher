@@ -23,7 +23,8 @@ Item {
 
     property int pageCount
     readonly property int currentIndex: appsSwipeview.currentIndex
-
+    readonly property int numberOfColumns: Math.floor(parent.width / cellSize)
+    readonly property int numberOfRows: Math.floor(parent.height / cellSize)
 
     id: artifactForProperlyDisplayingEverythingInANiceWay
 
@@ -37,9 +38,9 @@ Item {
         resetAppsGrid()
     }
 
-    function calculateNumberOfPages(categoryIndex, isFavoritePage) {
+    function calculateNumberOfPages(categoryIndex, isFavoritePage) { // TODO - number of pages is only corrected after searching or changing category.
         if ((categoryIndex != rootModel.showRecentApps + rootModel.showRecentDocs) || isFavoritePage) { // only calculate pages when we are in the "All Applications" category. Else, rootModel defaults to just using a page for some reason.
-            pageCount = 1
+            pageCount = 1//HACK
             return
         }
 
@@ -57,9 +58,7 @@ Item {
 
     function resetAppsGrid() {
 
-        var w_Aux = Math.floor(width / cellSize)
-        var h_Aux = Math.floor(height / cellSize)
-        rootModel.pageSize = w_Aux * h_Aux
+        rootModel.pageSize = numberOfColumns * numberOfRows
         appsSwipeview.interactive = true
 
         if(plasmoid.configuration.startOnFavorites)
@@ -148,7 +147,6 @@ Item {
 
                 onKeyNavLeft: {
                     if ((index == appsSwipeview.currentIndex) && (appsSwipeview.currentIndex > 0)) { // there are more items on our left
-                        var numberOfColumns = Math.floor(appsGridPage.width / cellWidth)
                         var rowToHighlight = currentRow()
                         appsSwipeview.decrementCurrentIndex()
                         appsSwipeview.tryActivateItemAt(rowToHighlight, numberOfColumns - 1)

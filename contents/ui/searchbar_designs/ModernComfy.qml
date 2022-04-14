@@ -36,7 +36,7 @@ Rectangle { // Inspired by modern, cool, responsive search bars
         }
 
         PlasmaCore.IconItem { // search icon
-            source: "system-search-symbolic" // symbolic-like. I enjoy much more this one than a detailed one.
+            source: "nepomuk" // symbolic-like. I enjoy much more this one than a detailed one.
             height: Math.floor(4 * parent.height / 5)
             width:  Math.floor(4 * parent.height / 5)
             anchors.centerIn: parent

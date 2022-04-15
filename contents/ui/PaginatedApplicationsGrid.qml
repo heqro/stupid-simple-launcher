@@ -30,11 +30,11 @@ Item {
 
     anchors.fill: parent
 
-    onWidthChanged: {
+    // Given that the dimensions of the apps grid is calculated right after the menu is launched, we have to communicate that the grid needs to be updated (if it needs to).
+    onNumberOfRowsChanged: {
         resetAppsGrid()
     }
-
-    onHeightChanged: {
+    onNumberOfColumnsChanged: {
         resetAppsGrid()
     }
 

@@ -25,7 +25,6 @@ import QtQuick.Layouts 1.1
 
 import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
-import org.kde.plasma.components 2.0 as PlasmaComponents
 import org.kde.plasma.components 3.0 as PlasmaComponents3
 
 import org.kde.plasma.extras 2.0 as PlasmaExtras
@@ -285,15 +284,90 @@ Kicker.DashboardWindow {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
                         Layout.alignment: Qt.AlignCenter
+                        Layout.bottomMargin: units.iconSizes.large
 
                         layoutDirection: showCategoriesOnTheRight ? Qt.LeftToRight : Qt.RightToLeft
 
-
-                        Loader {
-                            id: appsGridLoader
+                        Rectangle {
+                            id: appGridsRectangle
+                            color: "transparent"
                             Layout.fillWidth: true
-                            Layout.fillHeight: true
-                            source: plasmoid.configuration.paginateGrid ? "PaginatedApplicationsGrid.qml" : "ApplicationsGrid.qml"
+                            Layout.fillHeight:true
+                            Loader {
+                                id: appsGridLoader
+
+                                height: plasmoid.configuration.paginateGrid ? cellSize * Math.floor((parent.height - (favoritesLoader.height + units.largeSpacing) * favoritesLoader.active - (pageIndicatorLoader.height + units.largeSpacing) * pageIndicatorLoader.active) / cellSize) : parent.height - (favoritesLoader.height + units.largeSpacing) * favoritesLoader.active - pageIndicatorLoader.height * pageIndicatorLoader.active
+//                                 anchors.top: plasmoid.configuration.paginateGrid ? : parent.top
+
+                                anchors.top: parent.top
+                                width: cellSize * Math.floor(parent.width / cellSize)
+                                anchors.horizontalCenter: parent.horizontalCenter
+//                                 anchors.left: parent.left
+                                //anchors.right: parent.right
+                                source: plasmoid.configuration.paginateGrid ? "PaginatedApplicationsGrid.qml" : "ApplicationsGrid.qml"
+                            }
+                            Loader { // dots to show the current page and the amount of pages.
+                                id: pageIndicatorLoader
+                                active: plasmoid.configuration.paginateGrid
+                                anchors.top: appsGridLoader.bottom
+
+                                anchors.topMargin: units.largeSpacing
+                                anchors.horizontalCenter: parent.horizontalCenter
+
+                                sourceComponent: PageIndicator {
+
+                                    id: currentPageIndicator
+
+                                    visible: count != 1
+
+                                    count: !searching ? appsGridLoader.item.pageCount : 1
+                                    currentIndex: appsGridLoader.item.currentIndex
+
+                                    delegate: Rectangle {
+
+                                        color: theme.headerTextColor
+                                        opacity: index === currentPageIndicator.currentIndex ? 0.75 : 0.35
+                                        height: index === currentPageIndicator.currentIndex ? units.iconSizes.smallMedium : units.iconSizes.small
+                                        width:  index === currentPageIndicator.currentIndex ? units.iconSizes.smallMedium : units.iconSizes.small
+                                        radius: width / 2
+                                        anchors.verticalCenter: parent.verticalCenter // align all indicators
+
+                                        Behavior on width { SmoothedAnimation {velocity: 12; easing.type: Easing.OutQuad} }
+
+                                    }
+                                }
+                            }
+
+                            Loader { // we can get away with not setting this boys' width because the loaded item will give such info
+                                id: favoritesLoader
+                                active: showFavoritesInGrid
+                                anchors.bottom: parent.bottom
+                                anchors.topMargin: units.largeSpacing
+//                                 anchors.bottomMargin: units.largeSpacing
+                                height: plasmoid.configuration.favoritesIconSize
+                                anchors.horizontalCenter: parent.horizontalCenter
+
+                                sourceComponent: ItemGridView {
+                                    model: globalFavorites
+                                    cellWidth: parent.height
+                                    cellHeight: parent.height
+                                    showLabels: false
+                                    width: Math.min(globalFavorites.count * parent.height, appGridsRectangle.width) // TODO - if the favorites is higher than the width then add an extra button to show all favorites!
+
+                                    Rectangle {
+                                        z: -1 // draw this element under the ItemGridView
+                                        height: parent.height
+                                        width: parent.height * Math.floor(parent.width / parent.height)
+                                        color: colorWithAlpha(theme.backgroundColor, alphaValue * 0.6)
+                                        border.color: colorWithAlpha(theme.highlightColor, 1)
+                                        border.width: Math.floor(units.smallSpacing/2)
+                                        radius: units.smallSpacing
+
+                                    }
+                                }
+
+
+                            }
                         }
 
                         PlasmaComponents3.ScrollView { // dedicated to storing the categories list
@@ -302,7 +376,7 @@ Kicker.DashboardWindow {
 
                             Layout.fillHeight: true
                             Layout.fillWidth: true
-                            Layout.bottomMargin: plasmoid.configuration.showSessionControlBar ? units.iconSizes.medium : units.iconSizes.large
+//                             Layout.bottomMargin: plasmoid.configuration.showSessionControlBar ? units.iconSizes.medium : units.iconSizes.large
 
 
                             //Layout.preferredWidth: categoriesModel.count == 0 ? 0 : (customizeCategoriesSidebarSize ? Math.min(categoriesSidebarWidth, Math.floor(widthScreen / 8)) : Math.floor(widthScreen / 8))
@@ -336,7 +410,7 @@ Kicker.DashboardWindow {
                                 spacing: showCategoriesIcon ? units.iconSizes.small : 0
 
                                 // the following lines help maintaining consistency in highlighting with respect to whatever you have set in your Plasma Style. (This is taken from ItemGridDelegate.qml)
-                                highlight: PlasmaComponents.Highlight {}
+                                highlight: PlasmaExtras.Highlight {}
                                 highlightFollowsCurrentItem: true
                                 highlightMoveDuration: 0
 
@@ -345,32 +419,7 @@ Kicker.DashboardWindow {
 
                     }
 
-                    Loader {
-                        active: plasmoid.configuration.paginateGrid
-                        Layout.alignment: Qt.AlignCenter
-                        sourceComponent: PageIndicator {
 
-                            id: currentPageIndicator
-
-                            visible: count != 1
-
-                            count: !searching ? appsGridLoader.item.pageCount : 1
-                            currentIndex: appsGridLoader.item.currentIndex
-
-                            delegate: Rectangle {
-
-                                color: theme.headerTextColor
-                                opacity: index === currentPageIndicator.currentIndex ? 0.75 : 0.35
-                                height: index === currentPageIndicator.currentIndex ? units.iconSizes.smallMedium : units.iconSizes.small
-                                width:  index === currentPageIndicator.currentIndex ? units.iconSizes.smallMedium : units.iconSizes.small
-                                radius: width / 2
-                                anchors.verticalCenter: parent.verticalCenter // align all indicators
-
-                                Behavior on width { SmoothedAnimation {velocity: 12; easing.type: Easing.OutQuad} }
-
-                            }
-                        }
-                    }
 
 
 

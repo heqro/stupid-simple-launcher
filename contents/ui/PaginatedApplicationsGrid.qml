@@ -167,7 +167,7 @@ Item {
 
                 Connections {
                     target: appsSwipeview
-                    onUpdateGridModel: {
+                    function onUpdateGridModel(myCategoryIndex, isFavorite) {
 
                         if (myCategoryIndex == rootModel.showRecentApps + rootModel.showRecentDocs)  // we are either going to show favorites or all apps
                             if (isFavorite)

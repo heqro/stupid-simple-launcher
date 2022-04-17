@@ -28,11 +28,17 @@ Rectangle { // rectangle used for marking the bounds for the category button
 
     color: "transparent"
 
-    height: isButtonSizeSet ? plasmoid.configuration.categoriesButtonHeight : units.iconSizes.huge
+    height: isButtonSizeSet ? plasmoid.configuration.categoriesButtonHeight : t_metrics.height * 2
 
-    width:  isButtonSizeSet ? plasmoid.configuration.categoriesButtonWidth : Math.floor(widthScreen / 8)
+    width:  isButtonSizeSet ? plasmoid.configuration.categoriesButtonWidth : t_metrics.width + 4 * units.smallSpacing
 
     opacity: (!searching && (categoriesList.currentIndex == index || mouseArea.containsMouse)) ? 1 : 0.4
+
+    TextMetrics {
+        id: t_metrics
+        text: "Toutes les applications" // long-ass text for making sure most languages will have their applications tag visible out of the box.
+        font.pointSize: theme.defaultFont.pointSize * 1.2
+    }
 
     RowLayout {
         anchors.fill: parent

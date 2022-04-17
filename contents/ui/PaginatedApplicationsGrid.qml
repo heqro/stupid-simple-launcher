@@ -4,11 +4,7 @@ import QtQuick 2.4
 import QtQuick.Layouts 1.1
 
 import org.kde.plasma.plasmoid 2.0
-import org.kde.plasma.core 2.0 as PlasmaCore
-import org.kde.plasma.components 2.0 as PlasmaComponents
-import org.kde.plasma.components 3.0 as PlasmaComponents3
 
-import org.kde.plasma.extras 2.0 as PlasmaExtras
 import org.kde.plasma.private.kicker 0.1 as Kicker
 
 import "../code/tools.js" as Tools
@@ -30,7 +26,7 @@ Item {
 
     anchors.fill: parent
 
-    // Given that the dimensions of the apps grid is calculated right after the menu is launched, we have to communicate that the grid needs to be updated (if it needs to).
+    // Given that the dimensions of the apps grid is calculated right after the menu is launched (because that's how Layouts work), we have to communicate that the grid needs to be updated (if it needs to). The right way to do it -I believe- is to listen for whether or not the number of rows/columns of the app grid are to be updated. Thus, we save up calling this function too many times.
     onNumberOfRowsChanged: {
         resetAppsGrid()
     }
@@ -111,6 +107,10 @@ Item {
         appsSwipeview.tryActivateItemAt(row, column)
     }
 
+    function changePage(pageNumber) {
+        appsSwipeview.setCurrentIndex(pageNumber)
+    }
+
     SwipeView {
 
         id: appsSwipeview
@@ -121,16 +121,28 @@ Item {
 
         anchors.fill: parent
         clip: true
+        spacing: 150
+//wheelEnabled: true
 
         Repeater {
 
             id: appsGridPagesRepeater
             model: pageCount
+
             ItemGridView {
 
                 id: appsGridPage
                 cellWidth:  cellSize
                 cellHeight: cellSize
+                Rectangle { // We could start having cool designs for stuff. This is just a mock-up of drawing a rectangle.
+                    z: -1 // draw this element under the ItemGridView
+                    anchors.fill:parent
+                    color: colorWithAlpha(theme.backgroundColor, alphaValue * 0.6)
+                    border.color: colorWithAlpha(theme.highlightColor, 1)
+                    border.width: Math.floor(units.smallSpacing/2)
+                    radius: units.smallSpacing
+
+                }
 
                 onKeyNavUp: {
                     currentIndex = -1

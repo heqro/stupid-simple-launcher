@@ -318,21 +318,29 @@ Kicker.DashboardWindow {
 
                                     id: currentPageIndicator
 
-                                    visible: count != 1
+                                    visible: !searching && count != 1
 
-                                    count: !searching ? appsGridLoader.item.pageCount : 1
+                                    count: appsGridLoader.item.pageCount
                                     currentIndex: appsGridLoader.item.currentIndex
+//                                     interactive: true
 
                                     delegate: Rectangle {
 
                                         color: theme.headerTextColor
-                                        opacity: index === currentPageIndicator.currentIndex ? 0.75 : 0.35
+                                        opacity: index === currentPageIndicator.currentIndex ? 0.75 : (indicatorMouseArea.containsMouse ? 0.5 : 0.35)
                                         height: index === currentPageIndicator.currentIndex ? units.iconSizes.smallMedium : units.iconSizes.small
-                                        width:  index === currentPageIndicator.currentIndex ? units.iconSizes.smallMedium : units.iconSizes.small
-                                        radius: width / 2
+                                        width:  height
+                                        radius: height / 2
                                         anchors.verticalCenter: parent.verticalCenter // align all indicators
 
                                         Behavior on width { SmoothedAnimation {velocity: 12; easing.type: Easing.OutQuad} }
+
+                                        MouseArea {
+                                            id: indicatorMouseArea
+                                            anchors.fill: parent
+                                            hoverEnabled: true
+                                            onClicked: { appsGridLoader.item.changePage(index) } // send to the apps grid the order to change page
+                                        }
 
                                     }
                                 }

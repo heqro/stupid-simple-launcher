@@ -167,19 +167,19 @@ Item {
 
                 Connections {
                     target: appsSwipeview
-                    function onUpdateGridModel(myCategoryIndex, isFavorite) {
 
+                    onUpdateGridModel: {
                         if (myCategoryIndex == rootModel.showRecentApps + rootModel.showRecentDocs)  // we are either going to show favorites or all apps
                             if (isFavorite)
                                 appsGridPage.model = rootModel.modelForRow(myCategoryIndex).modelForRow(0)
                             else
                                 appsGridPage.model = rootModel.modelForRow(myCategoryIndex).modelForRow(index + 1)// shift first "All applications" index to account for the "Favorites" category
-                        else if (myCategoryIndex <= rootModel.showRecentApps + rootModel.showRecentDocs) // show either recent docs or recent apps
-                            appsGridPage.model = rootModel.modelForRow(myCategoryIndex)
-                        else // show a generic category
-                            appsGridPage.model = rootModel.modelForRow(myCategoryIndex).modelForRow(index)
-
+                            else if (myCategoryIndex <= rootModel.showRecentApps + rootModel.showRecentDocs) // show either recent docs or recent apps
+                                appsGridPage.model = rootModel.modelForRow(myCategoryIndex)
+                            else // show a generic category
+                                appsGridPage.model = rootModel.modelForRow(myCategoryIndex).modelForRow(index)
                     }
+
                     onChangeToSearchModel: {
                         appsGridPage.model = runnerModel.modelForRow(0)
                     }

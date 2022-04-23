@@ -56,10 +56,7 @@ Kicker.DashboardWindow {
     keyEventProxy: searchField
 
 
-    property int rootWidth: width
-
     property int columns: Math.floor(0.8 * Math.ceil(width / cellSize))
-    property int rows: Math.floor(0.75 * Math.ceil(height / cellSize))
 
     property int widthScreen:  columns * cellSize
 
@@ -191,6 +188,9 @@ Kicker.DashboardWindow {
             categoriesModel.clear() // always preemptively clean the categories model
         }
 
+        if (favoritesLoader.active)
+            favoritesLoader.item.currentIndex = -1 // don't current item on the favorites grid
+
         appsGridLoader.item.resetAppsGrid()
 
 
@@ -304,6 +304,8 @@ Kicker.DashboardWindow {
 //                                 anchors.left: parent.left
                                 //anchors.right: parent.right
                                 source: plasmoid.configuration.paginateGrid ? "PaginatedApplicationsGrid.qml" : "ApplicationsGrid.qml"
+
+
                             }
                             Loader { // dots to show the current page and the amount of pages.
                                 id: pageIndicatorLoader
@@ -360,6 +362,11 @@ Kicker.DashboardWindow {
                                     cellHeight: parent.height
                                     showLabels: false
                                     width: Math.min(globalFavorites.count * parent.height, appGridsRectangle.width) // TODO - if the favorites is higher than the width then add an extra button to show all favorites!
+
+                                    onKeyNavUp: {
+                                        currentIndex = -1
+                                        appsGridLoader.item.highlightItemAt(0,0)
+                                    }
 
                                     Rectangle {
                                         z: -1 // draw this element under the ItemGridView

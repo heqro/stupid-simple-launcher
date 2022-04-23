@@ -165,6 +165,13 @@ Item {
                     }
                 }
 
+                onKeyNavDown: { //TODO: this needs some work to communicate where to return if we are pressing the "up" key on sessionControlBar
+                    if (favoritesLoader.active) {
+                        currentIndex = -1
+                        favoritesLoader.item.tryActivate(0,0)
+                    }
+                }
+
                 Connections {
                     target: appsSwipeview
 

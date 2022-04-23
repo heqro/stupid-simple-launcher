@@ -83,17 +83,14 @@ Item {
         onKeyNavUp: {
             currentIndex = -1;
             searchField.focus = true
-//                 if (showFavoritesInGrid && !searching) {
-//                     myFavorites.tryActivate(0,0)
-//                 } else {
-//                     searchField.focus = true;
-//                 }
         }
 
-        // onKeyNavDown: { //TODO: this needs some work to communicate where to return if we are pressing the "up" key on sessionControlBar
-        //currentIndex = -1
-        //sessionControlBar.tryActivate(0,0)
-        //}
+        onKeyNavDown: { //TODO: this needs some work to communicate where to return if we are pressing the "up" key on sessionControlBar
+            if (favoritesLoader.active) {
+                currentIndex = -1
+                favoritesLoader.item.tryActivate(0,0)
+            }
+        }
 
         onModelChanged: { // when we stop userIsSearching or start userIsSearching, highlight the first item just to give the user a hint that pressing "Enter" will launch the first entry.
             currentIndex = 0

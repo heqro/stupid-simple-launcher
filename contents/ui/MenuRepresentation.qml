@@ -62,7 +62,6 @@ Kicker.DashboardWindow {
     property int rows: Math.floor(0.75 * Math.ceil(height / cellSize))
 
     property int widthScreen:  columns * cellSize
-    property int heightScreen: rows    * cellSize
 
     // this property is exposed because it will determine the behavior of the grid - whenever we are searching, we will have only a grid dedicated to it. However, when we aren't, we may have two (if favorites support is enabled). It also determines which model we feed to the applications grid.
     property bool searching: searchField.text != ""
@@ -384,14 +383,9 @@ Kicker.DashboardWindow {
 
                             Layout.fillHeight: true
                             Layout.fillWidth: true
-//                             Layout.bottomMargin: plasmoid.configuration.showSessionControlBar ? units.iconSizes.medium : units.iconSizes.large
 
-
-                            //Layout.preferredWidth: categoriesModel.count == 0 ? 0 : (customizeCategoriesSidebarSize ? Math.min(categoriesSidebarWidth, Math.floor(widthScreen / 8)) : Math.floor(widthScreen / 8))
                             Layout.maximumWidth: categoriesModel.count == 0 ? 0 : (customizeCategoriesSidebarSize ? Math.ceil(categoriesSidebarWidth + units.iconSizes.medium) : Math.floor(widthScreen / 8 + units.iconSizes.medium)) // adding up a little bit of "artificial" size to let the category button breathe with respect to the sidebar's scrollbar.
                             ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-
-
 
                             ListView {
 

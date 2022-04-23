@@ -10,7 +10,7 @@ import org.kde.kcoreaddons 1.0 as KCoreAddons
 Rectangle { // (CONCEPT) Inspired on https://material.io/components/text-fields
 
     height: parentHeight
-    color: "transparent"
+    color: colorWithAlpha(theme.backgroundColor, alphaValue * 0.6)
     border.color: isSearchBarFocused ? colorWithAlpha(theme.buttonFocusColor, 1) : colorWithAlpha(theme.highlightColor, 1)
     border.width: Math.floor(units.smallSpacing/2)
 

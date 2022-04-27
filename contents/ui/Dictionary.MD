@@ -102,3 +102,64 @@ showSeparators
 showTopLevelItems
 appNameFormat
 appletInterface
+
+
+
+
+runnerModel's own functions & properties:
+qml: objectName:
+qml: count: 0
+qml: favoritesModel: KAStatsFavoritesModel(0x561f072ca6f0)
+qml: appletInterface: AppletInterface(0x561f07455a70)
+qml: runners: services
+qml: query:
+qml: mergeResults: false
+qml: deleteWhenEmpty: false
+qml: objectNameChanged: function() { [native code] }
+qml: dataChanged: function() { [native code] }
+qml: headerDataChanged: function() { [native code] }
+qml: layoutChanged: function() { [native code] }
+qml: layoutAboutToBeChanged: function() { [native code] }
+qml: rowsAboutToBeInserted: function() { [native code] }
+qml: rowsInserted: function() { [native code] }
+qml: rowsAboutToBeRemoved: function() { [native code] }
+qml: rowsRemoved: function() { [native code] }
+qml: columnsAboutToBeInserted: function() { [native code] }
+qml: columnsInserted: function() { [native code] }
+qml: columnsAboutToBeRemoved: function() { [native code] }
+qml: columnsRemoved: function() { [native code] }
+qml: modelAboutToBeReset: function() { [native code] }
+qml: modelReset: function() { [native code] }
+qml: rowsAboutToBeMoved: function() { [native code] }
+qml: rowsMoved: function() { [native code] }
+qml: columnsAboutToBeMoved: function() { [native code] }
+qml: columnsMoved: function() { [native code] }
+qml: submit: function() { [native code] }
+qml: revert: function() { [native code] }
+qml: resetInternalData: function() { [native code] }
+qml: hasIndex: function() { [native code] }
+qml: index: function() { [native code] }
+qml: parent: function() { [native code] }
+qml: sibling: function() { [native code] }
+qml: rowCount: function() { [native code] }
+qml: columnCount: function() { [native code] }
+qml: hasChildren: function() { [native code] }
+qml: data: function() { [native code] }
+qml: setData: function() { [native code] }
+qml: headerData: function() { [native code] }
+qml: fetchMore: function() { [native code] }
+qml: canFetchMore: function() { [native code] }
+qml: flags: function() { [native code] }
+qml: match: function() { [native code] }
+qml: countChanged: function() { [native code] }
+qml: favoritesModelChanged: function() { [native code] }
+qml: appletInterfaceChanged: function() { [native code] }
+qml: runnersChanged: function() { [native code] }
+qml: queryChanged: function() { [native code] }
+qml: mergeResultsChanged: function() { [native code] }
+qml: deleteWhenEmptyChanged: function() { [native code] }
+qml: modelForRow: function() { [native code] }
+
+CODE:
+for (var p in item)
+    console.log(p + ": " + item[p]);

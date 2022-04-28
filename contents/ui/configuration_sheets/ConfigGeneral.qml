@@ -64,6 +64,8 @@ Item {
     property alias cfg_opacitySet: opacitySetter.checked
     property alias cfg_alphaValue: alphaValue.value
 
+    property alias cfg_clickToToggle: clickToToggle.checked
+
     property alias cfg_startOnFavorites: startOnFavorites.checked
 
     property alias cfg_paginateGrid: paginateGrid.checked
@@ -272,6 +274,21 @@ Item {
                 id: alphaValueText
                 text: Math.floor(alphaValue.value * 100) + "%"
                 visible: opacitySetter.checked
+            }
+        }
+
+        PlasmaExtras.Heading {
+            text: i18n("Behavior")
+        }
+
+        RowLayout {
+
+            Layout.fillWidth: true
+
+            CheckBox {
+                Layout.leftMargin: units.smallSpacing
+                id: clickToToggle
+                text: i18n("Hide the menu by clicking in an empty region")
             }
         }
 

@@ -51,6 +51,9 @@
     <entry name="searchBarDesign" type="String">
         <default></default>
     </entry>
+    <entry name="clickToToggle" type="Bool">
+      <default>true</default>
+    </entry>
     <entry name="configureOpacity" type="Bool">
         <default>false</default>
     </entry>

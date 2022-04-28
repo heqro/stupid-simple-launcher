@@ -236,7 +236,8 @@ Kicker.DashboardWindow {
 
                 onClicked: {
                     // when clicked inside this area and outside the applications grid or any cool buttons, register it as if the user wanted to get out of the menu
-                    root.toggle();
+                    if (plasmoid.configuration.clickToToggle)
+                        root.toggle();
                 }
 
                 Rectangle{

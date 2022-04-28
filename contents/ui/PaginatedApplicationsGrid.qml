@@ -35,8 +35,8 @@ Item {
     }
 
     function calculateNumberOfPages(categoryIndex, isFavoritePage) { // TODO - number of pages is only corrected after searching or changing category.
-        if ((categoryIndex != rootModel.showRecentApps + rootModel.showRecentDocs) || isFavoritePage) { // only calculate pages when we are in the "All Applications" category. Else, rootModel defaults to just using a page for some reason.
-            pageCount = 1//HACK
+        pageCount = 1
+        if (isFavoritePage) { // only calculate pages when we are in the "All Applications" category. Else, rootModel defaults to just using a page for some reason.
             return
         }
 
@@ -46,11 +46,11 @@ Item {
             else
                 break
         }
-        pageCount-- // There is an extra page in the "All Applications" category dedicated to the "Favorites" category. We account for that decreasing the index by an unit.
+        if (categoryIndex == allAppsIndex && pageCount > 1)
+            pageCount-- // There is an extra page in the "All Applications" category dedicated to the "Favorites" category. We account for that decreasing the index by an unit.
         appsSwipeview.interactive = true
 
     }
-
 
     function resetAppsGrid() {
 
@@ -60,7 +60,7 @@ Item {
         if(plasmoid.configuration.startOnFavorites)
             changeCategory(-1) // start on "Favorites" category
         else
-            changeCategory(rootModel.showRecentApps + rootModel.showRecentDocs)
+            changeCategory(allAppsIndex)
         highlightItemAt(0,0) // preemptively focus first item
     }
 
@@ -69,7 +69,7 @@ Item {
         var isCategoryFavorites = false
         switch (indexInModel) {
             case -1: { // Favorites are hard-tagged as index -1
-                categoryIndexToDoStuffWith = rootModel.showRecentApps + rootModel.showRecentDocs
+                categoryIndexToDoStuffWith = allAppsIndex
                 isCategoryFavorites = true
                 break
             }
@@ -93,7 +93,7 @@ Item {
 
     // Functions to call from our search bar to manage this grid.
     function showSearchResults() {
-        calculateNumberOfPages(-1, false)
+        calculateNumberOfPages(-1, true) // HACK - search results is only a page like favorites is
         appsGridPagesRepeater.model = pageCount
         appsSwipeview.changeToSearchModel()
         appsSwipeview.interactive = false
@@ -176,12 +176,12 @@ Item {
                     target: appsSwipeview
 
                     onUpdateGridModel: {
-                        if (myCategoryIndex == rootModel.showRecentApps + rootModel.showRecentDocs)  // we are either going to show favorites or all apps
+                        if (myCategoryIndex == allAppsIndex)  // we are either going to show favorites or all apps
                             if (isFavorite)
                                 appsGridPage.model = rootModel.modelForRow(myCategoryIndex).modelForRow(0)
                             else
                                 appsGridPage.model = rootModel.modelForRow(myCategoryIndex).modelForRow(index + 1)// shift first "All applications" index to account for the "Favorites" category
-                            else if (myCategoryIndex <= rootModel.showRecentApps + rootModel.showRecentDocs) // show either recent docs or recent apps
+                            else if (myCategoryIndex <= allAppsIndex) // show either recent docs or recent apps
                                 appsGridPage.model = rootModel.modelForRow(myCategoryIndex)
                             else // show a generic category
                                 appsGridPage.model = rootModel.modelForRow(myCategoryIndex).modelForRow(index)

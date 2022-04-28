@@ -13,9 +13,9 @@ Item {
     function resetAppsGrid() {
         rootModel.pageSize = -1
         if (startOnFavorites) {
-            appsGrid.model = rootModel.modelForRow(rootModel.showRecentApps + rootModel.showRecentDocs).modelForRow(0)
+            appsGrid.model = rootModel.modelForRow(allAppsIndex).modelForRow(0)
         } else {
-            appsGrid.model = rootModel.modelForRow(rootModel.showRecentApps + rootModel.showRecentDocs).modelForRow(1)
+            appsGrid.model = rootModel.modelForRow(allAppsIndex).modelForRow(1)
         }
         appsGrid.focus = true
         highlightItemAt(0,0)
@@ -24,7 +24,7 @@ Item {
     function changeCategory(indexInModel) {
         switch (indexInModel) {
             case -1: { // Favorites are hard-tagged as index -1
-                appsGrid.model = rootModel.modelForRow(rootModel.showRecentApps + rootModel.showRecentDocs).modelForRow(0)
+                appsGrid.model = rootModel.modelForRow(allAppsIndex).modelForRow(0)
                 break
             }
             case -2: { // Recent documents are hard-tagged as index -2
@@ -35,8 +35,8 @@ Item {
                 appsGrid.model = rootModel.modelForRow(!rootModel.showRecentApps)
                 break
             }
-            case rootModel.showRecentApps + rootModel.showRecentDocs: { // All Applications
-                appsGrid.model = rootModel.modelForRow(rootModel.showRecentApps + rootModel.showRecentDocs).modelForRow(1)
+            case allAppsIndex: { // All Applications
+                appsGrid.model = rootModel.modelForRow(allAppsIndex).modelForRow(1)
                 break
             }
             default: { // Show generic category

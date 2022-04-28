@@ -294,6 +294,7 @@ Kicker.DashboardWindow {
                             Layout.fillHeight:true
                             Loader {
                                 id: appsGridLoader
+                                readonly property int allAppsIndex: rootModel.showRecentApps + rootModel.showRecentDocs
 
                                 height: plasmoid.configuration.paginateGrid ? cellSize * Math.floor((parent.height - (favoritesLoader.height + units.largeSpacing) * favoritesLoader.active - (pageIndicatorLoader.height + units.largeSpacing) * pageIndicatorLoader.active) / cellSize) : parent.height - (favoritesLoader.height + units.largeSpacing) * favoritesLoader.active - pageIndicatorLoader.height * pageIndicatorLoader.active
 //                                 anchors.top: plasmoid.configuration.paginateGrid ? : parent.top

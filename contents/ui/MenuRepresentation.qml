@@ -25,6 +25,7 @@ import QtQuick.Layouts 1.1
 
 import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
+import org.kde.plasma.components 2.0 as PlasmaComponents
 import org.kde.plasma.components 3.0 as PlasmaComponents3
 
 import org.kde.plasma.extras 2.0 as PlasmaExtras
@@ -420,7 +421,7 @@ Kicker.DashboardWindow {
                                 spacing: showCategoriesIcon ? units.iconSizes.small : 0
 
                                 // the following lines help maintaining consistency in highlighting with respect to whatever you have set in your Plasma Style. (This is taken from ItemGridDelegate.qml)
-                                highlight: PlasmaExtras.Highlight {}
+                                highlight: PlasmaComponents.Highlight {}
                                 highlightFollowsCurrentItem: true
                                 highlightMoveDuration: 0
 

@@ -187,148 +187,147 @@ FocusScope {
             }
         }
 
-        GridView {
-            //this defines how the icons will look like in our menu
-            id: gridView
+        ScrollView {
+            id: scrollArea
             anchors.fill: parent
-            interactive: !plasmoid.configuration.paginateGrid
-            clip: true
-
-            property bool usesPlasmaTheme: false
-
-            property bool animating: false
-            property int animationDuration: dragEnabled ? resetAnimationDurationTimer.interval : 0
-
-            focus: true
-//                 visible: model.count > 0
-            //enabled: visible
-            currentIndex: -1
-
-            maximumFlickVelocity: height * 1.65
-            flickDeceleration: 3500
-            //ScrollBar.vertical: ScrollBar {
-                //visible: false    // hides scrollbar
-            //}
+            ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+            ScrollBar.vertical.policy: ScrollBar.AlwaysOff
 
 
-            move: Transition {
-                enabled: itemGrid.dragEnabled
+            GridView {
+                //this defines how the icons will look like in our menu
+                id: gridView
+                anchors.fill: parent
+                interactive: !plasmoid.configuration.paginateGrid
+                clip: true
 
-                SequentialAnimation {
-                    PropertyAction { target: gridView; property: "animating"; value: true }
+                property bool usesPlasmaTheme: false
 
-                    NumberAnimation {
-                        duration: gridView.animationDuration
-                        properties: "x, y"
-                        easing.type: Easing.OutQuad
+                property bool animating: false
+                property int animationDuration: dragEnabled ? resetAnimationDurationTimer.interval : 0
+
+                focus: true
+                currentIndex: -1
+
+                move: Transition {
+                    enabled: itemGrid.dragEnabled
+
+                    SequentialAnimation {
+                        PropertyAction { target: gridView; property: "animating"; value: true }
+
+                        NumberAnimation {
+                            duration: gridView.animationDuration
+                            properties: "x, y"
+                            easing.type: Easing.OutQuad
+                        }
+
+                        PropertyAction { target: gridView; property: "animating"; value: false }
+                    }
+                }
+
+                moveDisplaced: Transition {
+                    enabled: itemGrid.dragEnabled
+
+                    SequentialAnimation {
+                        PropertyAction { target: gridView; property: "animating"; value: true }
+
+                        NumberAnimation {
+                            duration: gridView.animationDuration
+                            properties: "x, y"
+                            easing.type: Easing.OutQuad
+                        }
+
+                        PropertyAction { target: gridView; property: "animating"; value: false }
+                    }
+                }
+
+                keyNavigationWraps: false
+                boundsBehavior: Flickable.StopAtBounds
+
+                delegate: ItemGridDelegate {
+                    showLabel: showLabels
+                }
+
+                // Using PlasmaComponents' highlight.
+                highlight: PlasmaComponents.Highlight {}
+                highlightFollowsCurrentItem: true
+                highlightMoveDuration: 0
+
+
+                onCountChanged: {
+                    animationDuration = 0;
+                    resetAnimationDurationTimer.start();
+                }
+
+                onModelChanged: {
+                    currentIndex = -1;
+                }
+
+                Keys.onLeftPressed: {
+                    if (currentIndex == -1) {
+                        currentIndex = 0;
+                        return;
                     }
 
-                    PropertyAction { target: gridView; property: "animating"; value: false }
+                    if (currentCol() != 0) {
+                        event.accepted = true;
+                        moveCurrentIndexLeft();
+                    } else {
+                        itemGrid.keyNavLeft();
+                    }
                 }
-            }
 
-            moveDisplaced: Transition {
-                enabled: itemGrid.dragEnabled
-
-                SequentialAnimation {
-                    PropertyAction { target: gridView; property: "animating"; value: true }
-
-                    NumberAnimation {
-                        duration: gridView.animationDuration
-                        properties: "x, y"
-                        easing.type: Easing.OutQuad
+                Keys.onRightPressed: {
+                    if (currentIndex == -1) {
+                        currentIndex = 0;
+                        return;
                     }
 
-                    PropertyAction { target: gridView; property: "animating"; value: false }
-                }
-            }
-
-            keyNavigationWraps: false
-            boundsBehavior: Flickable.StopAtBounds
-
-            delegate: ItemGridDelegate {
-                showLabel: showLabels
-            }
-
-            // Using PlasmaComponents' highlight.
-            highlight: PlasmaComponents.Highlight {}
-            highlightFollowsCurrentItem: true
-            highlightMoveDuration: 0
-
-
-            onCountChanged: {
-                animationDuration = 0;
-                resetAnimationDurationTimer.start();
-            }
-
-            onModelChanged: {
-                currentIndex = -1;
-            }
-
-            Keys.onLeftPressed: {
-                if (currentIndex == -1) {
-                    currentIndex = 0;
-                    return;
-                }
-
-                if (currentCol() != 0) {
-                    event.accepted = true;
-                    moveCurrentIndexLeft();
-                } else {
-                    itemGrid.keyNavLeft();
-                }
-            }
-
-            Keys.onRightPressed: {
-                if (currentIndex == -1) {
-                    currentIndex = 0;
-                    return;
-                }
-
-                var columns = Math.floor(width / cellWidth);
-
-                if (currentCol() != columns - 1 && currentIndex != count - 1) {
-                    event.accepted = true;
-                    moveCurrentIndexRight();
-                } else {
-                    itemGrid.keyNavRight();
-                }
-            }
-
-            Keys.onUpPressed: {
-                if (currentIndex == -1) {
-                    currentIndex = 0;
-                    return;
-                }
-
-                if (currentRow() != 0) {
-                    event.accepted = true;
-                    moveCurrentIndexUp();
-                    positionViewAtIndex(currentIndex, GridView.Contain);
-                } else {
-                    itemGrid.keyNavUp();
-                }
-            }
-
-            Keys.onDownPressed: {
-                if (currentIndex == -1) {
-                    currentIndex = 0;
-                    return;
-                }
-
-                if (currentRow() < itemGrid.lastRow()) {
-                    // Fix moveCurrentIndexDown()'s lack of proper spatial nav down
-                    // into partial columns.
-                    event.accepted = true;
                     var columns = Math.floor(width / cellWidth);
-                    var newIndex = currentIndex + columns;
-                    currentIndex = Math.min(newIndex, count - 1);
-                    positionViewAtIndex(currentIndex, GridView.Contain);
-                } else {
-                    itemGrid.keyNavDown();
-                }
-            }
 
+                    if (currentCol() != columns - 1 && currentIndex != count - 1) {
+                        event.accepted = true;
+                        moveCurrentIndexRight();
+                    } else {
+                        itemGrid.keyNavRight();
+                    }
+                }
+
+                Keys.onUpPressed: {
+                    if (currentIndex == -1) {
+                        currentIndex = 0;
+                        return;
+                    }
+
+                    if (currentRow() != 0) {
+                        event.accepted = true;
+                        moveCurrentIndexUp();
+                        positionViewAtIndex(currentIndex, GridView.Contain);
+                    } else {
+                        itemGrid.keyNavUp();
+                    }
+                }
+
+                Keys.onDownPressed: {
+                    if (currentIndex == -1) {
+                        currentIndex = 0;
+                        return;
+                    }
+
+                    if (currentRow() < itemGrid.lastRow()) {
+                        // Fix moveCurrentIndexDown()'s lack of proper spatial nav down
+                        // into partial columns.
+                        event.accepted = true;
+                        var columns = Math.floor(width / cellWidth);
+                        var newIndex = currentIndex + columns;
+                        currentIndex = Math.min(newIndex, count - 1);
+                        positionViewAtIndex(currentIndex, GridView.Contain);
+                    } else {
+                        itemGrid.keyNavDown();
+                    }
+                }
+
+            }
         }
 
         MouseArea {

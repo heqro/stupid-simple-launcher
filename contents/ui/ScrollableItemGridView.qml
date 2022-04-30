@@ -54,7 +54,7 @@ FocusScope {
     property alias cellWidth: gridView.cellWidth
     property alias cellHeight: gridView.cellHeight
 
-//     property alias horizontalScrollBarPolicy: scrollArea.horizontalScrollBarPolicy
+    //     property alias horizontalScrollBarPolicy: scrollArea.horizontalScrollBarPolicy
     //property alias verticalScrollBarPolicy: scrollArea.verticalScrollBarPolicy
 
     property bool rootVisible: root.visible
@@ -100,8 +100,8 @@ FocusScope {
             row = Math.min(row, rows - 1);
             col = Math.min(col, columns - 1);
             currentIndex = Math.min(row ? ((Math.max(1, row) * columns) + col)
-                : col,
-                count - 1);
+            : col,
+            count - 1);
 
             gridView.forceActiveFocus();
         }
@@ -117,9 +117,9 @@ FocusScope {
         onActionClicked: {
             var whoActed = visualParent.actionTriggered(actionId, actionArgument)
 
-//             console.log(actionId)
-//
-//             console.log(whoActed["name"], whoActed["description"], whoActed["url"], whoActed["icon"])
+            //             console.log(actionId)
+            //
+            //             console.log(whoActed["name"], whoActed["description"], whoActed["url"], whoActed["icon"])
 
             if (actionId == "hideApplication") {
 
@@ -139,7 +139,7 @@ FocusScope {
                 addIcon.push(whoActed["icon"])
                 plasmoid.configuration.hiddenApplicationsIcon = addIcon
 
-//                 itemGrid.menuUpdated
+                //                 itemGrid.menuUpdated
             }
         }
     }
@@ -187,9 +187,17 @@ FocusScope {
             }
         }
 
+        ScrollView {
+            id: scrollArea
+            ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+            ScrollBar.vertical.policy: ScrollBar.AlwaysOff
+            anchors.fill: parent
+
+
         GridView {
             //this defines how the icons will look like in our menu
             id: gridView
+            parent: plasmoid.configuration.paginateGrid ? dropArea : scrollArea
             anchors.fill: parent
             interactive: !plasmoid.configuration.paginateGrid
             clip: true
@@ -323,6 +331,7 @@ FocusScope {
 
         }
 
+        }
 
         MouseArea {
             id: mouseAreaView
@@ -374,10 +383,10 @@ FocusScope {
             }
 
             onWheel: {
-              wheel.accepted = false // prevents scrollArea from breaking.
-              if (currentIndex != -1 && currentItem) {
-                currentItem.showDelegateToolTip(false, true)
-              }
+                wheel.accepted = false // prevents scrollArea from breaking.
+                if (currentIndex != -1 && currentItem) {
+                    currentItem.showDelegateToolTip(false, true)
+                }
             }
 
             onPressed: {
@@ -459,7 +468,7 @@ FocusScope {
                     if (dragEnabled && pressX != -1 && dragHelper.isDrag(pressX, pressY, mouse.x, mouse.y)) {
                         if ("pluginName" in item.m) {
                             dragHelper.startDrag(kicker, item.url, item.icon,
-                            "text/x-plasmoidservicename", item.m.pluginName);
+                                                 "text/x-plasmoidservicename", item.m.pluginName);
                         } else {
                             dragHelper.startDrag(kicker, item.url, item.icon);
                         }

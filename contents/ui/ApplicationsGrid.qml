@@ -61,7 +61,7 @@ Item {
     id: artifactForProperlyDisplayingEverythingInANiceWay
     anchors.fill: parent
 
-    ItemGridView { // this is actually the applications grid
+    ScrollableItemGridView { // this is actually the applications grid
 
         id: appsGrid
         visible: model.count > 0

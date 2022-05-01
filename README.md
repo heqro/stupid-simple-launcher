@@ -9,7 +9,7 @@
   * [Session control bar](#session-control-bar)
 - [Gallery](#gallery)
 
-![alt text](./previews/Multicolor.png)
+![alt text](./previews/Carátula.png)
 
 Simple launcher for your applications as well as session management (logout, lock, shutdown, reboot), search and favorite applications support. Under heavy development.
 

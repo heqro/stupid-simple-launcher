@@ -363,6 +363,7 @@ Kicker.DashboardWindow {
                                     cellWidth: parent.height
                                     cellHeight: parent.height
                                     showLabels: false
+                                    dragEnabled: true
                                     width: Math.min(globalFavorites.count * parent.height, cellWidth * Math.floor(appGridsRectangle.width / cellWidth)) // TODO - if the favorites is higher than the width then add an extra button to show all favorites!
 
                                     onKeyNavUp: {

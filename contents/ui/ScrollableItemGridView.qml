@@ -464,7 +464,7 @@ FocusScope {
             onPositionChanged: {
                 var item = updatePositionProperties(mouse.x, mouse.y);
 
-                if (gridView.currentIndex != -1) {
+                if (gridView.currentIndex != -1 && item != null && item.m != null) {
                     if (dragEnabled && pressX != -1 && dragHelper.isDrag(pressX, pressY, mouse.x, mouse.y)) {
                         if ("pluginName" in item.m) {
                             dragHelper.startDrag(kicker, item.url, item.icon,

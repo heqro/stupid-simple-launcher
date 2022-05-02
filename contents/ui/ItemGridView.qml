@@ -35,8 +35,6 @@ FocusScope {
     signal keyNavUp
     signal keyNavDown
 
-    //signal menuUpdated
-
     property bool dragEnabled: false
     property bool showLabels: true
     property alias usesPlasmaTheme: gridView.usesPlasmaTheme
@@ -191,7 +189,6 @@ FocusScope {
             //this defines how the icons will look like in our menu
             id: gridView
             anchors.fill: parent
-            interactive: !plasmoid.configuration.paginateGrid
             clip: true
 
 
@@ -415,12 +412,6 @@ FocusScope {
                             root.visible = false;
                         }
                     }
-                } else if (!pressedItem && mouse.button == Qt.LeftButton) {
-                    if ("toggle" in root) {
-                        root.toggle();
-                    } else {
-                        root.visible = false;
-                    }
                 }
 
                 pressX = -1;
@@ -455,7 +446,7 @@ FocusScope {
             onPositionChanged: {
                 var item = updatePositionProperties(mouse.x, mouse.y);
 
-                if (gridView.currentIndex != -1) {
+                if (gridView.currentIndex != -1 && item != null && item.m != null) {
                     if (dragEnabled && pressX != -1 && dragHelper.isDrag(pressX, pressY, mouse.x, mouse.y)) {
                         if ("pluginName" in item.m) {
                             dragHelper.startDrag(kicker, item.url, item.icon,

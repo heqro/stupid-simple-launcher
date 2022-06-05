@@ -26,12 +26,6 @@ import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 2.0 as PlasmaComponents
 import org.kde.plasma.extras 2.0 as PlasmaExtras
 
-
-import org.kde.kquickcontrolsaddons 2.0 as KQuickAddons
-import org.kde.draganddrop 2.0 as DragDrop
-
-import org.kde.plasma.private.kicker 0.1 as Kicker
-
 // SwipeView and Spinbox values
 import QtQuick.Controls 2.2
 

@@ -18,7 +18,7 @@
  ***************************************************************************/
 
 import QtQuick 2.0
-//import QtQuick.Controls 1.0
+
 import QtQuick.Dialogs 1.2
 import QtQuick.Layouts 1.0
 
@@ -32,22 +32,13 @@ import QtQuick.Controls 2.2
 Item {
     id: configGeneral
 
-
-//     width: childrenRect.width
-    //height: childrenRect.height
-
     property string cfg_icon: plasmoid.configuration.icon
     property bool cfg_useCustomButtonImage: plasmoid.configuration.useCustomButtonImage
     property string cfg_customButtonImage: plasmoid.configuration.customButtonImage
 
-
-//     property alias cfg_useCustomSizeGrid: useCustomSizeGrid.checked
     property alias cfg_iconSize:      iconSize.value
     property alias cfg_favoritesIconSize: favoritesIconSize.value
-//     property alias cfg_numberColumns: numberColumns.value
-    //property alias cfg_numberRows:    numberRows.value
-    //property alias cfg_spaceWidth:    spaceWidth.value
-    //property alias cfg_spaceHeight:   spaceHeight.value
+
 
     property alias cfg_tooltipsInGrid: tooltipsInGrid.checked
 

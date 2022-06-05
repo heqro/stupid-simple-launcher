@@ -90,7 +90,7 @@ Item {
 
                         RadioButton {
                             id: categoriesShowIcon
-                            text: i18n("Show categories' icons only (will misbehave with downloaded icons)")
+                            text: i18n("Show categories' icons only")
                             exclusiveGroup: categoriesCustomizationGroup
                         }
 

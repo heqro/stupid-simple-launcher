@@ -28,14 +28,13 @@ Item {
 
     // Given that the dimensions of the apps grid is calculated right after the menu is launched (because that's how Layouts work), we have to communicate that the grid needs to be updated (if it needs to). The right way to do it -I believe- is to listen for whether or not the number of rows/columns of the app grid are to be updated. Thus, we save up calling this function too many times.
     onNumberOfRowsChanged: {
-        console.log("nrows changed")
-//         resetAppsGrid()
-        rootModel.pageSize = numberOfColumns * numberOfRows
+        // console.log("nrows changed")
+        rootModel.pageSize = numberOfColumns * numberOfRows // only communicate updated pageSize to avoid resetting the entire menu (not thoroughly tested, but less processor heavy nonethelesss)
     }
     onNumberOfColumnsChanged: {
-        console.log("ncols changed")
+        //console.log("ncols changed")
 //         resetAppsGrid()
-        rootModel.pageSize = numberOfColumns * numberOfRows
+        rootModel.pageSize = numberOfColumns * numberOfRows // only communicate updated pageSize to avoid resetting the entire menu (not thoroughly tested, but less processor heavy nonetheless)
     }
 
     function calculateNumberOfPages(categoryIndex, isFavoritePage) { // TODO - number of pages is only corrected after searching or changing category.
@@ -177,8 +176,8 @@ Item {
                 Connections {
                     target: appsSwipeview
 
-                    function onUpdateGridModel(myCategoryIndex, isFavorite) {
-                        console.log("ntro",index)
+                    function onUpdateGridModel(myCategoryIndex, isFavorite) { // magic function that assigns the right model according to myCategoryIndex and whether or not the category is "Favorites"
+                        //console.log("ntro",index) // counting how many times this processor-heavy function is called. (For lower-end devices optimization purposes)
                         if (myCategoryIndex == allAppsIndex)  // we are either going to show favorites or all apps
                             if (isFavorite)
                                 appsGridPage.model = rootModel.modelForRow(myCategoryIndex).modelForRow(0)

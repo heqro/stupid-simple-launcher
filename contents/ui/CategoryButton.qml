@@ -8,12 +8,13 @@ import org.kde.plasma.components 2.0 as PlasmaComponents
 // for using RowLayout
 import QtQuick.Layouts 1.1
 
+
 Rectangle { // rectangle used for marking the bounds for the category button
 
     id: containerForCategory
 
     property int indexInModel: categoryIndex
-    property string iconName: categoryIcon
+    property var iconName: categoryIcon
     property string categoryName: categoryText
 
     property bool showToolTip: (categoryTextId.truncated || showCategoriesIcon) && showCategoriesTooltip
@@ -34,6 +35,7 @@ Rectangle { // rectangle used for marking the bounds for the category button
 
     opacity: (!searching && (categoriesList.currentIndex == index || mouseArea.containsMouse)) ? 1 : 0.4
 
+
     TextMetrics {
         id: t_metrics
         text: "Toutes les applications" // long-ass text for making sure most languages will have their applications tag visible out of the box.
@@ -49,9 +51,10 @@ Rectangle { // rectangle used for marking the bounds for the category button
 
         layoutDirection: showCategoriesOnTheRight ? Qt.RightToLeft : Qt.LeftToRight
 
-        PlasmaCore.IconItem { // category icon
+
+        PlasmaCore.IconItem {
             id: categoryIconId
-            source: categoryIcon
+            source: iconName
             visible: showCategoriesIcon || showCategoriesIconAndText
 
             // arbitrary values because some icon packs cannot behave properly and need to be scaled down.

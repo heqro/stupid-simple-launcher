@@ -1,6 +1,7 @@
 /***************************************************************************
- *   Copyright (C) 2014 by Weng Xuetian <wengxt@gmail.com>
+ *   Copyright (C) 2014 by Weng Xuetian <wengxt@gmail.com>                 *
  *   Copyright (C) 2013-2017 by Eike Hein <hein@kde.org>                   *
+ *   Copyright (C) 2021-2022 by Hector Iglesias <heqromancer@gmail.com>    *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -152,7 +153,8 @@ Kicker.DashboardWindow {
                     var categoryIcon = rootModel.data(modelIndex, Qt.DecorationRole)
                     var aux = categoryIcon.toString().split('"')
                     var index = -2
-                    categoriesModel.append({"categoryText": categoryLabel, "categoryIcon": aux[1],"categoryIndex": index})
+                    categoriesModel.append({"categoryText": categoryLabel, "categoryIcon": categoryIcon,"categoryIndex": index})
+                    categoriesModel.get(categoriesModel.count - 1).iconName = categoryIcon
                 }
 
                 if (rootModel.showRecentApps) {
@@ -161,7 +163,8 @@ Kicker.DashboardWindow {
                     var categoryIcon = rootModel.data(modelIndex, Qt.DecorationRole)
                     var aux = categoryIcon.toString().split('"')
                     var index = -3
-                    categoriesModel.append({"categoryText": categoryLabel, "categoryIcon": aux[1],"categoryIndex": index})
+                    categoriesModel.append({"categoryText": categoryLabel, "categoryIcon": categoryIcon,"categoryIndex": index})
+                    categoriesModel.get(categoriesModel.count - 1).iconName = categoryIcon
                 }
             }
 
@@ -171,11 +174,12 @@ Kicker.DashboardWindow {
 
             var aux = categoryIcon.toString().split('"') // the day the way this prints out changes I will have a huge problem
 
-            //console.log("Category label:", categoryLabel)
 
 
             var index = i // we will use this index to swap categories inside the model that feeds our applications grid
-            categoriesModel.append({"categoryText": categoryLabel, "categoryIcon": aux[1],"categoryIndex": index})
+            categoriesModel.append({"categoryText": categoryLabel, "categoryIcon": rootModel.data(modelIndex, Qt.DecorationRole),"categoryIndex": index})
+            categoriesModel.setProperty(categoriesModel.count - 1, "iconName", categoryIcon) // correct badly set property
+
         }
 
     }
@@ -411,6 +415,7 @@ Kicker.DashboardWindow {
 
                                 model: ListModel {
                                     id: categoriesModel
+                                    dynamicRoles: true
                                 }
 
                                 delegate: CategoryButton {

@@ -63,6 +63,7 @@ Item {
 
                 PlasmaExtras.Heading {
                     text: "Appearance"
+                    visible: showCategories.checked
                 }
 
                 RowLayout {
@@ -249,6 +250,7 @@ Item {
 
                 PlasmaExtras.Heading {
                     text: "Behavior"
+                    visible: showCategories.checked
                 }
 
                 RowLayout {
@@ -263,6 +265,7 @@ Item {
 
                 PlasmaExtras.Heading {
                     text: "Extra categories"
+                    visible: showCategories.checked
                 }
 
                 ColumnLayout {

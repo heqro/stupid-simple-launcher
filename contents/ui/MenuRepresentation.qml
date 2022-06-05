@@ -121,9 +121,11 @@ Kicker.DashboardWindow {
         }
     }
 
-    onVisibleChanged: { // start fancy animation and preemptively return to a known state
-        animationSearch.start()
-        reset();
+    onVisibleChanged: {
+        if (visible) // start fancy animation
+            animationSearch.start()
+        else // only perform heavy calculations to return to last known state when menu is exited
+            reset()
     }
 
     function updateCategories() { // this function is dedicated to constructing the applications categories list and preemptively updating it, should changes have been applied
@@ -192,8 +194,7 @@ Kicker.DashboardWindow {
         if (favoritesLoader.active)
             favoritesLoader.item.currentIndex = -1 // don't current item on the favorites grid
 
-        appsGridLoader.item.resetAppsGrid()
-
+        appsGridLoader.item.changeCategory(appsGridLoader.startCategoryIndex)
 
         if (startOnFavorites) {
             if (showCategories) {
@@ -297,6 +298,7 @@ Kicker.DashboardWindow {
                             Loader {
                                 id: appsGridLoader
                                 readonly property int allAppsIndex: rootModel.showRecentApps + rootModel.showRecentDocs
+                                readonly property int startCategoryIndex: startOnFavorites ? -1 : allAppsIndex
 
                                 height: plasmoid.configuration.paginateGrid ? cellSize * Math.floor((parent.height - (favoritesLoader.height + units.largeSpacing) * favoritesLoader.active - (pageIndicatorLoader.height + units.largeSpacing) * pageIndicatorLoader.active) / cellSize) : parent.height - (favoritesLoader.height + units.largeSpacing) * favoritesLoader.active - pageIndicatorLoader.height * pageIndicatorLoader.active
 //                                 anchors.top: plasmoid.configuration.paginateGrid ? : parent.top
@@ -307,6 +309,10 @@ Kicker.DashboardWindow {
 //                                 anchors.left: parent.left
                                 //anchors.right: parent.right
                                 source: plasmoid.configuration.paginateGrid ? "PaginatedApplicationsGrid.qml" : "ApplicationsGrid.qml"
+
+                                onSourceChanged: {
+                                    reset()
+                                }
 
 
                             }
@@ -454,8 +460,9 @@ Kicker.DashboardWindow {
         // Dummy query to preload runner model
         appsGridLoader.item.updateQuery("k")
         appsGridLoader.item.showSearchResults()
-
+        reset()
         kicker.reset.connect(reset);
+
     }
 }
 

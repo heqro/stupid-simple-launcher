@@ -28,27 +28,28 @@ Item {
 
     // Given that the dimensions of the apps grid is calculated right after the menu is launched (because that's how Layouts work), we have to communicate that the grid needs to be updated (if it needs to). The right way to do it -I believe- is to listen for whether or not the number of rows/columns of the app grid are to be updated. Thus, we save up calling this function too many times.
     onNumberOfRowsChanged: {
-        resetAppsGrid()
+        // console.log("nrows changed")
+        rootModel.pageSize = numberOfColumns * numberOfRows // only communicate updated pageSize to avoid resetting the entire menu (not thoroughly tested, but less processor heavy nonethelesss)
     }
     onNumberOfColumnsChanged: {
-        resetAppsGrid()
+        //console.log("ncols changed")
+//         resetAppsGrid()
+        rootModel.pageSize = numberOfColumns * numberOfRows // only communicate updated pageSize to avoid resetting the entire menu (not thoroughly tested, but less processor heavy nonetheless)
     }
 
     function calculateNumberOfPages(categoryIndex, isFavoritePage) { // TODO - number of pages is only corrected after searching or changing category.
         pageCount = 1
-        if (isFavoritePage) { // only calculate pages when we are in the "All Applications" category. Else, rootModel defaults to just using a page for some reason.
-            return
+        if (isFavoritePage || categoryIndex < allAppsIndex) { // the favorites category, as well as the recent files/apps, are set to have only one page as per the KDE's built-in model's design
+            return pageCount
         }
 
-        while (1) {
-            if(rootModel.modelForRow(categoryIndex).modelForRow(pageCount))
-                pageCount++
-            else
-                break
-        }
-        if (categoryIndex == allAppsIndex && pageCount > 1)
-            pageCount-- // There is an extra page in the "All Applications" category dedicated to the "Favorites" category. We account for that decreasing the index by an unit.
+        if (categoryIndex == allAppsIndex)
+            pageCount = rootModel.modelForRow(categoryIndex).rowCount() - 1
+        else
+            pageCount = rootModel.modelForRow(categoryIndex).rowCount()
+
         appsSwipeview.interactive = true
+        return pageCount
 
     }
 
@@ -175,23 +176,24 @@ Item {
                 Connections {
                     target: appsSwipeview
 
-                    onUpdateGridModel: {
+                    function onUpdateGridModel(myCategoryIndex, isFavorite) { // magic function that assigns the right model according to myCategoryIndex and whether or not the category is "Favorites"
+                        //console.log("ntro",index) // counting how many times this processor-heavy function is called. (For lower-end devices optimization purposes)
                         if (myCategoryIndex == allAppsIndex)  // we are either going to show favorites or all apps
                             if (isFavorite)
                                 appsGridPage.model = rootModel.modelForRow(myCategoryIndex).modelForRow(0)
                             else
                                 appsGridPage.model = rootModel.modelForRow(myCategoryIndex).modelForRow(index + 1)// shift first "All applications" index to account for the "Favorites" category
-                            else if (myCategoryIndex <= allAppsIndex) // show either recent docs or recent apps
-                                appsGridPage.model = rootModel.modelForRow(myCategoryIndex)
-                            else // show a generic category
-                                appsGridPage.model = rootModel.modelForRow(myCategoryIndex).modelForRow(index)
+                        else if (myCategoryIndex <= allAppsIndex) // show either recent docs or recent apps
+                            appsGridPage.model = rootModel.modelForRow(myCategoryIndex)
+                        else // show a generic category
+                            appsGridPage.model = rootModel.modelForRow(myCategoryIndex).modelForRow(index)
                     }
 
-                    onChangeToSearchModel: {
+                    function onChangeToSearchModel() {
                         appsGridPage.model = runnerModel.modelForRow(0)
                     }
 
-                    onTryActivateItemAt: { // highlight item at coordinates (row, column) in the visible grid
+                    function onTryActivateItemAt(row,column) { // highlight item at coordinates (row, column) in the visible grid
                         if (appsSwipeview.currentIndex == index)
                             appsGridPage.tryActivate(row, column)
                             
@@ -206,5 +208,9 @@ Item {
     //}
 
 
+
+    Component.onCompleted: {
+        resetAppsGrid()
+    }
 
 }

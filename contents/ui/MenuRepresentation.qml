@@ -1,6 +1,7 @@
 /***************************************************************************
- *   Copyright (C) 2014 by Weng Xuetian <wengxt@gmail.com>
+ *   Copyright (C) 2014 by Weng Xuetian <wengxt@gmail.com>                 *
  *   Copyright (C) 2013-2017 by Eike Hein <hein@kde.org>                   *
+ *   Copyright (C) 2021-2022 by Hector Iglesias <heqromancer@gmail.com>    *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -121,61 +122,11 @@ Kicker.DashboardWindow {
         }
     }
 
-    onVisibleChanged: { // start fancy animation and preemptively return to a known state
-        animationSearch.start()
-        reset();
-    }
-
-    function updateCategories() { // this function is dedicated to constructing the applications categories list and preemptively updating it, should changes have been applied
-
-        var categoryStartIndex = 0
-
-        if (rootModel.showRecentDocs) categoryStartIndex++;
-        if (rootModel.showRecentApps) categoryStartIndex++;
-
-        var categoryEndIndex = rootModel.count
-        categoriesModel.clear() // given that we feed the model by appending items to it, it's only logical that we have to clear it every time we open the menu (just in case new applications have been installed)
-        for (var i = categoryStartIndex; i < categoryEndIndex; i++) { // loop courtesy of Windows 10 inspired menu plasmoid
-
-            if (i == categoryStartIndex + 1) { // this goes right after "All applications"
-
-                if (plasmoid.configuration.showFavoritesCategory) {
-                    favoritesCategoryIndex = categoriesModel.count
-                    categoriesModel.append({"categoryText": i18n("Favorites"), "categoryIcon": "favorite", "categoryIndex": -1})
-                }
-
-                if (rootModel.showRecentDocs) {
-                    var modelIndex = rootModel.index(rootModel.showRecentApps, 0)
-                    var categoryLabel = rootModel.data(modelIndex, Qt.DisplayRole)
-                    var categoryIcon = rootModel.data(modelIndex, Qt.DecorationRole)
-                    var aux = categoryIcon.toString().split('"')
-                    var index = -2
-                    categoriesModel.append({"categoryText": categoryLabel, "categoryIcon": aux[1],"categoryIndex": index})
-                }
-
-                if (rootModel.showRecentApps) {
-                    var modelIndex = rootModel.index(0, 0)
-                    var categoryLabel = rootModel.data(modelIndex, Qt.DisplayRole)
-                    var categoryIcon = rootModel.data(modelIndex, Qt.DecorationRole)
-                    var aux = categoryIcon.toString().split('"')
-                    var index = -3
-                    categoriesModel.append({"categoryText": categoryLabel, "categoryIcon": aux[1],"categoryIndex": index})
-                }
-            }
-
-            var modelIndex = rootModel.index(i, 0) // I don't know how this line works but it does
-            var categoryLabel = rootModel.data(modelIndex, Qt.DisplayRole) // this is the name that will be shown in the list, say, "All applications", "Utilities", "Education", blah blah blah
-            var categoryIcon = rootModel.data(modelIndex, Qt.DecorationRole)
-
-            var aux = categoryIcon.toString().split('"') // the day the way this prints out changes I will have a huge problem
-
-            //console.log("Category label:", categoryLabel)
-
-
-            var index = i // we will use this index to swap categories inside the model that feeds our applications grid
-            categoriesModel.append({"categoryText": categoryLabel, "categoryIcon": aux[1],"categoryIndex": index})
-        }
-
+    onVisibleChanged: {
+        if (visible) // start fancy animation
+            animationSearch.start()
+        else // only perform heavy calculations to return to last known state when menu is exited
+            reset()
     }
 
     function reset() { // return everything to the last known state
@@ -183,17 +134,10 @@ Kicker.DashboardWindow {
         searchField.text = "" // force placeholder text to be shown
         searchField.focus = false
 
-        if(showCategories) {
-            updateCategories()
-        } else {
-            categoriesModel.clear() // always preemptively clean the categories model
-        }
-
         if (favoritesLoader.active)
             favoritesLoader.item.currentIndex = -1 // don't current item on the favorites grid
 
-        appsGridLoader.item.resetAppsGrid()
-
+        appsGridLoader.item.changeCategory(appsGridLoader.startCategoryIndex)
 
         if (startOnFavorites) {
             if (showCategories) {
@@ -297,6 +241,7 @@ Kicker.DashboardWindow {
                             Loader {
                                 id: appsGridLoader
                                 readonly property int allAppsIndex: rootModel.showRecentApps + rootModel.showRecentDocs
+                                readonly property int startCategoryIndex: startOnFavorites ? -1 : allAppsIndex
 
                                 height: plasmoid.configuration.paginateGrid ? cellSize * Math.floor((parent.height - (favoritesLoader.height + units.largeSpacing) * favoritesLoader.active - (pageIndicatorLoader.height + units.largeSpacing) * pageIndicatorLoader.active) / cellSize) : parent.height - (favoritesLoader.height + units.largeSpacing) * favoritesLoader.active - pageIndicatorLoader.height * pageIndicatorLoader.active
 //                                 anchors.top: plasmoid.configuration.paginateGrid ? : parent.top
@@ -307,6 +252,10 @@ Kicker.DashboardWindow {
 //                                 anchors.left: parent.left
                                 //anchors.right: parent.right
                                 source: plasmoid.configuration.paginateGrid ? "PaginatedApplicationsGrid.qml" : "ApplicationsGrid.qml"
+
+                                onSourceChanged: {
+                                    reset()
+                                }
 
 
                             }
@@ -405,6 +354,7 @@ Kicker.DashboardWindow {
 
                                 model: ListModel {
                                     id: categoriesModel
+                                    dynamicRoles: true
                                 }
 
                                 delegate: CategoryButton {
@@ -425,6 +375,69 @@ Kicker.DashboardWindow {
                                 highlight: PlasmaComponents.Highlight {}
                                 highlightFollowsCurrentItem: true
                                 highlightMoveDuration: 0
+
+                                Connections {
+                                    target: rootModel
+
+                                    function onCountChanged() {
+                                        updateCategories()
+                                    }
+
+                                    function updateCategories() { // this function is dedicated to constructing the applications categories list and preemptively updating it, should changes have been applied
+
+                                        var categoryStartIndex = 0
+
+                                        if (rootModel.showRecentDocs) categoryStartIndex++;
+                                        if (rootModel.showRecentApps) categoryStartIndex++;
+
+                                        var categoryEndIndex = rootModel.count
+                                        categoriesModel.clear() // given that we feed the model by appending items to it, it's only logical that we have to clear it every time we open the menu (just in case new applications have been installed)
+                                        for (var i = categoryStartIndex; i < categoryEndIndex; i++) { // loop courtesy of Windows 10 inspired menu plasmoid
+
+                                            if (i == categoryStartIndex + 1) { // this goes right after "All applications"
+
+                                                if (plasmoid.configuration.showFavoritesCategory) {
+                                                    favoritesCategoryIndex = categoriesModel.count
+                                                    categoriesModel.append({"categoryText": i18n("Favorites"), "categoryIcon": "favorite", "categoryIndex": -1})
+                                                }
+
+                                                if (rootModel.showRecentDocs) {
+                                                    var modelIndex = rootModel.index(rootModel.showRecentApps, 0)
+                                                    var categoryLabel = rootModel.data(modelIndex, Qt.DisplayRole)
+                                                    var categoryIcon = rootModel.data(modelIndex, Qt.DecorationRole)
+                                                    var aux = categoryIcon.toString().split('"')
+                                                    var index = -2
+                                                    categoriesModel.append({"categoryText": categoryLabel, "categoryIcon": categoryIcon,"categoryIndex": index})
+                                                    categoriesModel.get(categoriesModel.count - 1).iconName = categoryIcon
+                                                }
+
+                                                if (rootModel.showRecentApps) {
+                                                    var modelIndex = rootModel.index(0, 0)
+                                                    var categoryLabel = rootModel.data(modelIndex, Qt.DisplayRole)
+                                                    var categoryIcon = rootModel.data(modelIndex, Qt.DecorationRole)
+                                                    var aux = categoryIcon.toString().split('"')
+                                                    var index = -3
+                                                    categoriesModel.append({"categoryText": categoryLabel, "categoryIcon": categoryIcon,"categoryIndex": index})
+                                                    categoriesModel.get(categoriesModel.count - 1).iconName = categoryIcon
+                                                }
+                                            }
+
+                                            var modelIndex = rootModel.index(i, 0) // I don't know how this line works but it does
+                                            var categoryLabel = rootModel.data(modelIndex, Qt.DisplayRole) // this is the name that will be shown in the list, say, "All applications", "Utilities", "Education", blah blah blah
+                                            var categoryIcon = rootModel.data(modelIndex, Qt.DecorationRole)
+
+                                            var aux = categoryIcon.toString().split('"') // the day the way this prints out changes I will have a huge problem
+
+
+
+                                            var index = i // we will use this index to swap categories inside the model that feeds our applications grid
+                                            categoriesModel.append({"categoryText": categoryLabel, "categoryIcon": rootModel.data(modelIndex, Qt.DecorationRole),"categoryIndex": index})
+                                            categoriesModel.setProperty(categoriesModel.count - 1, "iconName", categoryIcon) // correct badly set property
+
+                                        }
+
+                                    }
+                                }
 
                             }
                         }
@@ -454,8 +467,9 @@ Kicker.DashboardWindow {
         // Dummy query to preload runner model
         appsGridLoader.item.updateQuery("k")
         appsGridLoader.item.showSearchResults()
-
+        reset()
         kicker.reset.connect(reset);
+
     }
 }
 

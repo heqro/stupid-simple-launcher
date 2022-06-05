@@ -157,10 +157,11 @@
       <default></default>
     </entry>
     <entry name="useExtraRunners" type="Bool">
-      <default>false</default>
+      <default>true</default>
     </entry>
     <entry name="extraRunners" type="StringList">
-      <default>bookmarks,baloosearch</default>
+      <!--<default>bookmarks,baloosearch,calculator</default>-->
+      <default>calculator</default>
     </entry>
     <entry name="alignResultsToBottom" type="Bool">
       <default>true</default>

@@ -64,7 +64,7 @@ Item {
     ScrollableItemGridView { // this is actually the applications grid
 
         id: appsGrid
-        visible: model.count > 0
+//         visible: model.count > 0
         anchors.fill: parent
 
 
@@ -73,7 +73,7 @@ Item {
 
         //dragEnabled: (index == 0)
 
-        model: searching ? runnerModel.modelForRow(0) : rootModel.modelForRow(0).modelForRow(1) // if we happen to be searching, then we must show the results of said search. Else, we will default to showing all the applications
+        model: rootModel.modelForRow(0).modelForRow(1) // if we happen to be searching, then we must show the results of said search. Else, we will default to showing all the applications
 
         //onCountChanged: { // whenever the list of icons has its cardinality modified, account for the change
         //currentIndex = 0
@@ -100,6 +100,10 @@ Item {
         //onMenuUpdated: {
         //console.log("Aquí debería haber un mensajito de an application has been hidden o una animación para construir el modelo")
         //}
+    }
+
+    Component.onCompleted: {
+        resetAppsGrid()
     }
 
 }

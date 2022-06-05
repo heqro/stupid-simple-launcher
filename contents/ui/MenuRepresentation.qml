@@ -129,71 +129,10 @@ Kicker.DashboardWindow {
             reset()
     }
 
-    function updateCategories() { // this function is dedicated to constructing the applications categories list and preemptively updating it, should changes have been applied
-
-        var categoryStartIndex = 0
-
-        if (rootModel.showRecentDocs) categoryStartIndex++;
-        if (rootModel.showRecentApps) categoryStartIndex++;
-
-        var categoryEndIndex = rootModel.count
-        categoriesModel.clear() // given that we feed the model by appending items to it, it's only logical that we have to clear it every time we open the menu (just in case new applications have been installed)
-        for (var i = categoryStartIndex; i < categoryEndIndex; i++) { // loop courtesy of Windows 10 inspired menu plasmoid
-
-            if (i == categoryStartIndex + 1) { // this goes right after "All applications"
-
-                if (plasmoid.configuration.showFavoritesCategory) {
-                    favoritesCategoryIndex = categoriesModel.count
-                    categoriesModel.append({"categoryText": i18n("Favorites"), "categoryIcon": "favorite", "categoryIndex": -1})
-                }
-
-                if (rootModel.showRecentDocs) {
-                    var modelIndex = rootModel.index(rootModel.showRecentApps, 0)
-                    var categoryLabel = rootModel.data(modelIndex, Qt.DisplayRole)
-                    var categoryIcon = rootModel.data(modelIndex, Qt.DecorationRole)
-                    var aux = categoryIcon.toString().split('"')
-                    var index = -2
-                    categoriesModel.append({"categoryText": categoryLabel, "categoryIcon": categoryIcon,"categoryIndex": index})
-                    categoriesModel.get(categoriesModel.count - 1).iconName = categoryIcon
-                }
-
-                if (rootModel.showRecentApps) {
-                    var modelIndex = rootModel.index(0, 0)
-                    var categoryLabel = rootModel.data(modelIndex, Qt.DisplayRole)
-                    var categoryIcon = rootModel.data(modelIndex, Qt.DecorationRole)
-                    var aux = categoryIcon.toString().split('"')
-                    var index = -3
-                    categoriesModel.append({"categoryText": categoryLabel, "categoryIcon": categoryIcon,"categoryIndex": index})
-                    categoriesModel.get(categoriesModel.count - 1).iconName = categoryIcon
-                }
-            }
-
-            var modelIndex = rootModel.index(i, 0) // I don't know how this line works but it does
-            var categoryLabel = rootModel.data(modelIndex, Qt.DisplayRole) // this is the name that will be shown in the list, say, "All applications", "Utilities", "Education", blah blah blah
-            var categoryIcon = rootModel.data(modelIndex, Qt.DecorationRole)
-
-            var aux = categoryIcon.toString().split('"') // the day the way this prints out changes I will have a huge problem
-
-
-
-            var index = i // we will use this index to swap categories inside the model that feeds our applications grid
-            categoriesModel.append({"categoryText": categoryLabel, "categoryIcon": rootModel.data(modelIndex, Qt.DecorationRole),"categoryIndex": index})
-            categoriesModel.setProperty(categoriesModel.count - 1, "iconName", categoryIcon) // correct badly set property
-
-        }
-
-    }
-
     function reset() { // return everything to the last known state
 
         searchField.text = "" // force placeholder text to be shown
         searchField.focus = false
-
-        if(showCategories) {
-            updateCategories()
-        } else {
-            categoriesModel.clear() // always preemptively clean the categories model
-        }
 
         if (favoritesLoader.active)
             favoritesLoader.item.currentIndex = -1 // don't current item on the favorites grid
@@ -436,6 +375,69 @@ Kicker.DashboardWindow {
                                 highlight: PlasmaComponents.Highlight {}
                                 highlightFollowsCurrentItem: true
                                 highlightMoveDuration: 0
+
+                                Connections {
+                                    target: rootModel
+
+                                    function onCountChanged() {
+                                        updateCategories()
+                                    }
+
+                                    function updateCategories() { // this function is dedicated to constructing the applications categories list and preemptively updating it, should changes have been applied
+
+                                        var categoryStartIndex = 0
+
+                                        if (rootModel.showRecentDocs) categoryStartIndex++;
+                                        if (rootModel.showRecentApps) categoryStartIndex++;
+
+                                        var categoryEndIndex = rootModel.count
+                                        categoriesModel.clear() // given that we feed the model by appending items to it, it's only logical that we have to clear it every time we open the menu (just in case new applications have been installed)
+                                        for (var i = categoryStartIndex; i < categoryEndIndex; i++) { // loop courtesy of Windows 10 inspired menu plasmoid
+
+                                            if (i == categoryStartIndex + 1) { // this goes right after "All applications"
+
+                                                if (plasmoid.configuration.showFavoritesCategory) {
+                                                    favoritesCategoryIndex = categoriesModel.count
+                                                    categoriesModel.append({"categoryText": i18n("Favorites"), "categoryIcon": "favorite", "categoryIndex": -1})
+                                                }
+
+                                                if (rootModel.showRecentDocs) {
+                                                    var modelIndex = rootModel.index(rootModel.showRecentApps, 0)
+                                                    var categoryLabel = rootModel.data(modelIndex, Qt.DisplayRole)
+                                                    var categoryIcon = rootModel.data(modelIndex, Qt.DecorationRole)
+                                                    var aux = categoryIcon.toString().split('"')
+                                                    var index = -2
+                                                    categoriesModel.append({"categoryText": categoryLabel, "categoryIcon": categoryIcon,"categoryIndex": index})
+                                                    categoriesModel.get(categoriesModel.count - 1).iconName = categoryIcon
+                                                }
+
+                                                if (rootModel.showRecentApps) {
+                                                    var modelIndex = rootModel.index(0, 0)
+                                                    var categoryLabel = rootModel.data(modelIndex, Qt.DisplayRole)
+                                                    var categoryIcon = rootModel.data(modelIndex, Qt.DecorationRole)
+                                                    var aux = categoryIcon.toString().split('"')
+                                                    var index = -3
+                                                    categoriesModel.append({"categoryText": categoryLabel, "categoryIcon": categoryIcon,"categoryIndex": index})
+                                                    categoriesModel.get(categoriesModel.count - 1).iconName = categoryIcon
+                                                }
+                                            }
+
+                                            var modelIndex = rootModel.index(i, 0) // I don't know how this line works but it does
+                                            var categoryLabel = rootModel.data(modelIndex, Qt.DisplayRole) // this is the name that will be shown in the list, say, "All applications", "Utilities", "Education", blah blah blah
+                                            var categoryIcon = rootModel.data(modelIndex, Qt.DecorationRole)
+
+                                            var aux = categoryIcon.toString().split('"') // the day the way this prints out changes I will have a huge problem
+
+
+
+                                            var index = i // we will use this index to swap categories inside the model that feeds our applications grid
+                                            categoriesModel.append({"categoryText": categoryLabel, "categoryIcon": rootModel.data(modelIndex, Qt.DecorationRole),"categoryIndex": index})
+                                            categoriesModel.setProperty(categoriesModel.count - 1, "iconName", categoryIcon) // correct badly set property
+
+                                        }
+
+                                    }
+                                }
 
                             }
                         }

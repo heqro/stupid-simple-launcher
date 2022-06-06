@@ -44,9 +44,7 @@ Rectangle { // rectangle used for marking the bounds for the category button
 
     RowLayout {
         anchors.fill: parent
-//         anchors.leftMargin: highlightItemSvg.margins.left
         anchors.leftMargin: 2 * units.smallSpacing
-//         anchors.rightMargin: highlightItemSvg.margins.right
         anchors.rightMargin: 2 * units.smallSpacing
 
         layoutDirection: showCategoriesOnTheRight ? Qt.RightToLeft : Qt.LeftToRight

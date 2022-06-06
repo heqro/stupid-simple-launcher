@@ -366,6 +366,14 @@ Kicker.DashboardWindow {
 
                                 delegate: CategoryButton {
                                     id: categoryButton
+
+                                    Connections {
+                                        target: categoryButton
+                                        function onChangeCategoryRequested() {
+                                            appsGridLoader.item.changeCategory(indexInModel)
+                                            appsGridLoader.item.highlightItemAt(0, 0)
+                                        }
+                                    }/*
                                     onAttemptedToChangeCategoryChanged: {
                                         if (attemptedToChangeCategory) {
                                             appsGridLoader.item.changeCategory(indexInModel)
@@ -373,7 +381,7 @@ Kicker.DashboardWindow {
                                             attemptedToChangeCategory = false
                                         }
 
-                                    }
+                                    }*/
                                 }
                                 // only add some fancy spacing between the buttons if they are only icons.
                                 spacing: showCategoriesIcon ? units.iconSizes.small : 0

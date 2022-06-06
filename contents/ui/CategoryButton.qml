@@ -25,7 +25,7 @@ Rectangle { // rectangle used for marking the bounds for the category button
 
     property bool isButtonSizeSet: plasmoid.configuration.customizeCategoriesButtonSize
 
-    property bool attemptedToChangeCategory: false
+    signal changeCategoryRequested
 
     color: "transparent"
 
@@ -95,7 +95,7 @@ Rectangle { // rectangle used for marking the bounds for the category button
         onClicked: {
             if (searching)
                 return
-            attemptedToChangeCategory = true
+            changeCategoryRequested()
             categoriesList.currentIndex = index // highlight current category to give the feeling of responsiveness.
         }
 

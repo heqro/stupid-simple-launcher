@@ -45,6 +45,8 @@ Item {
     property QtObject globalFavorites: rootModel.favoritesModel
     property QtObject systemFavorites: rootModel.systemFavoritesModel
 
+    property bool debugEnabled: false
+
     function action_menuedit() {
         processRunner.runMenuEditor();
     }
@@ -196,5 +198,11 @@ Item {
         plasmoid.setAction("menuedit", i18n("Edit applications..."), "kmenuedit");
         rootModel.refreshed.connect(reset);
         dragHelper.dropped.connect(resetDragSource);
+    }
+
+    function log(msg) {
+        if (debugEnabled) {
+            console.log(msg)
+        }
     }
 }

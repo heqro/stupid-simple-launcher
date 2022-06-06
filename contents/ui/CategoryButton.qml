@@ -28,13 +28,9 @@ Rectangle { // rectangle used for marking the bounds for the category button
     signal changeCategoryRequested
 
     color: "transparent"
-
     height: isButtonSizeSet ? plasmoid.configuration.categoriesButtonHeight : t_metrics.height * 2
-
     width:  isButtonSizeSet ? plasmoid.configuration.categoriesButtonWidth : t_metrics.width + 4 * units.smallSpacing
-
     opacity: (!searching && (categoriesList.currentIndex == index || mouseArea.containsMouse)) ? 1 : 0.4
-
 
     TextMetrics {
         id: t_metrics
@@ -72,15 +68,15 @@ Rectangle { // rectangle used for marking the bounds for the category button
             Layout.preferredHeight: parent.height
             Layout.fillWidth: true
             fontSizeMode: Text.VerticalFit
+
             PlasmaCore.ToolTipArea { // for showing the tooltip linked to this category's name
                 id: toolTip
                 mainText: categoryText
             }
 
-            // collapsing text when the going gets tough
+            // collapsing text when needed
             elide: Text.ElideRight
             wrapMode: Text.NoWrap
-
         }
 
 

@@ -94,7 +94,6 @@ Rectangle { // rectangle used for marking the bounds for the category button
             if (searching)
                 return
             changeCategoryRequested()
-            categoriesList.currentIndex = index // highlight current category to give the feeling of responsiveness.
         }
 
         onEntered: { // show tooltips if the user wanted to.

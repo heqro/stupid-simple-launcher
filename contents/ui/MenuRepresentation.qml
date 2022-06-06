@@ -84,7 +84,7 @@ Kicker.DashboardWindow {
 
     // boolean value to know whether or not the user wants the menu to drop the user right into the favorites section instead of the "All applications" section on startup.
     property bool startOnFavorites: plasmoid.configuration.startOnFavorites
-    property int favoritesCategoryIndex
+    property int favoritesCategoryIndex: 1
 
     property bool customizeCategoriesSidebarSize: plasmoid.configuration.customizeCategoriesButtonSize
     property int categoriesSidebarWidth: plasmoid.configuration.categoriesButtonWidth
@@ -129,15 +129,22 @@ Kicker.DashboardWindow {
             reset()
     }
 
+    onStartOnFavoritesChanged: {
+        log("startOnFavorites changed: " + startOnFavorites)
+        reset()
+    }
+
     function reset() { // return everything to the last known state
 
         searchField.text = "" // force placeholder text to be shown
         searchField.focus = false
 
         if (favoritesLoader.active)
-            favoritesLoader.item.currentIndex = -1 // don't current item on the favorites grid
+            favoritesLoader.item.currentIndex = -1 // don't highlight current item on the favorites grid
 
-        appsGridLoader.item.changeCategory(appsGridLoader.startCategoryIndex)
+        var startCategoryIndex = startOnFavorites ? - 1 : appsGridLoader.allAppsIndex
+        appsGridLoader.item.changeCategory(startCategoryIndex)
+        log("appsGridLoader.item.changeCategory("+startCategoryIndex+")")
 
         if (startOnFavorites) {
             if (showCategories) {
@@ -241,7 +248,7 @@ Kicker.DashboardWindow {
                             Loader {
                                 id: appsGridLoader
                                 readonly property int allAppsIndex: rootModel.showRecentApps + rootModel.showRecentDocs
-                                readonly property int startCategoryIndex: startOnFavorites ? -1 : allAppsIndex
+                                readonly property int startCategoryIndex: plasmoid.configuration.startOnFavorites ? -1 : allAppsIndex
 
                                 height: plasmoid.configuration.paginateGrid ? cellSize * Math.floor((parent.height - (favoritesLoader.height + units.largeSpacing) * favoritesLoader.active - (pageIndicatorLoader.height + units.largeSpacing) * pageIndicatorLoader.active) / cellSize) : parent.height - (favoritesLoader.height + units.largeSpacing) * favoritesLoader.active - pageIndicatorLoader.height * pageIndicatorLoader.active
 //                                 anchors.top: plasmoid.configuration.paginateGrid ? : parent.top
@@ -379,63 +386,47 @@ Kicker.DashboardWindow {
                                 Connections {
                                     target: rootModel
 
-                                    function onCountChanged() {
+                                    function onCountChanged() { // make sure categories are only updated when rootModel really changes (to avoid repeating the same calculation when it's not needed)
                                         updateCategories()
+                                    }
+
+                                    function onShowRecentDocsChanged() {
+                                        updateCategories()
+                                        reset()
+                                    }
+
+                                    function onShowRecentAppsChanged() {
+                                        updateCategories()
+                                        reset()
                                     }
 
                                     function updateCategories() { // this function is dedicated to constructing the applications categories list and preemptively updating it, should changes have been applied
 
-                                        var categoryStartIndex = 0
-
-                                        if (rootModel.showRecentDocs) categoryStartIndex++;
-                                        if (rootModel.showRecentApps) categoryStartIndex++;
-
-                                        var categoryEndIndex = rootModel.count
-                                        categoriesModel.clear() // given that we feed the model by appending items to it, it's only logical that we have to clear it every time we open the menu (just in case new applications have been installed)
-                                        for (var i = categoryStartIndex; i < categoryEndIndex; i++) { // loop courtesy of Windows 10 inspired menu plasmoid
-
-                                            if (i == categoryStartIndex + 1) { // this goes right after "All applications"
-
-                                                if (plasmoid.configuration.showFavoritesCategory) {
-                                                    favoritesCategoryIndex = categoriesModel.count
-                                                    categoriesModel.append({"categoryText": i18n("Favorites"), "categoryIcon": "favorite", "categoryIndex": -1})
-                                                }
-
-                                                if (rootModel.showRecentDocs) {
-                                                    var modelIndex = rootModel.index(rootModel.showRecentApps, 0)
-                                                    var categoryLabel = rootModel.data(modelIndex, Qt.DisplayRole)
-                                                    var categoryIcon = rootModel.data(modelIndex, Qt.DecorationRole)
-                                                    var aux = categoryIcon.toString().split('"')
-                                                    var index = -2
-                                                    categoriesModel.append({"categoryText": categoryLabel, "categoryIcon": categoryIcon,"categoryIndex": index})
-                                                    categoriesModel.get(categoriesModel.count - 1).iconName = categoryIcon
-                                                }
-
-                                                if (rootModel.showRecentApps) {
-                                                    var modelIndex = rootModel.index(0, 0)
-                                                    var categoryLabel = rootModel.data(modelIndex, Qt.DisplayRole)
-                                                    var categoryIcon = rootModel.data(modelIndex, Qt.DecorationRole)
-                                                    var aux = categoryIcon.toString().split('"')
-                                                    var index = -3
-                                                    categoriesModel.append({"categoryText": categoryLabel, "categoryIcon": categoryIcon,"categoryIndex": index})
-                                                    categoriesModel.get(categoriesModel.count - 1).iconName = categoryIcon
-                                                }
-                                            }
-
-                                            var modelIndex = rootModel.index(i, 0) // I don't know how this line works but it does
-                                            var categoryLabel = rootModel.data(modelIndex, Qt.DisplayRole) // this is the name that will be shown in the list, say, "All applications", "Utilities", "Education", blah blah blah
+                                        function addToModel(modelKey, indexInCategoriesModel) {
+                                            var modelIndex = rootModel.index(modelKey, 0)
+                                            var categoryLabel = rootModel.data(modelIndex, Qt.DisplayRole)
                                             var categoryIcon = rootModel.data(modelIndex, Qt.DecorationRole)
-
-                                            var aux = categoryIcon.toString().split('"') // the day the way this prints out changes I will have a huge problem
-
-
-
-                                            var index = i // we will use this index to swap categories inside the model that feeds our applications grid
-                                            categoriesModel.append({"categoryText": categoryLabel, "categoryIcon": rootModel.data(modelIndex, Qt.DecorationRole),"categoryIndex": index})
-                                            categoriesModel.setProperty(categoriesModel.count - 1, "iconName", categoryIcon) // correct badly set property
-
+                                            categoriesModel.append({"categoryText": categoryLabel, "categoryIcon": categoryIcon,"categoryIndex": indexInCategoriesModel})
                                         }
 
+                                        function addMetaCategoriesToModel() { // manually add hardcoded categories (Favorites, Recent Docs, Recent Apps)
+                                            if (plasmoid.configuration.showFavoritesCategory)
+                                                categoriesModel.append({"categoryText": i18n("Favorites"), "categoryIcon": "favorite", "categoryIndex": -1})
+                                            if (rootModel.showRecentDocs)
+                                                addToModel(rootModel.showRecentApps, -2)
+                                            if (rootModel.showRecentApps)
+                                                addToModel(0, -3)
+                                        }
+
+                                        var categoryStartIndex = rootModel.showRecentDocs + rootModel.showRecentApps // rootModel adds recent docs and recent apps to the very start of it. We skip these metacategories (if they are to be present) to add them right after "All applications".
+                                        var categoryEndIndex = rootModel.count
+
+                                        categoriesModel.clear() // preemptive action
+
+                                        addToModel(categoryStartIndex, categoryStartIndex) // manually add "All apps" category (to make sure the MetaCategories are added right after it)
+                                        addMetaCategoriesToModel()
+                                        for (var i = categoryStartIndex + 1; i < categoryEndIndex; i++) // add the rest of "normal" categories
+                                            addToModel(i, i)
                                     }
                                 }
 

@@ -401,16 +401,16 @@ Kicker.DashboardWindow {
                                         reset()
                                     }
 
-                                    function updateCategories() { // this function is dedicated to constructing the applications categories list and preemptively updating it, should changes have been applied
+                                    function updateCategories() { // build categoriesModel
 
-                                        function addToModel(modelKey, indexInCategoriesModel) {
+                                        function addToModel(modelKey, indexInCategoriesModel) { // generic append function
                                             var modelIndex = rootModel.index(modelKey, 0)
                                             var categoryLabel = rootModel.data(modelIndex, Qt.DisplayRole)
                                             var categoryIcon = rootModel.data(modelIndex, Qt.DecorationRole)
                                             categoriesModel.append({"categoryText": categoryLabel, "categoryIcon": categoryIcon,"categoryIndex": indexInCategoriesModel})
                                         }
 
-                                        function addMetaCategoriesToModel() { // manually add hardcoded categories (Favorites, Recent Docs, Recent Apps)
+                                        function addMetaCategoriesToModel() { // sui generis append function to add hard-coded categories (Favorites, Recent Docs, Recent Apps)
                                             if (plasmoid.configuration.showFavoritesCategory)
                                                 categoriesModel.append({"categoryText": i18n("Favorites"), "categoryIcon": "favorite", "categoryIndex": -1})
                                             if (rootModel.showRecentDocs)
@@ -436,22 +436,16 @@ Kicker.DashboardWindow {
 
                     }
 
-
-
-
-
-                    SessionControlBar {
-                        id: sessionControlBar
-                        Layout.fillWidth: true
+                    Loader {
+                        visible: plasmoid.configuration.showSessionControlBar
+                        active: plasmoid.configuration.showSessionControlBar
+                        sourceComponent: SessionControlBar {
+                            showButtonTooltips: plasmoid.configuration.showSessionControlTooltips
+                        }
                         Layout.alignment: Qt.AlignCenter | Qt.AlignBottom
                         Layout.bottomMargin: units.iconSizes.smallMedium
                     }
-
                 }
-
-
-
-
             }
         }
 

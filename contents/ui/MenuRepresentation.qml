@@ -361,7 +361,7 @@ Kicker.DashboardWindow {
 
                                 model: ListModel {
                                     id: categoriesModel
-                                    dynamicRoles: true
+                                    dynamicRoles: true // if this is set to false, no icons will be shown!
                                 }
 
                                 delegate: CategoryButton {

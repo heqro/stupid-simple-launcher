@@ -28,9 +28,9 @@ PlasmaComponents.TextField { //searchbar
 
     font.pointSize: theme.defaultFont.pointSize * 2
 
-    placeholderText: designChooser.active ? designChooser.item.getPlaceHolderText() : (writeSomething ? greetingText : "Howdy, " + kuser.loginName + "! Type to start searching...")
+    placeholderText: (designChooser.active && designChooser.status == Loader.Ready) ? designChooser.item.getPlaceHolderText() : (writeSomething ? greetingText : "Howdy, " + kuser.loginName + "! Type to start searching...")
 
-    horizontalAlignment: designChooser.active ? designChooser.item.getHorizontalAlignment() : TextInput.AlignHCenter
+    horizontalAlignment: (designChooser.active && designChooser.status == Loader.Ready) ? designChooser.item.getHorizontalAlignment() : TextInput.AlignHCenter
 
     style: TextFieldStyle {
 

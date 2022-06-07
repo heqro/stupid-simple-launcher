@@ -109,7 +109,9 @@ Item {
     }
 
     function changePage(pageNumber) {
+        log("Change page from"+ appsSwipeview.currentIndex+ "to"+pageNumber)
         appsSwipeview.setCurrentIndex(pageNumber)
+        log(appsSwipeview.currentIndex)
     }
 
     SwipeView {
@@ -123,7 +125,6 @@ Item {
         anchors.fill: parent
         clip: true
         spacing: 150
-//wheelEnabled: true
 
         Repeater {
 

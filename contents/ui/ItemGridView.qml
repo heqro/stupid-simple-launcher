@@ -191,6 +191,7 @@ FocusScope {
             anchors.fill: parent
             clip: true
 
+            interactive: false // without this line, we cannot swipe sideways!
 
             property bool usesPlasmaTheme: false
 

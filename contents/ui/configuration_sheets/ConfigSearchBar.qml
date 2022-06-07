@@ -120,10 +120,10 @@ Item {
             text: i18n("Restore search bar")
             iconSource: "edit-clear-all"
             enabled: testSearchBar.focus
-            onClicked: {
-                testSearchBar.toggleFocus()
-            }
+
             Layout.topMargin: units.mediumSpacing
+
+            onClicked: testSearchBar.toggleFocus()
         }
 
         PlasmaExtras.Heading {

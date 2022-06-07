@@ -99,6 +99,7 @@ Item {
         RowLayout {
             Layout.fillWidth: true
             Layout.topMargin: units.largeSpacing
+            Layout.bottomMargin: units.mediumSpacing
             PlasmaExtras.Heading {
                 Layout.alignment: Qt.AlignLeft
                 text: i18n("Testing ground")

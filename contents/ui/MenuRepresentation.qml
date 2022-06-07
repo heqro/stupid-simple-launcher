@@ -92,11 +92,6 @@ Kicker.DashboardWindow {
 
     property var hiddenApps: plasmoid.configuration.hiddenApplicationsName
 
-    // cool function to tweak transparency I took from the original launchpad
-    function colorWithAlpha(color, alpha) {
-        return Qt.rgba(color.r, color.g, color.b, alpha)
-    }
-
     onKeyEscapePressed: { // using escape for either closing the menu or stopping the search
 
         if (searchField.activeFocus || searching) { // unfocus when escape key is pressed
@@ -191,7 +186,7 @@ Kicker.DashboardWindow {
 
             Rectangle{
                 anchors.fill: parent
-                color: colorWithAlpha(theme.backgroundColor, alphaValue)
+                color:Qt.rgba(theme.backgroundColor.r, theme.backgroundColor.g, theme.backgroundColor.b,  alphaValue)
             }
 
             ColumnLayout {
@@ -330,8 +325,8 @@ Kicker.DashboardWindow {
                                     z: -1 // draw this element under the ItemGridView
                                     height: parent.height
                                     width: parent.height * Math.floor(parent.width / parent.height)
-                                    color: colorWithAlpha(theme.backgroundColor, alphaValue * 0.6)
-                                    border.color: colorWithAlpha(theme.highlightColor, 1)
+                                    color:Qt.rgba(theme.backgroundColor.r, theme.backgroundColor.g, theme.backgroundColor.b,  alphaValue * 0.6)
+                                    border.color:Qt.rgba(theme.highlightColor.r, theme.highlightColor.g, theme.highlightColor.b,  1)
                                     border.width: Math.floor(units.smallSpacing/2)
                                     radius: units.smallSpacing
 

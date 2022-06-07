@@ -34,7 +34,7 @@ Rectangle { // (CONCEPT) Inspired on https://material.io/components/text-fields
         //anchors.top: parent.top
         //anchors.left: parent.left
         //anchors.leftMargin: Math.floor(parent.radius * 1.75)
-        //color: colorWithAlpha(theme.backgroundColor, plasmoid.configuration.opacitySet ? plasmoid.configuration.alphaValue : 0.8)
+        //color:Qt.rgba(theme.backgroundColor.r, theme.backgroundColor.g, theme.backgroundColor.b,  plasmoid.configuration.opacitySet ? plasmoid.configuration.alphaValue : 0.8)
 
         //Behavior on opacity { SmoothedAnimation {velocity: 3; easing.type: Easing.OutQuad} }
 

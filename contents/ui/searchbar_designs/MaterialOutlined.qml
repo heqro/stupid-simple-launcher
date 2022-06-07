@@ -10,13 +10,14 @@ Rectangle { // (CONCEPT) Inspired on https://material.io/components/text-fields
 
     height: parentHeight
     color: Qt.rgba(theme.backgroundColor.r,theme.backgroundColor.g,theme.backgroundColor.b, alphaValue * 0.6)
-    border.color: isSearchBarFocused ? Qt.rgba(theme.buttonFocusColor.r,theme.buttonFocusColor.g,theme.buttonFocusColor.b, 1) : Qt.rgba(theme.highlightColor.r,theme.highlightColor.g,theme.highlightColor.b, 1)
+
     border.width: Math.floor(units.smallSpacing/2)
+
+    readonly property real linesWidth: Math.floor(units.smallSpacing/2)
+
 
     radius: Math.ceil(1.75 * units.smallSpacing)
     width: t_metrics.width + Math.ceil(1.25 * units.largeSpacing)
-
-    Behavior on width { SmoothedAnimation {velocity: 2500; easing.type: Easing.OutQuad} } // setting both duration and velocity helps when the user cancels out his search and the greeting text is too long for the velocity to catch up in a good fashion.
 
     TextMetrics { // this elements allows us to read the width of the user's input text
         id: t_metrics
@@ -26,34 +27,99 @@ Rectangle { // (CONCEPT) Inspired on https://material.io/components/text-fields
 
     anchors.bottom: parent.top
 
-    //Rectangle {
- //FIXME - restore this functionality by adding four rectangles instead
-        //height: parent.border.width
-        //width: Math.ceil(upperSideMetrics.width * 1.25)
-        //opacity: isSearchBarFocused
-        //anchors.top: parent.top
-        //anchors.left: parent.left
-        //anchors.leftMargin: Math.floor(parent.radius * 1.75)
-        //color:Qt.rgba(theme.backgroundColor.r, theme.backgroundColor.g, theme.backgroundColor.b,  plasmoid.configuration.opacitySet ? plasmoid.configuration.alphaValue : 0.8)
+    Rectangle { // South line
+        id: southLine
+        height: linesWidth
+        width: parent.width
 
-        //Behavior on opacity { SmoothedAnimation {velocity: 3; easing.type: Easing.OutQuad} }
+        anchors.top: parent.bottom
+    }
+
+    Rectangle { // West line
+        id: westLine
+        height: parent.height
+        width: linesWidth
+
+        anchors.left: parent.left
+    }
+
+    Rectangle { // East line
+        id: eastLine
+        height: parent.height
+        width: linesWidth
+
+        anchors.right: parent.right
+    }
+
+    Rectangle {
+        id: northLeftLine
+        height: linesWidth
+        width: units.largeSpacing
 
 
-        //PlasmaComponents3.Label {
-            //id: textOnFocus
-            //text: "Search"
-            //anchors.centerIn: parent
-            //opacity: parent.opacity
-            ////Behavior on opacity { SmoothedAnimation {velocity: 100; easing.type: Easing.OutQuad} }
-        //}
+        anchors {
+            bottom: parent.top
+            left: parent.left
+        }
+    }
 
-        //TextMetrics {
-            //id: upperSideMetrics
-            //text: textOnFocus.text
-            //font.pointSize: PlasmaCore.Theme.defaultFont.pointSize
-        //}
+    Rectangle { // North line (right side)
+        id: northRightLine
+        height: linesWidth
+        width: isSearchBarFocused ? parent.width - (upperSideMetrics.width * 1.25 + northLeftLine.width) : parent.width
 
-    //}
+
+        anchors {
+            bottom: parent.top
+            right: parent.right
+        }
+
+        Behavior on width { SmoothedAnimation {
+            velocity: 250
+            easing.type: Easing.OutQuad
+            onRunningChanged: {
+                if (isSearchBarFocused && !running)
+                    textOnFocus.opacity = 1
+                if (!isSearchBarFocused && running)
+                    textOnFocus.opacity = 0
+            }
+        } }
+
+    }
+
+    PlasmaComponents3.Label {
+        id: textOnFocus
+        text: "Search"
+        opacity: 0
+
+        anchors.verticalCenter: northLeftLine.verticalCenter
+
+        Component.onCompleted: {
+            x = northRightLine.x + northLeftLine.width + upperSideMetrics.width * 0.125 // adjust according to northRightLine's width difference when toggling searchbar's focus
+        }
+    }
+
+    TextMetrics {
+        id: upperSideMetrics
+        text: textOnFocus.text
+        font.pointSize: PlasmaCore.Theme.defaultFont.pointSize
+    }
+
+    Connections {
+        target: parent
+        function onIsSearchBarFocusedChanged() {
+
+            let color = isSearchBarFocused ? Qt.rgba(theme.buttonFocusColor.r,theme.buttonFocusColor.g,theme.buttonFocusColor.b, 1) : Qt.rgba(theme.highlightColor.r,theme.highlightColor.g,theme.highlightColor.b, 1)
+
+            northLeftLine.color  = color
+            northRightLine.color = color
+            westLine.color       = color
+            eastLine.color       = color
+            southLine.color      = color
+        }
+
+        Component.onCompleted: onIsSearchBarFocusedChanged()
+    }
 
     KCoreAddons.KUser { // this is needed for the greeting message (saying hello whatever the user name is)
         id: kuser

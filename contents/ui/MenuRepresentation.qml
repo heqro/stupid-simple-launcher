@@ -113,7 +113,7 @@ Kicker.DashboardWindow {
 
     onSearchingChanged: {
         if (!searching)
-            reset()
+            reset("searchingChanged")
     }
 
     onSearchTextChanged: {
@@ -127,18 +127,16 @@ Kicker.DashboardWindow {
         if (visible) // start fancy animation
             animationSearch.start()
         else { // only perform heavy calculations to return to last known state when menu is exited
-            reset()
-            log("Exiting... -> visibleChanged()")
+            reset("visibleChanged -> false")
         }
     }
 
     onStartOnFavoritesChanged: {
-        log("startOnFavorites changed: " + startOnFavorites)
-        reset()
+        reset("startOnFavorites changed: " + startOnFavorites)
     }
 
-    function reset() { // return everything to the last known state
-        log("Resetting...")
+    function reset(reason) { // return everything to the last known state
+        log("Resetting... "+reason)
 
         searchField.text = "" // force placeholder text to be shown
         searchField.focus = false
@@ -147,8 +145,8 @@ Kicker.DashboardWindow {
             favoritesLoader.item.currentIndex = -1 // don't highlight current item on the favorites grid
 
         var startCategoryIndex = startOnFavorites ? - 1 : appsGridLoader.allAppsIndex
-        appsGridLoader.item.changeCategory(startCategoryIndex)
-        log("appsGridLoader.item.changeCategory("+startCategoryIndex+")")
+        appsGridLoader.item.resetAppsGrid()
+//         appsGridLoader.item.changeCategory(startCategoryIndex)
 
         if (startOnFavorites) {
             if (showCategories) {
@@ -240,9 +238,9 @@ Kicker.DashboardWindow {
 
                     layoutDirection: showCategoriesOnTheRight ? Qt.LeftToRight : Qt.RightToLeft
 
-                    Rectangle {
+                    Item {
                         id: appGridsRectangle
-                        color: "transparent"
+
                         Layout.fillWidth: true
                         Layout.fillHeight:true
                         Loader {
@@ -259,11 +257,6 @@ Kicker.DashboardWindow {
 //                                 anchors.left: parent.left
                             //anchors.right: parent.right
                             source: plasmoid.configuration.paginateGrid ? "PaginatedApplicationsGrid.qml" : "ApplicationsGrid.qml"
-
-                            Component.onCompleted: {
-                                appsGridLoader.sourceChanged.connect(reset) // connect the reset signal after source is set for the first time -> leverage first load heavy CPU times in paginated menu
-                            }
-
 
                         }
                         Loader { // dots to show the current page and the amount of pages.
@@ -380,15 +373,13 @@ Kicker.DashboardWindow {
                                 }
 
                                 function onShowRecentDocsChanged() {
-                                    log("showRecentDocsChanged()")
                                     updateCategories()
-                                    reset()
+                                    reset("showRecentDocsChanged")
                                 }
 
                                 function onShowRecentAppsChanged() {
-                                    log("showRecentAppsChanged()")
                                     updateCategories()
-                                    reset()
+                                    reset("showRecentAppsChanged")
                                 }
 
                                 function updateCategories() { // build categoriesModel
@@ -483,7 +474,12 @@ Kicker.DashboardWindow {
         // Dummy query to preload runner model
         appsGridLoader.item.updateQuery("k")
         appsGridLoader.item.showSearchResults()
-        kicker.reset.connect(reset);
+        reset("MenuRepresentation is ready -> Component.onCompleted()")
+        appsGridLoader.loaded.connect(function resetBecauseOfLoad() {reset("appsGridLoader loaded")})
+        kicker.reset.connect(function resetBecauseOfKicker() {
+            if (appsGridLoader.item) reset("Kicker reset")
+            else log("Won't reset (Component is loading and will reset once it is done loading)")
+        });
 
     }
 }

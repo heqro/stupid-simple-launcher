@@ -7,6 +7,8 @@ import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 2.0 as PlasmaComponents
 import org.kde.plasma.extras 2.0 as PlasmaExtras
 
+import ".."
+
 Item {
     id: configSidebar
 
@@ -16,20 +18,20 @@ Item {
     property alias cfg_searchBarDesign: designChooser.chosenDesignSheetPath
 
     ColumnLayout {
+        anchors.horizontalCenter: parent.horizontalCenter
         PlasmaExtras.Heading {
-            text: i18n("Design")
+            text: i18n("Choose a design")
         }
 
         GroupBox {
             id: designChooser
-            Layout.fillWidth: true
             ExclusiveGroup { id: designChoice }
 
             property string chosenDesignSheetPath: plasmoid.configuration.searchBarDesign
 
             ColumnLayout {
                 RadioButton {
-                    Layout.fillWidth: true
+                    //Layout.fillWidth: true
                     id: designNull
                     text: i18n("No design")
                     checked: plasmoid.configuration.searchBarDesign == ""
@@ -42,7 +44,7 @@ Item {
                 }
 
                 RadioButton {
-                    Layout.fillWidth: true
+                    //Layout.fillWidth: true
                     id: designUnderline
                     text: i18n("Underlining")
                     exclusiveGroup: designChoice
@@ -55,7 +57,7 @@ Item {
                 }
 
                 RadioButton {
-                    Layout.fillWidth: true
+                    //Layout.fillWidth: true
                     id: designFullyFledged
                     text: i18n("Fully-fledged")
                     exclusiveGroup: designChoice
@@ -67,7 +69,7 @@ Item {
                 }
 
                 RadioButton {
-                    Layout.fillWidth: true
+                    //Layout.fillWidth: true
                     id: designMaterial
                     text: i18n("Material")
                     exclusiveGroup: designChoice
@@ -79,7 +81,7 @@ Item {
                 }
 
                 RadioButton {
-                    Layout.fillWidth: true
+                    //Layout.fillWidth: true
                     id: designModernComfy
                     text: i18n("Modern comfy")
                     exclusiveGroup: designChoice
@@ -93,11 +95,45 @@ Item {
             }
         }
 
+
+        RowLayout {
+            Layout.fillWidth: true
+            Layout.topMargin: units.largeSpacing
+            Layout.bottomMargin: units.mediumSpacing
+            PlasmaExtras.Heading {
+                Layout.alignment: Qt.AlignLeft
+                text: i18n("Testing ground")
+            }
+        }
+
+
+        SearchBar {
+
+            id: testSearchBar
+//             Layout.fillWidth:true
+            writeSomething:  true
+            greetingText:    "Sample greeting text"
+            searchBarDesign: designChooser.chosenDesignSheetPath
+            searchBarOpacity:alphaValue.value
+        }
+
+        PlasmaComponents.Button {
+            text: i18n("Restore search bar")
+            iconSource: "edit-clear-all"
+            enabled: testSearchBar.focus
+
+            Layout.topMargin: units.mediumSpacing
+
+            onClicked: testSearchBar.toggleFocus()
+        }
+
         PlasmaExtras.Heading {
             Layout.fillWidth: true
+            Layout.topMargin: units.largeSpacing
             text: i18n("Configure the design")
             visible: designFullyFledged.checked
         }
+
 
         CheckBox {
             Layout.fillWidth: true

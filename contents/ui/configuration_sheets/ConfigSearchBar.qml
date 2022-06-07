@@ -121,10 +121,7 @@ Item {
             iconSource: "edit-clear-all"
             enabled: testSearchBar.focus
             onClicked: {
-                if (testSearchBar.focus) {
-                    testSearchBar.focus = !testSearchBar.focus
-                    testSearchBar.text = ""
-                }
+                testSearchBar.toggleFocus()
             }
             Layout.topMargin: units.mediumSpacing
         }

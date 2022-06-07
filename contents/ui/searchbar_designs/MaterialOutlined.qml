@@ -11,10 +11,7 @@ Rectangle { // (CONCEPT) Inspired on https://material.io/components/text-fields
     height: parentHeight
     color: Qt.rgba(theme.backgroundColor.r,theme.backgroundColor.g,theme.backgroundColor.b, alphaValue * 0.6)
 
-    border.width: Math.floor(units.smallSpacing/2)
-
-    readonly property real linesWidth: Math.floor(units.smallSpacing/2)
-
+    readonly property real linesWidth: Math.floor(units.smallSpacing / 2)
 
     radius: Math.ceil(1.75 * units.smallSpacing)
     width: t_metrics.width + Math.ceil(1.25 * units.largeSpacing)
@@ -56,7 +53,6 @@ Rectangle { // (CONCEPT) Inspired on https://material.io/components/text-fields
         height: linesWidth
         width: units.largeSpacing
 
-
         anchors {
             bottom: parent.top
             left: parent.left
@@ -68,13 +64,12 @@ Rectangle { // (CONCEPT) Inspired on https://material.io/components/text-fields
         height: linesWidth
         width: isSearchBarFocused ? parent.width - (upperSideMetrics.width * 1.25 + northLeftLine.width) : parent.width
 
-
         anchors {
             bottom: parent.top
             right: parent.right
         }
 
-        Behavior on width { SmoothedAnimation {
+        Behavior on width { SmoothedAnimation { // Show and hide the upper label in the right time
             velocity: 250
             easing.type: Easing.OutQuad
             onRunningChanged: {
@@ -90,13 +85,10 @@ Rectangle { // (CONCEPT) Inspired on https://material.io/components/text-fields
     PlasmaComponents3.Label {
         id: textOnFocus
         text: "Search"
-        opacity: 0
 
         anchors.verticalCenter: northLeftLine.verticalCenter
-
-        Component.onCompleted: {
-            x = northRightLine.x + northLeftLine.width + upperSideMetrics.width * 0.125 // adjust according to northRightLine's width difference when toggling searchbar's focus
-        }
+        anchors.left: northLeftLine.right
+        anchors.leftMargin: upperSideMetrics.width * 0.125
     }
 
     TextMetrics {
@@ -106,10 +98,12 @@ Rectangle { // (CONCEPT) Inspired on https://material.io/components/text-fields
     }
 
     Connections {
-        target: parent
-        function onIsSearchBarFocusedChanged() {
 
-            let color = isSearchBarFocused ? Qt.rgba(theme.buttonFocusColor.r,theme.buttonFocusColor.g,theme.buttonFocusColor.b, 1) : Qt.rgba(theme.highlightColor.r,theme.highlightColor.g,theme.highlightColor.b, 1)
+        target: parent
+
+        function onIsSearchBarFocusedChanged() { // this function avoids to have 5 bindings for just swapping a color
+
+            const color = isSearchBarFocused ? Qt.rgba(theme.buttonFocusColor.r,theme.buttonFocusColor.g,theme.buttonFocusColor.b, 1) : Qt.rgba(theme.highlightColor.r,theme.highlightColor.g,theme.highlightColor.b, 1)
 
             northLeftLine.color  = color
             northRightLine.color = color
@@ -133,6 +127,10 @@ Rectangle { // (CONCEPT) Inspired on https://material.io/components/text-fields
 
     function getHorizontalAlignment() {
         return TextInput.AlignHCenter
+    }
+
+    Component.onCompleted: {
+        textOnFocus.opacity = isSearchBarFocused
     }
 
 }

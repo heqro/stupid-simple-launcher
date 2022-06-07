@@ -203,14 +203,4 @@ Item {
         }
 
     }
-
-
-    //}
-
-
-
-    Component.onCompleted: {
-        resetAppsGrid()
-    }
-
 }

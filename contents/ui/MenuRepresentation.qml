@@ -35,6 +35,7 @@ import org.kde.plasma.private.kicker 0.1 as Kicker
 import "../code/tools.js" as Tools
 import QtQuick.Window 2.0
 import QtQuick.Controls.Styles 1.4
+import QtQml.Models 2.4
 
 
 // for vanilla scrollview
@@ -112,7 +113,7 @@ Kicker.DashboardWindow {
 
     onSearchingChanged: {
         if (!searching)
-            reset()
+            reset("searchingChanged")
     }
 
     onSearchTextChanged: {
@@ -125,16 +126,17 @@ Kicker.DashboardWindow {
     onVisibleChanged: {
         if (visible) // start fancy animation
             animationSearch.start()
-        else // only perform heavy calculations to return to last known state when menu is exited
-            reset()
+        else { // only perform heavy calculations to return to last known state when menu is exited
+            reset("visibleChanged -> false")
+        }
     }
 
     onStartOnFavoritesChanged: {
-        log("startOnFavorites changed: " + startOnFavorites)
-        reset()
+        reset("startOnFavorites changed: " + startOnFavorites)
     }
 
-    function reset() { // return everything to the last known state
+    function reset(reason) { // return everything to the last known state
+        log("Resetting... "+reason)
 
         searchField.text = "" // force placeholder text to be shown
         searchField.focus = false
@@ -143,8 +145,8 @@ Kicker.DashboardWindow {
             favoritesLoader.item.currentIndex = -1 // don't highlight current item on the favorites grid
 
         var startCategoryIndex = startOnFavorites ? - 1 : appsGridLoader.allAppsIndex
-        appsGridLoader.item.changeCategory(startCategoryIndex)
-        log("appsGridLoader.item.changeCategory("+startCategoryIndex+")")
+        appsGridLoader.item.resetAppsGrid()
+//         appsGridLoader.item.changeCategory(startCategoryIndex)
 
         if (startOnFavorites) {
             if (showCategories) {
@@ -165,286 +167,305 @@ Kicker.DashboardWindow {
     }
 
     mainItem:
-        Rectangle {
 
+        MouseArea {
+
+            id: mainItemRoot
             anchors.fill: parent
-            color: 'transparent'
+            acceptedButtons: Qt.LeftButton | Qt.RightButton
+            LayoutMirroring.enabled: Qt.application.layoutDirection == Qt.RightToLeft
+            LayoutMirroring.childrenInherit: true
 
-            MouseArea {
+            ScaleAnimator{
+                id: animationSearch
+                from: 1.1
+                to: 1
+                target: mainItemRoot
+            }
 
-                id: mainItemRoot
+            onClicked: {
+                // when clicked inside this area and outside the applications grid or any cool buttons, register it as if the user wanted to get out of the menu
+                if (plasmoid.configuration.clickToToggle)
+                    root.toggle();
+            }
+
+            Rectangle{
                 anchors.fill: parent
-                acceptedButtons: Qt.LeftButton | Qt.RightButton
-                LayoutMirroring.enabled: Qt.application.layoutDirection == Qt.RightToLeft
-                LayoutMirroring.childrenInherit: true
+                color: colorWithAlpha(theme.backgroundColor, alphaValue)
+            }
 
-                ScaleAnimator{
-                    id: animationSearch
-                    from: 1.1
-                    to: 1
-                    target: mainItemRoot
-                }
+            ColumnLayout {
 
-                onClicked: {
-                    // when clicked inside this area and outside the applications grid or any cool buttons, register it as if the user wanted to get out of the menu
-                    if (plasmoid.configuration.clickToToggle)
-                        root.toggle();
-                }
+                id: mainColumn
+                anchors.fill: parent
 
-                Rectangle{
-                    anchors.fill: parent
-                    color: colorWithAlpha(theme.backgroundColor, alphaValue)
-                }
+                SearchBar {
 
-                ColumnLayout {
+                    id: searchField
+                    Layout.alignment: Qt.AlignCenter
+                    Layout.fillWidth: true
+                    Layout.topMargin: units.iconSizes.large
+                    Layout.bottomMargin: units.iconSizes.medium
+                    Layout.maximumWidth: searchField.usedSpace // expand the search field's width as much as the design requires space work with. Some designs are dynamic when it comes to their width, thus we need to account for this change.
 
-                    id: mainColumn
-                    anchors.fill: parent
-
-                    SearchBar {
-
-                        id: searchField
-                        Layout.alignment: Qt.AlignCenter
-                        Layout.fillWidth: true
-                        Layout.topMargin: units.iconSizes.large
-                        Layout.bottomMargin: units.iconSizes.medium
-                        Layout.maximumWidth: searchField.usedSpace // expand the search field's width as much as the design requires space work with. Some designs are dynamic when it comes to their width, thus we need to account for this change.
-
-                        Keys.onPressed: {
-                            if (event.key == Qt.Key_Down || event.key == Qt.Key_Right) {
+                    Keys.onPressed: {
+                        if (event.key == Qt.Key_Down || event.key == Qt.Key_Right) {
+                            event.accepted = true
+                            appsGridLoader.item.highlightItemAt(0, 0)
+                        } else if (event.key == Qt.Key_Return || event.key == Qt.Key_Enter) {
+                            if (searching && runnerModel.count >= 1) {
                                 event.accepted = true
-                                appsGridLoader.item.highlightItemAt(0, 0)
-                            } else if (event.key == Qt.Key_Return || event.key == Qt.Key_Enter) {
-                                if (searching && runnerModel.count >= 1) {
-                                    event.accepted = true
-                                    appsGridLoader.item.highlightItemAt(0,0)
-                                    appsGridLoader.item.itemGrid.model.trigger(0, "", null);
-                                    root.toggle()
-                                }
-
+                                appsGridLoader.item.highlightItemAt(0,0)
+                                appsGridLoader.item.itemGrid.model.trigger(0, "", null);
+                                root.toggle()
                             }
 
                         }
+
                     }
+                }
 
 
 
-                    RowLayout {
+                RowLayout {
 
-                        id: appsGridPlusCategories
+                    id: appsGridPlusCategories
+
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    Layout.alignment: Qt.AlignCenter
+                    Layout.bottomMargin: units.iconSizes.large
+
+                    layoutDirection: showCategoriesOnTheRight ? Qt.LeftToRight : Qt.RightToLeft
+
+                    Item {
+                        id: appGridsRectangle
 
                         Layout.fillWidth: true
-                        Layout.fillHeight: true
-                        Layout.alignment: Qt.AlignCenter
-                        Layout.bottomMargin: units.iconSizes.large
+                        Layout.fillHeight:true
+                        Loader {
+                            id: appsGridLoader
+                            readonly property int allAppsIndex: rootModel.showRecentApps + rootModel.showRecentDocs
+                            readonly property int startCategoryIndex: plasmoid.configuration.startOnFavorites ? -1 : allAppsIndex
 
-                        layoutDirection: showCategoriesOnTheRight ? Qt.LeftToRight : Qt.RightToLeft
-
-                        Rectangle {
-                            id: appGridsRectangle
-                            color: "transparent"
-                            Layout.fillWidth: true
-                            Layout.fillHeight:true
-                            Loader {
-                                id: appsGridLoader
-                                readonly property int allAppsIndex: rootModel.showRecentApps + rootModel.showRecentDocs
-                                readonly property int startCategoryIndex: plasmoid.configuration.startOnFavorites ? -1 : allAppsIndex
-
-                                height: plasmoid.configuration.paginateGrid ? cellSize * Math.floor((parent.height - (favoritesLoader.height + units.largeSpacing) * favoritesLoader.active - (pageIndicatorLoader.height + units.largeSpacing) * pageIndicatorLoader.active) / cellSize) : parent.height - (favoritesLoader.height + units.largeSpacing) * favoritesLoader.active - pageIndicatorLoader.height * pageIndicatorLoader.active
+                            height: plasmoid.configuration.paginateGrid ? cellSize * Math.floor((parent.height - (favoritesLoader.height + units.largeSpacing) * favoritesLoader.active - (pageIndicatorLoader.height + units.largeSpacing) * pageIndicatorLoader.active) / cellSize) : parent.height - (favoritesLoader.height + units.largeSpacing) * favoritesLoader.active - pageIndicatorLoader.height * pageIndicatorLoader.active
 //                                 anchors.top: plasmoid.configuration.paginateGrid ? : parent.top
 
-                                anchors.top: parent.top
-                                width: cellSize * Math.floor(parent.width / cellSize)
-                                anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.top: parent.top
+                            width: cellSize * Math.floor(parent.width / cellSize)
+                            anchors.horizontalCenter: parent.horizontalCenter
 //                                 anchors.left: parent.left
-                                //anchors.right: parent.right
-                                source: plasmoid.configuration.paginateGrid ? "PaginatedApplicationsGrid.qml" : "ApplicationsGrid.qml"
+                            //anchors.right: parent.right
+                            source: plasmoid.configuration.paginateGrid ? "PaginatedApplicationsGrid.qml" : "ApplicationsGrid.qml"
 
-                                onSourceChanged: {
-                                    reset()
-                                }
+                        }
+                        Loader { // dots to show the current page and the amount of pages.
+                            id: pageIndicatorLoader
+                            active: plasmoid.configuration.paginateGrid
+                            anchors.top: appsGridLoader.bottom
 
+                            anchors.topMargin: units.largeSpacing
+                            anchors.horizontalCenter: parent.horizontalCenter
 
-                            }
-                            Loader { // dots to show the current page and the amount of pages.
-                                id: pageIndicatorLoader
-                                active: plasmoid.configuration.paginateGrid
-                                anchors.top: appsGridLoader.bottom
+                            sourceComponent: PageIndicator {
 
-                                anchors.topMargin: units.largeSpacing
-                                anchors.horizontalCenter: parent.horizontalCenter
+                                id: currentPageIndicator
 
-                                sourceComponent: PageIndicator {
+                                visible: !searching && count != 1
 
-                                    id: currentPageIndicator
-
-                                    visible: !searching && count != 1
-
-                                    count: appsGridLoader.item.pageCount
-                                    currentIndex: appsGridLoader.item.currentIndex
+                                count: appsGridLoader.item.pageCount
+                                currentIndex: appsGridLoader.item.currentIndex
 //                                     interactive: true
 
-                                    delegate: Rectangle {
+                                delegate: Rectangle {
 
-                                        color: theme.headerTextColor
-                                        opacity: index === currentPageIndicator.currentIndex ? 0.75 : (indicatorMouseArea.containsMouse ? 0.5 : 0.35)
-                                        height: index === currentPageIndicator.currentIndex ? units.iconSizes.smallMedium : units.iconSizes.small
-                                        width:  height
-                                        radius: height / 2
-                                        anchors.verticalCenter: parent.verticalCenter // align all indicators
+                                    color: theme.headerTextColor
+                                    opacity: index === currentPageIndicator.currentIndex ? 0.75 : (indicatorMouseArea.containsMouse ? 0.5 : 0.35)
+                                    height: index === currentPageIndicator.currentIndex ? units.iconSizes.smallMedium : units.iconSizes.small
+                                    width:  height
+                                    radius: height / 2
+                                    anchors.verticalCenter: parent.verticalCenter // align all indicators
 
-                                        Behavior on width { SmoothedAnimation {velocity: 12; easing.type: Easing.OutQuad} }
+                                    Behavior on width { SmoothedAnimation {velocity: 12; easing.type: Easing.OutQuad} }
 
-                                        MouseArea {
-                                            id: indicatorMouseArea
-                                            anchors.fill: parent
-                                            hoverEnabled: true
-                                            onClicked: { appsGridLoader.item.changePage(index) } // send to the apps grid the order to change page
-                                        }
-
+                                    MouseArea {
+                                        id: indicatorMouseArea
+                                        anchors.fill: parent
+                                        hoverEnabled: true
+                                        onClicked: { appsGridLoader.item.changePage(index) } // send to the apps grid the order to change page
                                     }
+
                                 }
-                            }
-
-                            Loader { // we can get away with not setting this boys' width because the loaded item will give such info
-                                id: favoritesLoader
-                                active: showFavoritesInGrid
-                                anchors.bottom: parent.bottom
-                                anchors.topMargin: units.largeSpacing
-                                height: plasmoid.configuration.favoritesIconSize
-                                anchors.horizontalCenter: parent.horizontalCenter
-
-                                sourceComponent: ItemGridView {
-                                    model: globalFavorites
-                                    cellWidth: parent.height
-                                    cellHeight: parent.height
-                                    showLabels: false
-                                    dragEnabled: true
-                                    width: Math.min(globalFavorites.count * parent.height, cellWidth * Math.floor(appGridsRectangle.width / cellWidth)) // TODO - if the favorites is higher than the width then add an extra button to show all favorites!
-
-                                    onKeyNavUp: {
-                                        currentIndex = -1
-                                        appsGridLoader.item.highlightItemAt(0,0)
-                                    }
-
-                                    Rectangle {
-                                        z: -1 // draw this element under the ItemGridView
-                                        height: parent.height
-                                        width: parent.height * Math.floor(parent.width / parent.height)
-                                        color: colorWithAlpha(theme.backgroundColor, alphaValue * 0.6)
-                                        border.color: colorWithAlpha(theme.highlightColor, 1)
-                                        border.width: Math.floor(units.smallSpacing/2)
-                                        radius: units.smallSpacing
-
-                                    }
-                                }
-
-
                             }
                         }
 
-                        PlasmaComponents3.ScrollView { // dedicated to storing the categories list
+                        Loader { // we can get away with not setting this boys' width because the loaded item will give such info
+                            id: favoritesLoader
+                            active: showFavoritesInGrid
+                            anchors.bottom: parent.bottom
+                            anchors.topMargin: units.largeSpacing
+                            height: plasmoid.configuration.favoritesIconSize
+                            anchors.horizontalCenter: parent.horizontalCenter
 
-                            id: categoriesItem
+                            sourceComponent: ItemGridView {
+                                model: globalFavorites
+                                cellWidth: parent.height
+                                cellHeight: parent.height
+                                showLabels: false
+                                dragEnabled: true
+                                width: Math.min(globalFavorites.count * parent.height, cellWidth * Math.floor(appGridsRectangle.width / cellWidth)) // TODO - if the favorites is higher than the width then add an extra button to show all favorites!
 
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
-
-                            Layout.maximumWidth: categoriesModel.count == 0 ? 0 : (customizeCategoriesSidebarSize ? Math.ceil(categoriesSidebarWidth + units.iconSizes.medium) : Math.floor(widthScreen / 8 + units.iconSizes.medium)) // adding up a little bit of "artificial" size to let the category button breathe with respect to the sidebar's scrollbar.
-                            ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-
-                            ListView {
-
-                                id: categoriesList
-
-                                anchors.fill: parent
-
-                                model: ListModel {
-                                    id: categoriesModel
-                                    dynamicRoles: true // if this is set to false, no icons will be shown!
+                                onKeyNavUp: {
+                                    currentIndex = -1
+                                    appsGridLoader.item.highlightItemAt(0,0)
                                 }
 
-                                delegate: CategoryButton {
-                                    id: categoryButton
+                                Rectangle {
+                                    z: -1 // draw this element under the ItemGridView
+                                    height: parent.height
+                                    width: parent.height * Math.floor(parent.width / parent.height)
+                                    color: colorWithAlpha(theme.backgroundColor, alphaValue * 0.6)
+                                    border.color: colorWithAlpha(theme.highlightColor, 1)
+                                    border.width: Math.floor(units.smallSpacing/2)
+                                    radius: units.smallSpacing
 
-                                    Connections {
-                                        target: categoryButton
-                                        function onChangeCategoryRequested() {
-                                            appsGridLoader.item.changeCategory(indexInModel)
+                                }
+                            }
+
+
+                        }
+                    }
+
+                    PlasmaComponents3.ScrollView { // dedicated to storing the categories list
+
+                        id: categoriesItem
+
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
+
+                        Layout.maximumWidth: categoriesModel.count == 0 ? 0 : (customizeCategoriesSidebarSize ? Math.ceil(categoriesSidebarWidth + units.iconSizes.medium) : Math.floor(widthScreen / 8 + units.iconSizes.medium)) // adding up a little bit of "artificial" size to let the category button breathe with respect to the sidebar's scrollbar.
+                        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+
+                        ListView {
+
+                            id: categoriesList
+
+                            anchors.fill: parent
+
+                            model: ObjectModel {
+                                id: categoriesModel
+                            }
+
+
+                            // only add some fancy spacing between the buttons if they are only icons.
+                            spacing: showCategoriesIcon ? units.iconSizes.small : 0
+
+                            // the following lines help maintaining consistency in highlighting with respect to whatever you have set in your Plasma Style. (This is taken from ItemGridDelegate.qml)
+                            highlight: PlasmaComponents.Highlight {}
+                            highlightFollowsCurrentItem: true
+                            highlightMoveDuration: 0
+
+                            Connections {
+                                target: rootModel
+
+                                function onCountChanged() { // make sure categories are only updated when rootModel really changes (to avoid repeating the same calculation when it's not needed)
+                                    updateCategories()
+                                }
+
+                                function onShowRecentDocsChanged() {
+                                    updateCategories()
+                                    reset("showRecentDocsChanged")
+                                }
+
+                                function onShowRecentAppsChanged() {
+                                    updateCategories()
+                                    reset("showRecentAppsChanged")
+                                }
+
+                                function updateCategories() { // build categoriesModel
+
+                                    function addToModel(modelKey, indexInCategoriesModel) { // generic append function
+                                        component = Qt.createComponent("CategoryButton.qml")
+                                        if (component.status == Component.Ready)
+                                            finishCreation(modelKey,indexInCategoriesModel);
+                                        else
+                                            component.statusChanged.connect(finishCreation);
+                                    }
+                                    function finishCreation(modelKey, indexInCategoriesModel) {
+                                        var modelIndex = rootModel.index(modelKey, 0)
+                                        var categoryLabel = rootModel.data(modelIndex, Qt.DisplayRole)
+                                        var categoryIcon = rootModel.data(modelIndex, Qt.DecorationRole)
+
+                                        const modelCount = categoriesModel.count
+
+                                        var object = component.createObject(categoriesList, {
+                                            indexInModel: indexInCategoriesModel,
+                                            categoryName: categoryLabel
+                                        })
+                                        object.setSourceIcon(categoryIcon)
+
+                                        categoriesModel.append(object)
+                                        object.changeCategoryRequested.connect(function() {
+                                            appsGridLoader.item.changeCategory(object.indexInModel)
                                             appsGridLoader.item.highlightItemAt(0, 0)
-                                            categoriesList.currentIndex = index
+                                            categoriesList.currentIndex = modelCount
+                                        })
+
+                                    }
+
+                                    function addFavoritesToModel() {
+                                        if (plasmoid.configuration.showFavoritesCategory) { // manually create favorites category button (because this info cannot be reached with the rest of the tools)
+                                            var component = Qt.createComponent("CategoryButton.qml")
+                                            var object = component.createObject(categoriesList, {
+                                                indexInModel: -1,
+                                                categoryName: i18n("Favorites")
+                                            })
+                                            object.setSourceIcon("favorite")
+                                            const modelCount = categoriesModel.count
+                                            categoriesModel.append(object)
+                                            object.changeCategoryRequested.connect(function() {
+                                                appsGridLoader.item.changeCategory(-1)
+                                                appsGridLoader.item.highlightItemAt(0, 0)
+                                                categoriesList.currentIndex = modelCount
+                                            })
                                         }
                                     }
+
+                                    function addMetaCategoriesToModel() { // sui generis append function to add hard-coded categories (Favorites, Recent Docs, Recent Apps)
+                                        if (rootModel.showRecentDocs)
+                                            addToModel(rootModel.showRecentApps, -2)
+                                        if (rootModel.showRecentApps)
+                                            addToModel(0, -3)
+                                    }
+
+                                    var component
+
+                                    var categoryStartIndex = rootModel.showRecentDocs + rootModel.showRecentApps // rootModel adds recent docs and recent apps to the very start of it. We skip these metacategories (if they are to be present) to add them right after "All applications".
+                                    var categoryEndIndex = rootModel.count
+
+                                    categoriesModel.clear() // preemptive action
+
+                                    addToModel(categoryStartIndex, categoryStartIndex) // manually add "All apps" category (to make sure the meta-categories & favorites are added right after it)
+                                    addFavoritesToModel()
+                                    addMetaCategoriesToModel()
+                                    for (var i = categoryStartIndex + 1; i < categoryEndIndex; i++) // add the rest of "normal" categories
+                                        addToModel(i, i)
                                 }
-                                // only add some fancy spacing between the buttons if they are only icons.
-                                spacing: showCategoriesIcon ? units.iconSizes.small : 0
-
-                                // the following lines help maintaining consistency in highlighting with respect to whatever you have set in your Plasma Style. (This is taken from ItemGridDelegate.qml)
-                                highlight: PlasmaComponents.Highlight {}
-                                highlightFollowsCurrentItem: true
-                                highlightMoveDuration: 0
-
-                                Connections {
-                                    target: rootModel
-
-                                    function onCountChanged() { // make sure categories are only updated when rootModel really changes (to avoid repeating the same calculation when it's not needed)
-                                        updateCategories()
-                                    }
-
-                                    function onShowRecentDocsChanged() {
-                                        updateCategories()
-                                        reset()
-                                    }
-
-                                    function onShowRecentAppsChanged() {
-                                        updateCategories()
-                                        reset()
-                                    }
-
-                                    function updateCategories() { // build categoriesModel
-
-                                        function addToModel(modelKey, indexInCategoriesModel) { // generic append function
-                                            var modelIndex = rootModel.index(modelKey, 0)
-                                            var categoryLabel = rootModel.data(modelIndex, Qt.DisplayRole)
-                                            var categoryIcon = rootModel.data(modelIndex, Qt.DecorationRole)
-                                            categoriesModel.append({"categoryText": categoryLabel, "categoryIcon": categoryIcon,"categoryIndex": indexInCategoriesModel})
-                                        }
-
-                                        function addMetaCategoriesToModel() { // sui generis append function to add hard-coded categories (Favorites, Recent Docs, Recent Apps)
-                                            if (plasmoid.configuration.showFavoritesCategory)
-                                                categoriesModel.append({"categoryText": i18n("Favorites"), "categoryIcon": "favorite", "categoryIndex": -1})
-                                            if (rootModel.showRecentDocs)
-                                                addToModel(rootModel.showRecentApps, -2)
-                                            if (rootModel.showRecentApps)
-                                                addToModel(0, -3)
-                                        }
-
-                                        var categoryStartIndex = rootModel.showRecentDocs + rootModel.showRecentApps // rootModel adds recent docs and recent apps to the very start of it. We skip these metacategories (if they are to be present) to add them right after "All applications".
-                                        var categoryEndIndex = rootModel.count
-
-                                        categoriesModel.clear() // preemptive action
-
-                                        addToModel(categoryStartIndex, categoryStartIndex) // manually add "All apps" category (to make sure the MetaCategories are added right after it)
-                                        addMetaCategoriesToModel()
-                                        for (var i = categoryStartIndex + 1; i < categoryEndIndex; i++) // add the rest of "normal" categories
-                                            addToModel(i, i)
-                                    }
-                                }
-
                             }
-                        }
 
+                        }
                     }
 
-                    Loader {
-                        visible: plasmoid.configuration.showSessionControlBar
-                        active: plasmoid.configuration.showSessionControlBar
-                        sourceComponent: SessionControlBar {
-                            showButtonTooltips: plasmoid.configuration.showSessionControlTooltips
-                        }
-                        Layout.alignment: Qt.AlignCenter | Qt.AlignBottom
-                        Layout.bottomMargin: units.iconSizes.smallMedium
+                }
+
+                Loader {
+                    visible: plasmoid.configuration.showSessionControlBar
+                    active: plasmoid.configuration.showSessionControlBar
+                    sourceComponent: SessionControlBar {
+                        showButtonTooltips: plasmoid.configuration.showSessionControlTooltips
                     }
+                    Layout.alignment: Qt.AlignCenter | Qt.AlignBottom
+                    Layout.bottomMargin: units.iconSizes.smallMedium
                 }
             }
         }
@@ -453,8 +474,12 @@ Kicker.DashboardWindow {
         // Dummy query to preload runner model
         appsGridLoader.item.updateQuery("k")
         appsGridLoader.item.showSearchResults()
-        reset()
-        kicker.reset.connect(reset);
+        reset("MenuRepresentation is ready -> Component.onCompleted()")
+        appsGridLoader.loaded.connect(function resetBecauseOfLoad() {reset("appsGridLoader loaded")})
+        kicker.reset.connect(function resetBecauseOfKicker() {
+            if (appsGridLoader.item) reset("Kicker reset")
+            else log("Won't reset (Component is loading and will reset once it is done loading)")
+        });
 
     }
 }

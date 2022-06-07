@@ -61,24 +61,16 @@ Item {
     id: artifactForProperlyDisplayingEverythingInANiceWay
     anchors.fill: parent
 
+    readonly property int pageCount: 1
+    readonly property int currentIndex: 1
+
     ScrollableItemGridView { // this is actually the applications grid
 
         id: appsGrid
-//         visible: model.count > 0
         anchors.fill: parent
-
 
         cellWidth:  cellSize
         cellHeight: cellSize
-
-        //dragEnabled: (index == 0)
-
-        model: rootModel.modelForRow(0).modelForRow(1) // if we happen to be searching, then we must show the results of said search. Else, we will default to showing all the applications
-
-        //onCountChanged: { // whenever the list of icons has its cardinality modified, account for the change
-        //currentIndex = 0
-        //itemGrid.tryActivate(0, 0);
-        //}
 
         onKeyNavUp: {
             currentIndex = -1;
@@ -96,14 +88,7 @@ Item {
             currentIndex = 0
             //appsGrid.itemGrid.tryActivate(0, 0);
         }
-
-        //onMenuUpdated: {
-        //console.log("Aquí debería haber un mensajito de an application has been hidden o una animación para construir el modelo")
-        //}
     }
 
-    Component.onCompleted: {
-        resetAppsGrid()
-    }
 
 }

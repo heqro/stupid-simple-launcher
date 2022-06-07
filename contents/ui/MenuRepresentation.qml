@@ -202,6 +202,12 @@ Kicker.DashboardWindow {
                 SearchBar {
 
                     id: searchField
+
+                    writeSomething:  plasmoid.configuration.writeSomething
+                    greetingText:    plasmoid.configuration.greetingText
+                    searchBarDesign: plasmoid.configuration.searchBarDesign
+                    searchBarOpacity:plasmoid.configuration.searchBarOpacity
+
                     Layout.alignment: Qt.AlignCenter
                     Layout.fillWidth: true
                     Layout.topMargin: units.iconSizes.large

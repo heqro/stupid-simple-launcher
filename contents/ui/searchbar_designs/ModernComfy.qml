@@ -1,6 +1,6 @@
 import QtQuick 2.4
+// QtQuick 2.4 -> TextMetrics, getHorizontalAlignment(), getPlaceHolderText()
 
-import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
 
 // user information is called by using this

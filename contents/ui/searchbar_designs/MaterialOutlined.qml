@@ -1,6 +1,5 @@
 import QtQuick 2.4
 
-import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents3
 
@@ -10,8 +9,8 @@ import org.kde.kcoreaddons 1.0 as KCoreAddons
 Rectangle { // (CONCEPT) Inspired on https://material.io/components/text-fields
 
     height: parentHeight
-    color: colorWithAlpha(theme.backgroundColor, alphaValue * 0.6)
-    border.color: isSearchBarFocused ? colorWithAlpha(theme.buttonFocusColor, 1) : colorWithAlpha(theme.highlightColor, 1)
+    color: Qt.rgba(theme.backgroundColor.r,theme.backgroundColor.g,theme.backgroundColor.b, alphaValue * 0.6)
+    border.color: isSearchBarFocused ? Qt.rgba(theme.buttonFocusColor.r,theme.buttonFocusColor.g,theme.buttonFocusColor.b, 1) : Qt.rgba(theme.highlightColor.r,theme.highlightColor.g,theme.highlightColor.b, 1)
     border.width: Math.floor(units.smallSpacing/2)
 
     radius: Math.ceil(1.75 * units.smallSpacing)
@@ -22,39 +21,39 @@ Rectangle { // (CONCEPT) Inspired on https://material.io/components/text-fields
     TextMetrics { // this elements allows us to read the width of the user's input text
         id: t_metrics
         text: placeholderText
-        font.pointSize: PlasmaCore.Theme.defaultFont.pointSize * 2 // account for the arbitrary font size chosen in the parent object.
+        font.pointSize: theme.defaultFont.pointSize * 2 // account for the arbitrary font size chosen in the parent object.
     }
 
     anchors.bottom: parent.top
 
-    Rectangle {
+    //Rectangle {
+ //FIXME - restore this functionality by adding four rectangles instead
+        //height: parent.border.width
+        //width: Math.ceil(upperSideMetrics.width * 1.25)
+        //opacity: isSearchBarFocused
+        //anchors.top: parent.top
+        //anchors.left: parent.left
+        //anchors.leftMargin: Math.floor(parent.radius * 1.75)
+        //color: colorWithAlpha(theme.backgroundColor, plasmoid.configuration.opacitySet ? plasmoid.configuration.alphaValue : 0.8)
 
-        height: parent.border.width
-        width: Math.ceil(upperSideMetrics.width * 1.25)
-        opacity: isSearchBarFocused
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.leftMargin: Math.floor(parent.radius * 1.75)
-        color: colorWithAlpha(theme.backgroundColor, plasmoid.configuration.opacitySet ? plasmoid.configuration.alphaValue : 0.8)
-
-        Behavior on opacity { SmoothedAnimation {velocity: 3; easing.type: Easing.OutQuad} }
+        //Behavior on opacity { SmoothedAnimation {velocity: 3; easing.type: Easing.OutQuad} }
 
 
-        PlasmaComponents3.Label {
-            id: textOnFocus
-            text: "Search"
-            anchors.centerIn: parent
-            opacity: parent.opacity
-            //Behavior on opacity { SmoothedAnimation {velocity: 100; easing.type: Easing.OutQuad} }
-        }
+        //PlasmaComponents3.Label {
+            //id: textOnFocus
+            //text: "Search"
+            //anchors.centerIn: parent
+            //opacity: parent.opacity
+            ////Behavior on opacity { SmoothedAnimation {velocity: 100; easing.type: Easing.OutQuad} }
+        //}
 
-        TextMetrics {
-            id: upperSideMetrics
-            text: textOnFocus.text
-            font.pointSize: PlasmaCore.Theme.defaultFont.pointSize
-        }
+        //TextMetrics {
+            //id: upperSideMetrics
+            //text: textOnFocus.text
+            //font.pointSize: PlasmaCore.Theme.defaultFont.pointSize
+        //}
 
-    }
+    //}
 
     KCoreAddons.KUser { // this is needed for the greeting message (saying hello whatever the user name is)
         id: kuser
@@ -62,7 +61,7 @@ Rectangle { // (CONCEPT) Inspired on https://material.io/components/text-fields
 
     // Send visual info to the SearchBar so as to customize it
     function getPlaceHolderText() {
-        var text = plasmoid.configuration.writeSomething ? plasmoid.configuration.greetingText : "Howdy, " + kuser.loginName + "! Type to start searching..."
+        var text = writeSomething ? greetingText : "Howdy, " + kuser.loginName + "! Type to start searching..."
         return text
     }
 

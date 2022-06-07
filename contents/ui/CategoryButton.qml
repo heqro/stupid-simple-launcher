@@ -8,14 +8,15 @@ import org.kde.plasma.components 2.0 as PlasmaComponents
 // for using RowLayout
 import QtQuick.Layouts 1.1
 
+import QtQml.Models 2.4 as QM2
+
 
 Rectangle { // rectangle used for marking the bounds for the category button
 
     id: containerForCategory
 
-    property int indexInModel: categoryIndex
-    property var iconName: categoryIcon
-    property string categoryName: categoryText
+    property int indexInModel
+    property string categoryName
 
     property bool showToolTip: (categoryTextId.truncated || showCategoriesIcon) && showCategoriesTooltip
 
@@ -30,7 +31,7 @@ Rectangle { // rectangle used for marking the bounds for the category button
     color: "transparent"
     height: isButtonSizeSet ? plasmoid.configuration.categoriesButtonHeight : t_metrics.height * 2
     width:  isButtonSizeSet ? plasmoid.configuration.categoriesButtonWidth : t_metrics.width + 4 * units.smallSpacing
-    opacity: (!searching && (categoriesList.currentIndex == index || mouseArea.containsMouse)) ? 1 : 0.4
+    opacity: (!searching && (categoriesList.currentIndex == QM2.ObjectModel.index || mouseArea.containsMouse)) ? 1 : 0.4
 
     TextMetrics {
         id: t_metrics
@@ -48,7 +49,7 @@ Rectangle { // rectangle used for marking the bounds for the category button
 
         PlasmaCore.IconItem {
             id: categoryIconId
-            source: iconName
+//             source: iconName
             visible: showCategoriesIcon || showCategoriesIconAndText
 
             // arbitrary values because some icon packs cannot behave properly and need to be scaled down.
@@ -71,7 +72,7 @@ Rectangle { // rectangle used for marking the bounds for the category button
 
             PlasmaCore.ToolTipArea { // for showing the tooltip linked to this category's name
                 id: toolTip
-                mainText: categoryText
+                mainText: categoryName
             }
 
             // collapsing text when needed
@@ -104,5 +105,9 @@ Rectangle { // rectangle used for marking the bounds for the category button
             }
 
         }
+    }
+
+    function setSourceIcon(source) {
+        categoryIconId.source = source
     }
 }

@@ -13,14 +13,18 @@ PlasmaComponents.TextField { //searchbar
 
     id: searchBar
 
-    // Properties inherited from parent object
+    // Properties inherited from parent object to customize the TextField
+        // Whether or not the user wants to set a custom greeting text
     required property bool writeSomething
     required property string greetingText
+        // Which design to load
     required property string searchBarDesign
+        // Property used by certain designs where its background's transparency can be tweaked
     required property real searchBarOpacity
 
-    property int usedSpace: designChooser.active ? designChooser.width : parent.width
-
+    // Properties to consult from outside the scope of this element
+        // The width it needs
+    readonly property int usedSpace: designChooser.active ? designChooser.width : parent.width
     readonly property bool isSearchBarFocused: activeFocus || text != ""
 
     KCoreAddons.KUser { // this is needed for the greeting message (saying hello whatever the user name is)

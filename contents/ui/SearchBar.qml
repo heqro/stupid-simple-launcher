@@ -19,8 +19,9 @@ PlasmaComponents.TextField { //searchbar
     required property string searchBarDesign
     required property real searchBarOpacity
 
-    property string myText: text
     property int usedSpace: designChooser.active ? designChooser.width : parent.width
+
+    readonly property bool isSearchBarFocused: activeFocus || text != ""
 
     KCoreAddons.KUser { // this is needed for the greeting message (saying hello whatever the user name is)
         id: kuser
@@ -47,8 +48,9 @@ PlasmaComponents.TextField { //searchbar
         id: designChooser
 
         readonly property int parentHeight: parent.height // propagate this property so that each and every design can make use of it (without explicitly assigning a value to the Loader element because it will affect loaded elements' dimensions.)
-        readonly property bool isSearchBarFocused: parent.activeFocus || myText != ""
+        //readonly property bool isSearchBarFocused: parent.activeFocus || myText != ""
         property alias parentText: searchBar.text // we want parentText to be exactly the same as the search bar's text. I am using this property alias because some search bar designs make use of it for their buttons & functionality (such as clearing the query text).
+        readonly property bool isSearchBarFocused: parent.isSearchBarFocused
 
         z: -1 // draw everything under the parent
         active: searchBarDesign != ""

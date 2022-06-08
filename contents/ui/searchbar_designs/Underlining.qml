@@ -14,7 +14,7 @@ Rectangle { // (CONCEPT) line under search field. This should be loaded on deman
 
     TextMetrics { // this elements allows us to read the width of the user's input text
         id: t_metrics
-        text: isSearchBarFocused ? myText : placeholderText
+        text: isSearchBarFocused ? parentText : placeholderText
         font.pointSize: theme.defaultFont.pointSize * 2 // account for the arbitrary font size chosen in the parent object.
     }
 

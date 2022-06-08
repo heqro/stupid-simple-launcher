@@ -9,7 +9,7 @@ import org.kde.kcoreaddons 1.0 as KCoreAddons
 Rectangle { // (CONCEPT) Inspired on https://material.io/components/text-fields
 
     height: parentHeight
-    color: Qt.rgba(theme.backgroundColor.r,theme.backgroundColor.g,theme.backgroundColor.b, alphaValue * 0.6)
+    color: Qt.rgba(theme.backgroundColor.r,theme.backgroundColor.g,theme.backgroundColor.b, 1)
 
     readonly property real linesWidth: Math.floor(units.smallSpacing / 2)
 

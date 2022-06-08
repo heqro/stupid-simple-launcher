@@ -250,13 +250,10 @@ Kicker.DashboardWindow {
                             readonly property int startCategoryIndex: plasmoid.configuration.startOnFavorites ? -1 : allAppsIndex
 
                             height: plasmoid.configuration.paginateGrid ? cellSize * Math.floor((parent.height - (favoritesLoader.height + units.largeSpacing) * favoritesLoader.active - (pageIndicatorLoader.height + units.largeSpacing) * pageIndicatorLoader.active) / cellSize) : parent.height - (favoritesLoader.height + units.largeSpacing) * favoritesLoader.active - pageIndicatorLoader.height * pageIndicatorLoader.active
-//                                 anchors.top: plasmoid.configuration.paginateGrid ? : parent.top
 
                             anchors.top: parent.top
                             width: cellSize * Math.floor(parent.width / cellSize)
                             anchors.horizontalCenter: parent.horizontalCenter
-//                                 anchors.left: parent.left
-                            //anchors.right: parent.right
                             source: plasmoid.configuration.paginateGrid ? "PaginatedApplicationsGrid.qml" : "ApplicationsGrid.qml"
 
                         }
@@ -276,7 +273,6 @@ Kicker.DashboardWindow {
 
                                 count: appsGridLoader.item.pageCount
                                 currentIndex: appsGridLoader.item.currentIndex
-//                                     interactive: true
 
                                 delegate: Rectangle {
 

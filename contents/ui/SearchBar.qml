@@ -48,7 +48,6 @@ PlasmaComponents.TextField { //searchbar
         id: designChooser
 
         readonly property int parentHeight: parent.height // propagate this property so that each and every design can make use of it (without explicitly assigning a value to the Loader element because it will affect loaded elements' dimensions.)
-        //readonly property bool isSearchBarFocused: parent.activeFocus || myText != ""
         property alias parentText: searchBar.text // we want parentText to be exactly the same as the search bar's text. I am using this property alias because some search bar designs make use of it for their buttons & functionality (such as clearing the query text).
         readonly property bool isSearchBarFocused: parent.isSearchBarFocused
 

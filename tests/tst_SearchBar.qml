@@ -20,10 +20,10 @@ Rectangle {
             const greet = "Some text"
             const component = Qt.createComponent("../contents/ui/SearchBar.qml");
             const designs = [
+                "",
                 "../ui/searchbar_designs/Underlining.qml",
-                "../ui/searchbar_designs/ModernComfy.qml",
                 "../ui/searchbar_designs/FullyFledged.qml",
-                "../ui/searchbar_designs/MaterialOutlined.qml"
+                "../ui/searchbar_designs/MaterialOutlined.qml",
             ]
 
             if (component.status == Component.Error)
@@ -39,11 +39,11 @@ Rectangle {
                     });
                 searchBar.anchors.centerIn = parent
 
-                verify(searchBar.placeholderText == "Some text" || path == "../ui/searchbar_designs/ModernComfy.qml", "placeholderText is equals to Some text for design " + searchBar.searchBarDesign)
+                verify(searchBar.placeholderText == "Some text", "placeholderText is equals to Some text for design " + searchBar.searchBarDesign)
 
                 searchBar.writeSomething = false
 
-                verify(searchBar.placeholderText == "Howdy, " + kuser.loginName + "! Type to start searching..." || path == "../ui/searchbar_designs/ModernComfy.qml", "placeholderText is equals to Some text for design " + searchBar.searchBarDesign)
+                verify(searchBar.placeholderText == "Howdy, " + kuser.loginName + "! Type to start searching...", "placeholderText is equals to Some text for design " + searchBar.searchBarDesign)
 
                 verify(!searchBar.isSearchBarFocused, "SearchBar is not focused")
                 mouseClick(searchBar)

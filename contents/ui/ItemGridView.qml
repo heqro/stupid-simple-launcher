@@ -371,12 +371,7 @@ FocusScope {
                 return item;
             }
 
-            onWheel: {
-              wheel.accepted = false // prevents scrollArea from breaking.
-              if (currentIndex != -1 && currentItem) {
-                currentItem.showDelegateToolTip(false, true)
-              }
-            }
+
 
             onPressed: {
                 mouse.accepted = true;

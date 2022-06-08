@@ -57,6 +57,9 @@ FocusScope {
 
     property bool rootVisible: root.visible
 
+    readonly property int columns: Math.floor(width / cellWidth)
+    readonly property int rows: Math.ceil(count / columns)
+
     onRootVisibleChanged: {
         // This makes sure that the application tooltip is hidden when the user leaves the menu. We can determine they has left leaves because the root visibility is changed.
         if (currentIndex != -1 && currentItem) {
@@ -75,7 +78,7 @@ FocusScope {
             return -1;
         }
 
-        return Math.floor(currentIndex / Math.floor(width / cellWidth));
+        return Math.floor(currentIndex / columns);
     }
 
     function currentCol() {
@@ -83,18 +86,15 @@ FocusScope {
             return -1;
         }
 
-        return currentIndex - (currentRow() * Math.floor(width / cellWidth));
+        return currentIndex - (currentRow() * columns);
     }
 
     function lastRow() {
-        var columns = Math.floor(width / cellWidth);
-        return Math.ceil(count / columns) - 1;
+        return rows - 1;
     }
 
     function tryActivate(row, col) {
         if (count) {
-            var columns = Math.floor(width / cellWidth);
-            var rows = Math.ceil(count / columns);
             row = Math.min(row, rows - 1);
             col = Math.min(col, columns - 1);
             currentIndex = Math.min(row ? ((Math.max(1, row) * columns) + col)
@@ -275,7 +275,7 @@ FocusScope {
                     return;
                 }
 
-                var columns = Math.floor(width / cellWidth);
+
 
                 if (currentCol() != columns - 1 && currentIndex != count - 1) {
                     event.accepted = true;
@@ -310,7 +310,7 @@ FocusScope {
                     // Fix moveCurrentIndexDown()'s lack of proper spatial nav down
                     // into partial columns.
                     event.accepted = true;
-                    var columns = Math.floor(width / cellWidth);
+
                     var newIndex = currentIndex + columns;
                     currentIndex = Math.min(newIndex, count - 1);
                     positionViewAtIndex(currentIndex, GridView.Contain);

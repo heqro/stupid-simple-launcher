@@ -109,7 +109,9 @@ Item {
     }
 
     function changePage(pageNumber) {
+        log("Change page from"+ appsSwipeview.currentIndex+ "to"+pageNumber)
         appsSwipeview.setCurrentIndex(pageNumber)
+        log(appsSwipeview.currentIndex)
     }
 
     SwipeView {
@@ -123,7 +125,6 @@ Item {
         anchors.fill: parent
         clip: true
         spacing: 150
-//wheelEnabled: true
 
         Repeater {
 
@@ -138,8 +139,8 @@ Item {
                 Rectangle { // We could start having cool designs for stuff. This is just a mock-up of drawing a rectangle.
                     z: -1 // draw this element under the ItemGridView
                     anchors.fill:parent
-                    color: colorWithAlpha(theme.backgroundColor, alphaValue * 0.6)
-                    border.color: colorWithAlpha(theme.highlightColor, 1)
+                    color:Qt.rgba(theme.backgroundColor.r, theme.backgroundColor.g, theme.backgroundColor.b,  alphaValue * 0.6)
+                    border.color:Qt.rgba(theme.highlightColor.r, theme.highlightColor.g, theme.highlightColor.b,  1)
                     border.width: Math.floor(units.smallSpacing/2)
                     radius: units.smallSpacing
 
@@ -203,14 +204,4 @@ Item {
         }
 
     }
-
-
-    //}
-
-
-
-    Component.onCompleted: {
-        resetAppsGrid()
-    }
-
 }

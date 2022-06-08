@@ -1,6 +1,6 @@
 import QtQuick 2.4
+// QtQuick 2.4 -> TextMetrics, getHorizontalAlignment(), getPlaceHolderText()
 
-import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
 
 // user information is called by using this
@@ -18,7 +18,7 @@ Rectangle { // Inspired by modern, cool, responsive search bars
     TextMetrics { // this elements allows us to read the width of the user's input text
         id: t_metrics
         text: "Some query I would make" // use a text long enough to hold a meaningful query
-        font.pointSize: PlasmaCore.Theme.defaultFont.pointSize * 2 // account for the arbitrary font size chosen in the parent object.
+        font.pointSize: theme.defaultFont.pointSize * 2 // account for the arbitrary font size chosen in the parent object.
     }
 
     Rectangle {
@@ -26,7 +26,7 @@ Rectangle { // Inspired by modern, cool, responsive search bars
         id: searchIconContainer
         height:Math.floor(9 * parent.height / 11)
         width: Math.floor(9 * parent.height / 11)
-        color: colorWithAlpha(theme.highlightColor, Math.min(!hoverArea.containsMouse + 0.75, 1))
+        color: Qt.rgba(theme.highlightColor.r,theme.highlightColor.g,theme.highlightColor.b, Math.min(!hoverArea.containsMouse + 0.75, 1))
         radius: width / 2
 
         anchors {
@@ -100,8 +100,8 @@ Rectangle { // Inspired by modern, cool, responsive search bars
         radius: width/2
 
         //color: "red" // for debugging purposes
-        color: colorWithAlpha(theme.backgroundColor, 1)
-        border.color: colorWithAlpha(theme.highlightColor, 1)
+        color: Qt.rgba(theme.backgroundColor.r,theme.backgroundColor.g,theme.backgroundColor.b, 1)
+        border.color: Qt.rgba(theme.highlightColor.r,theme.highlightColor.g,theme.highlightColor.b, 1)
         border.width: Math.floor(units.smallSpacing/2)
 
     }

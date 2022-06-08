@@ -8,14 +8,15 @@ import org.kde.plasma.components 2.0 as PlasmaComponents
 // for using RowLayout
 import QtQuick.Layouts 1.1
 
+import QtQml.Models 2.4 as QM2
+
 
 Rectangle { // rectangle used for marking the bounds for the category button
 
     id: containerForCategory
 
-    property int indexInModel: categoryIndex
-    property var iconName: categoryIcon
-    property string categoryName: categoryText
+    property int indexInModel
+    property string categoryName
 
     property bool showToolTip: (categoryTextId.truncated || showCategoriesIcon) && showCategoriesTooltip
 
@@ -25,16 +26,12 @@ Rectangle { // rectangle used for marking the bounds for the category button
 
     property bool isButtonSizeSet: plasmoid.configuration.customizeCategoriesButtonSize
 
-    property bool attemptedToChangeCategory: false
+    signal changeCategoryRequested
 
     color: "transparent"
-
     height: isButtonSizeSet ? plasmoid.configuration.categoriesButtonHeight : t_metrics.height * 2
-
     width:  isButtonSizeSet ? plasmoid.configuration.categoriesButtonWidth : t_metrics.width + 4 * units.smallSpacing
-
-    opacity: (!searching && (categoriesList.currentIndex == index || mouseArea.containsMouse)) ? 1 : 0.4
-
+    opacity: (!searching && (categoriesList.currentIndex == QM2.ObjectModel.index || mouseArea.containsMouse)) ? 1 : 0.4
 
     TextMetrics {
         id: t_metrics
@@ -44,9 +41,7 @@ Rectangle { // rectangle used for marking the bounds for the category button
 
     RowLayout {
         anchors.fill: parent
-//         anchors.leftMargin: highlightItemSvg.margins.left
         anchors.leftMargin: 2 * units.smallSpacing
-//         anchors.rightMargin: highlightItemSvg.margins.right
         anchors.rightMargin: 2 * units.smallSpacing
 
         layoutDirection: showCategoriesOnTheRight ? Qt.RightToLeft : Qt.LeftToRight
@@ -54,7 +49,7 @@ Rectangle { // rectangle used for marking the bounds for the category button
 
         PlasmaCore.IconItem {
             id: categoryIconId
-            source: iconName
+//             source: iconName
             visible: showCategoriesIcon || showCategoriesIconAndText
 
             // arbitrary values because some icon packs cannot behave properly and need to be scaled down.
@@ -74,15 +69,15 @@ Rectangle { // rectangle used for marking the bounds for the category button
             Layout.preferredHeight: parent.height
             Layout.fillWidth: true
             fontSizeMode: Text.VerticalFit
+
             PlasmaCore.ToolTipArea { // for showing the tooltip linked to this category's name
                 id: toolTip
-                mainText: categoryText
+                mainText: categoryName
             }
 
-            // collapsing text when the going gets tough
+            // collapsing text when needed
             elide: Text.ElideRight
             wrapMode: Text.NoWrap
-
         }
 
 
@@ -95,8 +90,7 @@ Rectangle { // rectangle used for marking the bounds for the category button
         onClicked: {
             if (searching)
                 return
-            attemptedToChangeCategory = true
-            categoriesList.currentIndex = index // highlight current category to give the feeling of responsiveness.
+            changeCategoryRequested()
         }
 
         onEntered: { // show tooltips if the user wanted to.
@@ -111,5 +105,9 @@ Rectangle { // rectangle used for marking the bounds for the category button
             }
 
         }
+    }
+
+    function setSourceIcon(source) {
+        categoryIconId.source = source
     }
 }

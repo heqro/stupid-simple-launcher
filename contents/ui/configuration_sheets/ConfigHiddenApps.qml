@@ -143,7 +143,7 @@ Item {
                     property int indexInList: hiddenAppsIndex
 
                     color: theme.buttonBackgroundColor
-    //                 border.color: isSearchBarFocused ? colorWithAlpha(theme.buttonFocusColor, 1) : colorWithAlpha(theme.highlightColor, 1)
+    //                 border.color: isSearchBarFocused ? Qt.rgba(theme.buttonFocusColor, 1) : colorWithAlpha(theme.highlightColor.r, theme.buttonFocusColor, 1) : colorWithAlpha(theme.highlightColor.g, theme.buttonFocusColor, 1) : colorWithAlpha(theme.highlightColor.b,  1)
                     border.color: theme.buttonFocusColor
                     height: units.iconSizes.huge + 2 * units.iconSizes.small
                     width: parent.width

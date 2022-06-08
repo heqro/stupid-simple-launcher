@@ -61,7 +61,7 @@ FocusScope {
 
     onRootVisibleChanged: {
         // This makes sure that the application tooltip is hidden when the user leaves the menu. We can determine they has left leaves because the root visibility is changed.
-        if (currentIndex != -1 && currentItem) {
+        if (!visible && currentIndex != -1 && currentItem) {
             currentItem.showDelegateToolTip(false, true)
         }
     }
@@ -197,9 +197,9 @@ FocusScope {
         GridView {
             //this defines how the icons will look like in our menu
             id: gridView
-            parent: plasmoid.configuration.paginateGrid ? dropArea : scrollArea
+//             parent: plasmoid.configuration.paginateGrid ? dropArea : scrollArea
             anchors.fill: parent
-            interactive: !plasmoid.configuration.paginateGrid
+//             interactive: !plasmoid.configuration.paginateGrid
             clip: true
 
 
@@ -500,4 +500,9 @@ FocusScope {
             }
         }
     }
+
+    Component.onCompleted: {
+        log("ScrollableItemGridView is ready -> Component.onCompleted()")
+    }
+
 }

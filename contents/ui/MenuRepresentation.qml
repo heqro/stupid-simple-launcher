@@ -131,7 +131,7 @@ Kicker.DashboardWindow {
     }
 
     onShowCategoriesChanged: {
-        rootModelCategoryConnections.updateCategories()
+        categoriesList.updateCategories()
     }
 
     function reset(reason) { // return everything to the last known state
@@ -371,53 +371,54 @@ Kicker.DashboardWindow {
                                 target: rootModel
 
                                 function onCountChanged() { // make sure categories are only updated when rootModel really changes (to avoid repeating the same calculation when it's not needed)
-                                    updateCategories()
+                                    categoriesList.updateCategories()
                                 }
 
                                 function onShowRecentDocsChanged() {
-                                    updateCategories()
+                                    categoriesList.updateCategories()
                                     reset("showRecentDocsChanged")
                                 }
 
                                 function onShowRecentAppsChanged() {
-                                    updateCategories()
+                                    categoriesList.updateCategories()
                                     reset("showRecentAppsChanged")
                                 }
+                            }
 
-                                function updateCategories() { // build categoriesModel
+                            function updateCategories() { // build categoriesModel
 
-                                    function addToModel(modelKey, indexInCategoriesModel) { // generic append function
-                                        const object = factory.createCategoryButton(modelKey, indexInCategoriesModel)
+                                function addToModel(modelKey, indexInCategoriesModel) { // generic append function
+                                    const object = factory.createCategoryButton(modelKey, indexInCategoriesModel)
+                                    categoriesModel.append(object)
+                                    object.changeCategoryRequested.connect(changeCategory)
+                                }
+
+                                function addFavoritesToModel() {
+                                    if (plasmoid.configuration.showFavoritesCategory) { // manually create favorites category button (because this info cannot be reached with the rest of the tools)
+                                        const object = factory.createHandmadeCategoryButton(-1, i18n("Favorites"), "favorite")
                                         categoriesModel.append(object)
                                         object.changeCategoryRequested.connect(changeCategory)
                                     }
+                                }
 
-                                    function addFavoritesToModel() {
-                                        if (plasmoid.configuration.showFavoritesCategory) { // manually create favorites category button (because this info cannot be reached with the rest of the tools)
-                                            const object = factory.createHandmadeCategoryButton(-1, i18n("Favorites"), "favorite")
-                                            categoriesModel.append(object)
-                                            object.changeCategoryRequested.connect(changeCategory)
-                                        }
-                                    }
+                                function changeCategory(indexInRootModel, indexInCategoriesList) {
+                                    searchField.toggleFocus()
+                                    appsGridLoader.item.changeCategory(indexInRootModel)
+                                    appsGridLoader.item.highlightItemAt(0, 0)
+                                    categoriesList.currentIndex = indexInCategoriesList
+                                }
 
-                                    function changeCategory(indexInRootModel, indexInCategoriesList) {
-                                        searchField.toggleFocus()
-                                        appsGridLoader.item.changeCategory(indexInRootModel)
-                                        appsGridLoader.item.highlightItemAt(0, 0)
-                                        categoriesList.currentIndex = indexInCategoriesList
-                                    }
-
-                                    function addMetaCategoriesToModel() { // sui generis append function to add hard-coded categories (Favorites, Recent Docs, Recent Apps)
-                                        if (rootModel.showRecentDocs)
-                                            addToModel(rootModel.showRecentApps, -2)
+                                function addMetaCategoriesToModel() { // sui generis append function to add hard-coded categories (Favorites, Recent Docs, Recent Apps)
+                                    if (rootModel.showRecentDocs)
+                                        addToModel(rootModel.showRecentApps, -2)
                                         if (rootModel.showRecentApps)
                                             addToModel(0, -3)
-                                    }
+                                }
 
 
-                                    categoriesModel.clear() // preemptive action
+                                categoriesModel.clear() // preemptive action
 
-                                    if (!factory.isReady || !showCategories) return
+                                if (!factory.isReady || !showCategories) return
 
                                     var categoryStartIndex = rootModel.showRecentDocs + rootModel.showRecentApps // rootModel adds recent docs and recent apps to the very start of it. We skip these metacategories (if they are to be present) to add them right after "All applications".
                                     var categoryEndIndex = rootModel.count
@@ -428,7 +429,6 @@ Kicker.DashboardWindow {
                                     addMetaCategoriesToModel()
                                     for (var i = categoryStartIndex + 1; i < categoryEndIndex; i++) // add the rest of "normal" categories
                                         addToModel(i, i)
-                                }
                             }
 
                         }

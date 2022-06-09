@@ -181,7 +181,6 @@ Item {
                                 MouseArea {
                                     property bool clicked: false
                                     anchors.fill: parent
-                                    hoverEnabled: true
 
                                     drag{
                                         target: parent
@@ -194,18 +193,6 @@ Item {
 
                                     onClicked: {
                                         myCategoryTemplateList.currentIndex = (myCategoryTemplateList.currentIndex == 0) ? -1 : 0
-                                    }
-
-                                    onEntered: { // highlight item on hovering
-                                        if (myCategoryTemplateList.currentIndex != 0) { // item is not selected
-                                            myCategoryTemplate.opacity = 0.9
-                                        }
-                                    }
-
-                                    onExited: { // reduce opacity on leaving
-                                        if (myCategoryTemplateList.currentIndex != 0) { // item is not selected
-                                            myCategoryTemplate.opacity = 0.4
-                                        }
                                     }
                                 }
 

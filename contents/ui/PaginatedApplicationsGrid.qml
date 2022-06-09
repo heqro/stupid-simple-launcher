@@ -65,10 +65,10 @@ Item {
         highlightItemAt(0,0) // preemptively focus first item
     }
 
-    function changeCategory(indexInModel) { // this function receives the "change category!" order from the category buttons and translates the index from said button into an order the paginated applications grid can understand.
+    function changeCategory(appsGridModelKey) { // this function receives the "change category!" order from the category buttons and translates the index from said button into an order the paginated applications grid can understand.
         var categoryIndexToDoStuffWith
         var isCategoryFavorites = false
-        switch (indexInModel) {
+        switch (appsGridModelKey) {
             case -1: { // Favorites are hard-tagged as index -1
                 categoryIndexToDoStuffWith = allAppsIndex
                 isCategoryFavorites = true
@@ -83,7 +83,7 @@ Item {
                 break
             }
             default: { // Generic category or All applications
-                categoryIndexToDoStuffWith = indexInModel
+                categoryIndexToDoStuffWith = appsGridModelKey
             }
         }
 

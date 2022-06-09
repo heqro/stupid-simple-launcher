@@ -35,10 +35,10 @@ Item {
         return createHandmadeCategoryButton(indexInCategoriesModel, getCategoryName(modelKey), getCategoryIcon(modelKey))
     }
 
-    function createHandmadeCategoryButton(indexInModel, categoryName, categoryIcon) { // function more difficult to operate - you want to use createCategoryButton unless you want to add the favorites category, which is not really a category per se and must always go through this route instead
+    function createHandmadeCategoryButton(appsGridModelKey, categoryName, categoryIcon) { // function more difficult to operate - you want to use createCategoryButton unless you want to add the favorites category, which is not really a category per se and must always go through this route instead
         var categoryButton =  component.createObject(parent,
         {
-            indexInModel: indexInModel,
+            appsGridModelKey: appsGridModelKey,
             categoryName: categoryName,
             customizeCategoriesFontSize: Qt.binding(
                 function() {
@@ -80,10 +80,11 @@ Item {
                 function() {
                     return plasmoid.configuration.showCategoriesTooltip
                 }),
-            categoriesListIndex: Qt.binding(
+            categoriesListCurrentIndex: Qt.binding(
                 function() {
                     return categoriesList.currentIndex
                 }),
+            indexInCategoriesList: categoriesModel.count,
         })
         categoryButton.setSourceIcon(categoryIcon)
         return categoryButton

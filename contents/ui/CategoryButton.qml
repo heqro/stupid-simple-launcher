@@ -8,15 +8,13 @@ import org.kde.plasma.components 2.0 as PlasmaComponents
 // for using RowLayout
 import QtQuick.Layouts 1.1
 
-import QtQml.Models 2.4 as QM2
-
 
 Rectangle { // rectangle used for marking the bounds for the category button
 
     id: containerForCategory
 
-    // indexInModel is communicated to the applications grid to change the currently shown category. It's an index that may correspond to rootModel's index or may not (for example, when we want to show recent apps, recent docs or favorites).
-    required property int indexInModel
+    // appsGridModelKey is communicated to the applications grid to change the currently shown category. It's an index that may correspond to rootModel's index or may not (for example, when we want to show recent apps, recent docs or favorites).
+    required property int appsGridModelKey
     required property string categoryName
 
     // font size related properties
@@ -28,7 +26,7 @@ Rectangle { // rectangle used for marking the bounds for the category button
     required property int buttonHeight
     required property int buttonWidth
 
-    // design size related properties
+    // design related properties
     required property bool showCategoriesIcon
     required property bool showCategoriesText
     required property bool showCategoriesIconAndText
@@ -37,14 +35,17 @@ Rectangle { // rectangle used for marking the bounds for the category button
     // behavior related properties
     required property bool showCategoriesTooltip
     readonly property bool showToolTip: (categoryTextId.truncated || showCategoriesIcon) && showCategoriesTooltip
-    property int categoriesListIndex
+
+    // properties related to the list with the rest of the buttons
+    property int categoriesListCurrentIndex
+    property int indexInCategoriesList
 
     color: "transparent"
     height: isButtonSizeSet ? buttonHeight : t_metrics.height * 2
     width:  isButtonSizeSet ? buttonWidth : t_metrics.width + 4 * units.smallSpacing
-    opacity: categoriesListIndex == QM2.ObjectModel.index || mouseArea.containsMouse ? 1 : 0.4
+    opacity: categoriesListCurrentIndex == indexInCategoriesList || mouseArea.containsMouse ? 1 : 0.4
 
-    signal changeCategoryRequested
+    signal changeCategoryRequested(int appsGridModelKey, int indexInCategoriesList)
 
 
     TextMetrics {
@@ -100,7 +101,7 @@ Rectangle { // rectangle used for marking the bounds for the category button
         id: mouseArea
         anchors.fill: parent
         hoverEnabled: true
-        onClicked: changeCategoryRequested()
+        onClicked: changeCategoryRequested(appsGridModelKey, indexInCategoriesList)
 
         onEntered: { // show tooltips if the user wanted to.
             if (showToolTip) {

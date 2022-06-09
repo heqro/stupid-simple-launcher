@@ -133,8 +133,7 @@ Kicker.DashboardWindow {
     function reset(reason) { // return everything to the last known state
         log("Resetting... "+reason)
 
-        searchField.text = "" // force placeholder text to be shown
-        searchField.focus = false
+        searchField.toggleFocus()
 
         if (favoritesLoader.active)
             favoritesLoader.item.currentIndex = -1 // don't highlight current item on the favorites grid
@@ -386,32 +385,24 @@ Kicker.DashboardWindow {
                                 function updateCategories() { // build categoriesModel
 
                                     function addToModel(modelKey, indexInCategoriesModel) { // generic append function
-                                        const modelCount = categoriesModel.count
-
-                                        var object = factory.createCategoryButton(modelKey, indexInCategoriesModel)
-
+                                        const object = factory.createCategoryButton(modelKey, indexInCategoriesModel)
                                         categoriesModel.append(object)
-                                        object.changeCategoryRequested.connect(function() {
-                                            searchField.toggleFocus()
-                                            appsGridLoader.item.changeCategory(object.indexInModel)
-                                            appsGridLoader.item.highlightItemAt(0, 0)
-                                            categoriesList.currentIndex = modelCount
-                                        })
+                                        object.changeCategoryRequested.connect(changeCategory)
                                     }
 
                                     function addFavoritesToModel() {
                                         if (plasmoid.configuration.showFavoritesCategory) { // manually create favorites category button (because this info cannot be reached with the rest of the tools)
-
-                                            var object = factory.createHandmadeCategoryButton(-1, i18n("Favorites"), "favorite")
-                                            const modelCount = categoriesModel.count
+                                            const object = factory.createHandmadeCategoryButton(-1, i18n("Favorites"), "favorite")
                                             categoriesModel.append(object)
-                                            object.changeCategoryRequested.connect(function() {
-                                                searchField.toggleFocus()
-                                                appsGridLoader.item.changeCategory(-1)
-                                                appsGridLoader.item.highlightItemAt(0, 0)
-                                                categoriesList.currentIndex = modelCount
-                                            })
+                                            object.changeCategoryRequested.connect(changeCategory)
                                         }
+                                    }
+
+                                    function changeCategory(indexInRootModel, indexInCategoriesList) {
+                                        searchField.toggleFocus()
+                                        appsGridLoader.item.changeCategory(indexInRootModel)
+                                        appsGridLoader.item.highlightItemAt(0, 0)
+                                        categoriesList.currentIndex = indexInCategoriesList
                                     }
 
                                     function addMetaCategoriesToModel() { // sui generis append function to add hard-coded categories (Favorites, Recent Docs, Recent Apps)
@@ -420,6 +411,7 @@ Kicker.DashboardWindow {
                                         if (rootModel.showRecentApps)
                                             addToModel(0, -3)
                                     }
+
 
                                     if (!factory.isReady) return
 

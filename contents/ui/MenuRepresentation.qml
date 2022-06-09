@@ -420,15 +420,15 @@ Kicker.DashboardWindow {
 
                                 if (!factory.isReady || !showCategories) return
 
-                                    var categoryStartIndex = rootModel.showRecentDocs + rootModel.showRecentApps // rootModel adds recent docs and recent apps to the very start of it. We skip these metacategories (if they are to be present) to add them right after "All applications".
-                                    var categoryEndIndex = rootModel.count
+                                var categoryStartIndex = rootModel.showRecentDocs + rootModel.showRecentApps // rootModel adds recent docs and recent apps to the very start of it. We skip these metacategories (if they are to be present) to add them right after "All applications".
+                                var categoryEndIndex = rootModel.count
 
 
-                                    addToModel(categoryStartIndex, categoryStartIndex) // manually add "All apps" category (to make sure the meta-categories & favorites are added right after it)
-                                    addFavoritesToModel()
-                                    addMetaCategoriesToModel()
-                                    for (var i = categoryStartIndex + 1; i < categoryEndIndex; i++) // add the rest of "normal" categories
-                                        addToModel(i, i)
+                                addToModel(categoryStartIndex, categoryStartIndex) // manually add "All apps" category (to make sure the meta-categories & favorites are added right after it)
+                                addFavoritesToModel()
+                                addMetaCategoriesToModel()
+                                for (var i = categoryStartIndex + 1; i < categoryEndIndex; i++) // add the rest of "normal" categories
+                                    addToModel(i, i)
                             }
 
                         }

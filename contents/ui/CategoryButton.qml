@@ -14,7 +14,7 @@ Rectangle { // rectangle used for marking the bounds for the category button
     id: containerForCategory
 
     // appsGridModelKey is communicated to the applications grid to change the currently shown category. It's an index that may correspond to rootModel's index or may not (for example, when we want to show recent apps, recent docs or favorites).
-    required property int appsGridModelKey
+    property int appsGridModelKey
     required property string categoryName
 
     // font size related properties

@@ -14,6 +14,7 @@ import org.kde.draganddrop 2.0 as DragDrop
 
 import org.kde.plasma.private.kicker 0.1 as Kicker
 
+import ".."
 
 Item {
     id: configCategory
@@ -21,22 +22,22 @@ Item {
     //width: childrenRect.width
     //height: childrenRect.height
 
-    property alias cfg_categoriesText: categoriesShowText.checked
-    property alias cfg_categoriesIcon: categoriesShowIcon.checked
-    property alias cfg_categoriesIconAndText: categoriesShowTextAndIcon.checked
+    property alias cfg_categoriesText: categoriesShowTextCheckbox.checked
+    property alias cfg_categoriesIcon: categoriesShowIconCheckbox.checked
+    property alias cfg_categoriesIconAndText: categoriesShowTextAndIconCheckbox.checked
 
-    property alias cfg_showCategoriesTooltip: showCategoriesTooltip.checked
+    property alias cfg_showCategoriesTooltip: categoriesTooltip.checked
 
     property alias cfg_showCategories: showCategories.checked
 
-    property alias cfg_showCategoriesOnTheRight: showCategoriesOnTheRight.checked
+    property alias cfg_showCategoriesOnTheRight: categoriesOnTheRight.checked
 
-    property alias cfg_customizeCategoriesFontSize: customizeCategoriesFontSize.checked
-    property alias cfg_categoriesFontSize: categoriesFontSize.value
+    property alias cfg_customizeCategoriesFontSize: customizeCategoriesFontSizeCheckbox.checked
+    property alias cfg_categoriesFontSize: categoriesFontSizeSpinbox.value
 
     property alias cfg_customizeCategoriesButtonSize: customizeCategoriesSize.checked
-    property alias cfg_categoriesButtonHeight: myCategoryTemplateList.buttonHeight
-    property alias cfg_categoriesButtonWidth: myCategoryTemplateList.buttonWidth
+    property alias cfg_categoriesButtonHeight: myCategoryTemplateList.delegateButtonHeight
+    property alias cfg_categoriesButtonWidth: myCategoryTemplateList.delegateButtonWidth
 
     property alias cfg_showFavoritesCategory: showFavoritesCategory.checked
     property alias cfg_showRecentFilesCategory: showRecentFilesCategory.checked
@@ -71,7 +72,7 @@ Item {
                     visible: showCategories.checked
                     CheckBox {
                         Layout.leftMargin: units.smallSpacing
-                        id: showCategoriesOnTheRight
+                        id: categoriesOnTheRight
                         text: i18n("Show the categories sidebar at the right side of the menu")
                     }
                 }
@@ -83,20 +84,20 @@ Item {
 
                     ColumnLayout {
                         RadioButton {
-                            id: categoriesShowText
+                            id: categoriesShowTextCheckbox
                             text: i18n("Show categories' names only")
                             checked: true
                             exclusiveGroup: categoriesCustomizationGroup
                         }
 
                         RadioButton {
-                            id: categoriesShowIcon
+                            id: categoriesShowIconCheckbox
                             text: i18n("Show categories' icons only")
                             exclusiveGroup: categoriesCustomizationGroup
                         }
 
                         RadioButton {
-                            id: categoriesShowTextAndIcon
+                            id: categoriesShowTextAndIconCheckbox
                             text: i18n("Show categories' icons and names")
                             exclusiveGroup: categoriesCustomizationGroup
                         }
@@ -105,19 +106,19 @@ Item {
 
                 RowLayout {
                     Layout.fillWidth: true
-                    visible: showCategories.checked && (categoriesShowText.checked || categoriesShowTextAndIcon.checked)
+                    visible: showCategories.checked && (categoriesShowTextCheckbox.checked || categoriesShowTextAndIconCheckbox.checked)
 
                     CheckBox {
                         Layout.leftMargin: units.smallSpacing
-                        id: customizeCategoriesFontSize
+                        id: customizeCategoriesFontSizeCheckbox
                         text: i18n("Customize categories' font size")
                     }
                     SpinBox{
-                        id: categoriesFontSize
+                        id: categoriesFontSizeSpinbox
                         minimumValue: 4
                         maximumValue: 128
                         stepSize: 1
-                        enabled: customizeCategoriesFontSize.checked
+                        enabled: customizeCategoriesFontSizeCheckbox.checked
                     }
 
                 }
@@ -147,22 +148,36 @@ Item {
                             Layout.minimumWidth: (plasmoid.configuration.categoriesButtonWidth > 0) ? plasmoid.configuration.categoriesButtonWidth : units.iconSizes.huge
                             visible: showCategories.checked && customizeCategoriesSize.checked
 
-                            property int buttonWidth: width
-                            property int buttonHeight: height
+                            property int delegateButtonWidth: width
+                            property int delegateButtonHeight: height
 
                             highlight: PlasmaComponents.Highlight {}
                             highlightFollowsCurrentItem: true
                             highlightMoveDuration: 0
-                            delegate: CategoryButtonTemplate {
+
+                            delegate: CategoryButton {
+
                                 id: myCategoryTemplate
-                                opacity: (currentIndex == 0) ? 1 : 0.4
+
                                 property int rulersSize: 18
-                                showCategoriesIcon: categoriesShowIcon.checked
-                                showCategoriesText: categoriesShowText.checked
-                                showCategoriesIconAndText: categoriesShowTextAndIcon.checked
-                                isSidebarOnTheRight: showCategoriesOnTheRight.checked
-                                isCategoriesFontSizeSet: customizeCategoriesFontSize.checked
-                                fontSize: categoriesFontSize.value
+
+                                categoryName: "I am a category. Customize my size"
+
+                                customizeCategoriesFontSize: customizeCategoriesFontSizeCheckbox.checked
+                                categoriesFontSize: categoriesFontSizeSpinbox.value
+
+                                isButtonSizeSet: true
+                                buttonHeight: myCategoryTemplateList.delegateButtonHeight
+                                buttonWidth: myCategoryTemplateList.delegateButtonWidth
+
+
+                                showCategoriesIcon: categoriesShowIconCheckbox.checked
+                                showCategoriesText: categoriesShowTextCheckbox.checked
+                                showCategoriesIconAndText: categoriesShowTextAndIconCheckbox.checked
+                                showCategoriesOnTheRight: categoriesOnTheRight.checked
+
+                                showCategoriesTooltip: categoriesTooltip.checked
+
                                 MouseArea {
                                     property bool clicked: false
                                     anchors.fill: parent
@@ -208,7 +223,7 @@ Item {
                                         onMouseXChanged: {
                                             if(drag.active){
                                                 myCategoryTemplate.width = myCategoryTemplate.width + mouseX
-                                                myCategoryTemplateList.buttonWidth = myCategoryTemplate.width
+                                                myCategoryTemplateList.delegateButtonWidth = myCategoryTemplate.width
                                                 if(myCategoryTemplate.width < units.iconSizes.huge)
                                                     myCategoryTemplate.width = units.iconSizes.huge
                                             }
@@ -234,10 +249,14 @@ Item {
                                                     myCategoryTemplate.height = units.iconSizes.smallMedium
                                                 else
                                                     myCategoryTemplate.height = myCategoryTemplate.height + mouseY
-                                                myCategoryTemplateList.buttonHeight = myCategoryTemplate.height
+                                                myCategoryTemplateList.delegateButtonHeight = myCategoryTemplate.height
                                             }
                                         }
                                     }
+                                }
+
+                                Component.onCompleted: {
+                                    setSourceIcon("emblem-favorite")
                                 }
                             }
                             model: ListModel {
@@ -258,7 +277,7 @@ Item {
                     visible: showCategories.checked
                     CheckBox {
                         Layout.leftMargin: units.smallSpacing
-                        id: showCategoriesTooltip
+                        id: categoriesTooltip
                         text: i18n("Show categories' names in a tooltip when the text is elided or when using icons-only menu")
                     }
                 }

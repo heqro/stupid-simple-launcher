@@ -362,6 +362,10 @@ Kicker.DashboardWindow {
                             highlightFollowsCurrentItem: true
                             highlightMoveDuration: 0
 
+                            CategoryButtonFactory {
+                                id: factory
+                            }
+
                             Connections {
                                 target: rootModel
 
@@ -382,45 +386,27 @@ Kicker.DashboardWindow {
                                 function updateCategories() { // build categoriesModel
 
                                     function addToModel(modelKey, indexInCategoriesModel) { // generic append function
-                                        component = Qt.createComponent("CategoryButton.qml")
-                                        if (component.status == Component.Ready)
-                                            finishCreation(modelKey,indexInCategoriesModel);
-                                        else
-                                            component.statusChanged.connect(finishCreation);
-                                    }
-                                    function finishCreation(modelKey, indexInCategoriesModel) {
-                                        var modelIndex = rootModel.index(modelKey, 0)
-                                        var categoryLabel = rootModel.data(modelIndex, Qt.DisplayRole)
-                                        var categoryIcon = rootModel.data(modelIndex, Qt.DecorationRole)
-
                                         const modelCount = categoriesModel.count
 
-                                        var object = component.createObject(categoriesList, {
-                                            indexInModel: indexInCategoriesModel,
-                                            categoryName: categoryLabel
-                                        })
-                                        object.setSourceIcon(categoryIcon)
+                                        var object = factory.createCategoryButton(modelKey, indexInCategoriesModel)
 
                                         categoriesModel.append(object)
                                         object.changeCategoryRequested.connect(function() {
+                                            searchField.toggleFocus()
                                             appsGridLoader.item.changeCategory(object.indexInModel)
                                             appsGridLoader.item.highlightItemAt(0, 0)
                                             categoriesList.currentIndex = modelCount
                                         })
-
                                     }
 
                                     function addFavoritesToModel() {
                                         if (plasmoid.configuration.showFavoritesCategory) { // manually create favorites category button (because this info cannot be reached with the rest of the tools)
-                                            var component = Qt.createComponent("CategoryButton.qml")
-                                            var object = component.createObject(categoriesList, {
-                                                indexInModel: -1,
-                                                categoryName: i18n("Favorites")
-                                            })
-                                            object.setSourceIcon("favorite")
+
+                                            var object = factory.createHandmadeCategoryButton(-1, i18n("Favorites"), "favorite")
                                             const modelCount = categoriesModel.count
                                             categoriesModel.append(object)
                                             object.changeCategoryRequested.connect(function() {
+                                                searchField.toggleFocus()
                                                 appsGridLoader.item.changeCategory(-1)
                                                 appsGridLoader.item.highlightItemAt(0, 0)
                                                 categoriesList.currentIndex = modelCount
@@ -435,7 +421,7 @@ Kicker.DashboardWindow {
                                             addToModel(0, -3)
                                     }
 
-                                    var component
+                                    if (!factory.isReady) return
 
                                     var categoryStartIndex = rootModel.showRecentDocs + rootModel.showRecentApps // rootModel adds recent docs and recent apps to the very start of it. We skip these metacategories (if they are to be present) to add them right after "All applications".
                                     var categoryEndIndex = rootModel.count

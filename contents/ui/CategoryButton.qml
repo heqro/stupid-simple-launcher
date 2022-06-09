@@ -1,10 +1,10 @@
+// it won't work with any lower version (silent error)
 import QtQuick 2.4
 
-// communicating with plasmoid options so as to customize the sidebar from this module
-import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
 // for using the button itself
 import org.kde.plasma.components 2.0 as PlasmaComponents
+
 // for using RowLayout
 import QtQuick.Layouts 1.1
 
@@ -15,23 +15,37 @@ Rectangle { // rectangle used for marking the bounds for the category button
 
     id: containerForCategory
 
-    property int indexInModel
-    property string categoryName
+    // indexInModel is communicated to the applications grid to change the currently shown category. It's an index that may correspond to rootModel's index or may not (for example, when we want to show recent apps, recent docs or favorites).
+    required property int indexInModel
+    required property string categoryName
 
-    property bool showToolTip: (categoryTextId.truncated || showCategoriesIcon) && showCategoriesTooltip
+    // font size related properties
+    required property bool customizeCategoriesFontSize
+    required property int categoriesFontSize
 
-    // customization options set from ConfigGeneral.qml
-    property bool customizeCategoriesFontSize: plasmoid.configuration.customizeCategoriesFontSize
-    property int categoriesFontSize: plasmoid.configuration.categoriesFontSize
+    // button size related properties
+    required property bool isButtonSizeSet
+    required property int buttonHeight
+    required property int buttonWidth
 
-    property bool isButtonSizeSet: plasmoid.configuration.customizeCategoriesButtonSize
+    // design size related properties
+    required property bool showCategoriesIcon
+    required property bool showCategoriesText
+    required property bool showCategoriesIconAndText
+    required property bool showCategoriesOnTheRight
+
+    // behavior related properties
+    required property bool showCategoriesTooltip
+    readonly property bool showToolTip: (categoryTextId.truncated || showCategoriesIcon) && showCategoriesTooltip
+    property int categoriesListIndex
+
+    color: "transparent"
+    height: isButtonSizeSet ? buttonHeight : t_metrics.height * 2
+    width:  isButtonSizeSet ? buttonWidth : t_metrics.width + 4 * units.smallSpacing
+    opacity: categoriesListIndex == QM2.ObjectModel.index || mouseArea.containsMouse ? 1 : 0.4
 
     signal changeCategoryRequested
 
-    color: "transparent"
-    height: isButtonSizeSet ? plasmoid.configuration.categoriesButtonHeight : t_metrics.height * 2
-    width:  isButtonSizeSet ? plasmoid.configuration.categoriesButtonWidth : t_metrics.width + 4 * units.smallSpacing
-    opacity: (!searching && (categoriesList.currentIndex == QM2.ObjectModel.index || mouseArea.containsMouse)) ? 1 : 0.4
 
     TextMetrics {
         id: t_metrics
@@ -49,7 +63,6 @@ Rectangle { // rectangle used for marking the bounds for the category button
 
         PlasmaCore.IconItem {
             id: categoryIconId
-//             source: iconName
             visible: showCategoriesIcon || showCategoriesIconAndText
 
             // arbitrary values because some icon packs cannot behave properly and need to be scaled down.
@@ -87,11 +100,7 @@ Rectangle { // rectangle used for marking the bounds for the category button
         id: mouseArea
         anchors.fill: parent
         hoverEnabled: true
-        onClicked: {
-            if (searching)
-                return
-            changeCategoryRequested()
-        }
+        onClicked: changeCategoryRequested()
 
         onEntered: { // show tooltips if the user wanted to.
             if (showToolTip) {

@@ -130,6 +130,10 @@ Kicker.DashboardWindow {
         reset("startOnFavorites changed: " + startOnFavorites)
     }
 
+    onShowCategoriesChanged: {
+        rootModelCategoryConnections.updateCategories()
+    }
+
     function reset(reason) { // return everything to the last known state
         log("Resetting... "+reason)
 
@@ -140,7 +144,8 @@ Kicker.DashboardWindow {
 
         var startCategoryIndex = startOnFavorites ? - 1 : appsGridLoader.allAppsIndex
         appsGridLoader.item.resetAppsGrid()
-//         appsGridLoader.item.changeCategory(startCategoryIndex)
+
+        categoriesList.positionViewAtBeginning()
 
         if (startOnFavorites) {
             if (showCategories) {
@@ -155,9 +160,6 @@ Kicker.DashboardWindow {
                 categoriesList.currentIndex = 0 // highlight first category on the list (always will be "All applications")
             }
         }
-
-
-
     }
 
     mainItem:
@@ -352,7 +354,6 @@ Kicker.DashboardWindow {
                                 id: categoriesModel
                             }
 
-
                             // only add some fancy spacing between the buttons if they are only icons.
                             spacing: showCategoriesIcon ? units.iconSizes.small : 0
 
@@ -366,6 +367,7 @@ Kicker.DashboardWindow {
                             }
 
                             Connections {
+                                id: rootModelCategoryConnections
                                 target: rootModel
 
                                 function onCountChanged() { // make sure categories are only updated when rootModel really changes (to avoid repeating the same calculation when it's not needed)
@@ -413,12 +415,13 @@ Kicker.DashboardWindow {
                                     }
 
 
-                                    if (!factory.isReady) return
+                                    categoriesModel.clear() // preemptive action
+
+                                    if (!factory.isReady || !showCategories) return
 
                                     var categoryStartIndex = rootModel.showRecentDocs + rootModel.showRecentApps // rootModel adds recent docs and recent apps to the very start of it. We skip these metacategories (if they are to be present) to add them right after "All applications".
                                     var categoryEndIndex = rootModel.count
 
-                                    categoriesModel.clear() // preemptive action
 
                                     addToModel(categoryStartIndex, categoryStartIndex) // manually add "All apps" category (to make sure the meta-categories & favorites are added right after it)
                                     addFavoritesToModel()

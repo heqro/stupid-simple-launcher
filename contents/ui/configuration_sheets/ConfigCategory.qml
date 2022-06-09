@@ -170,7 +170,6 @@ Item {
                                 buttonHeight: myCategoryTemplateList.delegateButtonHeight
                                 buttonWidth: myCategoryTemplateList.delegateButtonWidth
 
-
                                 showCategoriesIcon: categoriesShowIconCheckbox.checked
                                 showCategoriesText: categoriesShowTextCheckbox.checked
                                 showCategoriesIconAndText: categoriesShowTextAndIconCheckbox.checked

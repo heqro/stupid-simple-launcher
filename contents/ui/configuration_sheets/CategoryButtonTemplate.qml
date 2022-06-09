@@ -16,10 +16,8 @@ Rectangle { // rectangle used for marking the bounds for the category button
 
     id: myCategoryTemplate
 
-    //property int indexInModel: categoryIndex
     property string iconName: "emblem-favorite"
     property string categoryName: i18n("I am a category. Customize my size!")
-//     property int selectedItemIndex: categoriesList.currentIndex
 
     // deletthis
     property bool showCategoriesIcon: plasmoid.configuration.categoriesIcon

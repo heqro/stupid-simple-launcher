@@ -37,7 +37,7 @@ Item {
         rootModel.pageSize = numberOfColumns * numberOfRows // only communicate updated pageSize to avoid resetting the entire menu (not thoroughly tested, but less processor heavy nonetheless)
     }
 
-    function calculateNumberOfPages(categoryIndex, isFavoritePage) { // TODO - number of pages is only corrected after searching or changing category.
+    function calculateNumberOfPages(categoryIndex, isFavoritePage) {
         pageCount = 1
         if (isFavoritePage || categoryIndex < allAppsIndex) { // the favorites category, as well as the recent files/apps, are set to have only one page as per the KDE's built-in model's design
             return pageCount

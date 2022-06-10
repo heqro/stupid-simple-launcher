@@ -21,8 +21,8 @@ Item {
         highlightItemAt(0,0)
     }
 
-    function changeCategory(indexInModel) {
-        switch (indexInModel) {
+    function changeCategory(appsGridModelKey) {
+        switch (appsGridModelKey) {
             case -1: { // Favorites are hard-tagged as index -1
                 appsGrid.model = rootModel.modelForRow(allAppsIndex).modelForRow(0)
                 break
@@ -40,7 +40,7 @@ Item {
                 break
             }
             default: { // Show generic category
-                appsGrid.model = rootModel.modelForRow(indexInModel).modelForRow(0)
+                appsGrid.model = rootModel.modelForRow(appsGridModelKey).modelForRow(0)
             }
         }
     }

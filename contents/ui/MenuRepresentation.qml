@@ -94,9 +94,8 @@ Kicker.DashboardWindow {
 
     onKeyEscapePressed: { // using escape for either closing the menu or stopping the search
 
-        if (searchField.activeFocus || searching) { // unfocus when escape key is pressed
-            searchField.focus = false
-            searchField.text = ""
+        if (searchField.isSearchBarFocused) { // unfocus when escape key is pressed
+            searchField.toggleFocus()
         } else {
             root.toggle()
         }
@@ -130,18 +129,22 @@ Kicker.DashboardWindow {
         reset("startOnFavorites changed: " + startOnFavorites)
     }
 
+    onShowCategoriesChanged: {
+        categoriesList.updateCategories()
+    }
+
     function reset(reason) { // return everything to the last known state
         log("Resetting... "+reason)
 
-        searchField.text = "" // force placeholder text to be shown
-        searchField.focus = false
+        searchField.toggleFocus()
 
         if (favoritesLoader.active)
             favoritesLoader.item.currentIndex = -1 // don't highlight current item on the favorites grid
 
         var startCategoryIndex = startOnFavorites ? - 1 : appsGridLoader.allAppsIndex
         appsGridLoader.item.resetAppsGrid()
-//         appsGridLoader.item.changeCategory(startCategoryIndex)
+
+        categoriesList.positionViewAtBeginning()
 
         if (startOnFavorites) {
             if (showCategories) {
@@ -156,9 +159,6 @@ Kicker.DashboardWindow {
                 categoriesList.currentIndex = 0 // highlight first category on the list (always will be "All applications")
             }
         }
-
-
-
     }
 
     mainItem:
@@ -353,7 +353,6 @@ Kicker.DashboardWindow {
                                 id: categoriesModel
                             }
 
-
                             // only add some fancy spacing between the buttons if they are only icons.
                             spacing: showCategoriesIcon ? units.iconSizes.small : 0
 
@@ -362,92 +361,79 @@ Kicker.DashboardWindow {
                             highlightFollowsCurrentItem: true
                             highlightMoveDuration: 0
 
+                            CategoryButtonFactory {
+                                id: factory
+                            }
+
                             Connections {
+                                id: rootModelCategoryConnections
                                 target: rootModel
 
                                 function onCountChanged() { // make sure categories are only updated when rootModel really changes (to avoid repeating the same calculation when it's not needed)
-                                    updateCategories()
+                                    categoriesList.updateCategories()
                                 }
 
                                 function onShowRecentDocsChanged() {
-                                    updateCategories()
+                                    categoriesList.updateCategories()
                                     reset("showRecentDocsChanged")
                                 }
 
                                 function onShowRecentAppsChanged() {
-                                    updateCategories()
+                                    categoriesList.updateCategories()
                                     reset("showRecentAppsChanged")
                                 }
+                            }
 
-                                function updateCategories() { // build categoriesModel
+                            function updateCategories() { // build categoriesModel
 
-                                    function addToModel(modelKey, indexInCategoriesModel) { // generic append function
-                                        component = Qt.createComponent("CategoryButton.qml")
-                                        if (component.status == Component.Ready)
-                                            finishCreation(modelKey,indexInCategoriesModel);
-                                        else
-                                            component.statusChanged.connect(finishCreation);
-                                    }
-                                    function finishCreation(modelKey, indexInCategoriesModel) {
-                                        var modelIndex = rootModel.index(modelKey, 0)
-                                        var categoryLabel = rootModel.data(modelIndex, Qt.DisplayRole)
-                                        var categoryIcon = rootModel.data(modelIndex, Qt.DecorationRole)
+                                function addToModel(modelKey, indexInCategoriesModel) { // generic append function
+                                    const object = factory.createCategoryButton(modelKey, indexInCategoriesModel)
+                                    categoriesModel.append(object)
+                                    object.changeCategoryRequested.connect(changeCategory)
+                                }
 
-                                        const modelCount = categoriesModel.count
-
-                                        var object = component.createObject(categoriesList, {
-                                            indexInModel: indexInCategoriesModel,
-                                            categoryName: categoryLabel
-                                        })
-                                        object.setSourceIcon(categoryIcon)
-
+                                function addFavoritesToModel() {
+                                    if (plasmoid.configuration.showFavoritesCategory) { // manually create favorites category button (because this info cannot be reached with the rest of the tools)
+                                        const object = factory.createHandmadeCategoryButton(-1, i18n("Favorites"), "favorite")
                                         categoriesModel.append(object)
-                                        object.changeCategoryRequested.connect(function() {
-                                            appsGridLoader.item.changeCategory(object.indexInModel)
-                                            appsGridLoader.item.highlightItemAt(0, 0)
-                                            categoriesList.currentIndex = modelCount
-                                        })
-
+                                        object.changeCategoryRequested.connect(changeCategory)
                                     }
+                                }
 
-                                    function addFavoritesToModel() {
-                                        if (plasmoid.configuration.showFavoritesCategory) { // manually create favorites category button (because this info cannot be reached with the rest of the tools)
-                                            var component = Qt.createComponent("CategoryButton.qml")
-                                            var object = component.createObject(categoriesList, {
-                                                indexInModel: -1,
-                                                categoryName: i18n("Favorites")
-                                            })
-                                            object.setSourceIcon("favorite")
-                                            const modelCount = categoriesModel.count
-                                            categoriesModel.append(object)
-                                            object.changeCategoryRequested.connect(function() {
-                                                appsGridLoader.item.changeCategory(-1)
-                                                appsGridLoader.item.highlightItemAt(0, 0)
-                                                categoriesList.currentIndex = modelCount
-                                            })
-                                        }
-                                    }
+                                function changeCategory(indexInRootModel, indexInCategoriesList) {
+                                    searchField.toggleFocus()
+                                    appsGridLoader.item.changeCategory(indexInRootModel)
+                                    appsGridLoader.item.highlightItemAt(0, 0)
+                                    categoriesList.currentIndex = indexInCategoriesList
+                                }
 
-                                    function addMetaCategoriesToModel() { // sui generis append function to add hard-coded categories (Favorites, Recent Docs, Recent Apps)
-                                        if (rootModel.showRecentDocs)
-                                            addToModel(rootModel.showRecentApps, -2)
+                                function addMetaCategoriesToModel() { // sui generis append function to add hard-coded categories (Favorites, Recent Docs, Recent Apps)
+                                    if (rootModel.showRecentDocs)
+                                        addToModel(rootModel.showRecentApps, -2)
                                         if (rootModel.showRecentApps)
                                             addToModel(0, -3)
-                                    }
-
-                                    var component
-
-                                    var categoryStartIndex = rootModel.showRecentDocs + rootModel.showRecentApps // rootModel adds recent docs and recent apps to the very start of it. We skip these metacategories (if they are to be present) to add them right after "All applications".
-                                    var categoryEndIndex = rootModel.count
-
-                                    categoriesModel.clear() // preemptive action
-
-                                    addToModel(categoryStartIndex, categoryStartIndex) // manually add "All apps" category (to make sure the meta-categories & favorites are added right after it)
-                                    addFavoritesToModel()
-                                    addMetaCategoriesToModel()
-                                    for (var i = categoryStartIndex + 1; i < categoryEndIndex; i++) // add the rest of "normal" categories
-                                        addToModel(i, i)
                                 }
+
+
+                                categoriesModel.clear() // preemptive action
+
+                                if (!showCategories) return
+
+                                var categoryStartIndex = rootModel.showRecentDocs + rootModel.showRecentApps // rootModel adds recent docs and recent apps to the very start of it. We skip these metacategories (if they are to be present) to add them right after "All applications".
+                                var categoryEndIndex = rootModel.count
+
+
+                                addToModel(categoryStartIndex, categoryStartIndex) // manually add "All apps" category (to make sure the meta-categories & favorites are added right after it)
+                                addFavoritesToModel()
+                                addMetaCategoriesToModel()
+                                for (var i = categoryStartIndex + 1; i < categoryEndIndex; i++) // add the rest of "normal" categories
+                                    addToModel(i, i)
+
+                                // visual band-aid that corrects a way ListView could start visually collapsing items
+                                for(var step=0; step < categoriesList.count; step++) {
+                                    categoriesList.positionViewAtIndex(step, ListView.Visible)
+                                }
+                                categoriesList.positionViewAtBeginning()
                             }
 
                         }

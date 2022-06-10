@@ -27,6 +27,9 @@ PlasmaComponents.TextField { //searchbar
     readonly property int usedSpace: designChooser.active ? designChooser.width : parent.width
     readonly property bool isSearchBarFocused: activeFocus || text != ""
 
+    // we expose this property to be able to run much more powerful tests involving the designs the loader can load
+    readonly property Loader design: designChooser
+
     KCoreAddons.KUser { // this is needed for the greeting message (saying hello whatever the user name is)
         id: kuser
     }

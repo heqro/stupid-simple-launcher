@@ -418,7 +418,7 @@ Kicker.DashboardWindow {
 
                                 categoriesModel.clear() // preemptive action
 
-                                if (!factory.isReady || !showCategories) return
+                                if (!showCategories) return
 
                                 var categoryStartIndex = rootModel.showRecentDocs + rootModel.showRecentApps // rootModel adds recent docs and recent apps to the very start of it. We skip these metacategories (if they are to be present) to add them right after "All applications".
                                 var categoryEndIndex = rootModel.count
@@ -429,6 +429,12 @@ Kicker.DashboardWindow {
                                 addMetaCategoriesToModel()
                                 for (var i = categoryStartIndex + 1; i < categoryEndIndex; i++) // add the rest of "normal" categories
                                     addToModel(i, i)
+
+                                // visual band-aid that corrects a way ListView could start visually collapsing items
+                                for(var step=0; step < categoriesList.count; step++) {
+                                    categoriesList.positionViewAtIndex(step, ListView.Visible)
+                                }
+                                categoriesList.positionViewAtBeginning()
                             }
 
                         }

@@ -14,7 +14,6 @@ import QtQml.Models 2.4 as QM2
 
 Item {
     property Component component
-    property bool isReady: component.status == Component.Ready
 
     function createComponent() {
         component = Qt.createComponent("CategoryButton.qml")
@@ -36,6 +35,7 @@ Item {
     }
 
     function createHandmadeCategoryButton(appsGridModelKey, categoryName, categoryIcon) { // function more difficult to operate - you want to use createCategoryButton unless you want to add the favorites category, which is not really a category per se and must always go through this route instead
+        if (!component) createComponent()
         var categoryButton =  component.createObject(parent,
         {
             appsGridModelKey: appsGridModelKey,
@@ -89,9 +89,4 @@ Item {
         categoryButton.setSourceIcon(categoryIcon)
         return categoryButton
     }
-
-    Component.onCompleted: {
-        component = Qt.createComponent("CategoryButton.qml")
-    }
-
 }

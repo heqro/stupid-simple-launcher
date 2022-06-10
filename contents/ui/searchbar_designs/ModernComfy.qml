@@ -6,13 +6,12 @@ import org.kde.plasma.core 2.0 as PlasmaCore
 // user information is called by using this
 import org.kde.kcoreaddons 1.0 as KCoreAddons
 
-Rectangle { // Inspired by modern, cool, responsive search bars
+Item { // Inspired by modern, cool, responsive search bars
 
     // expose important properties for launching our tests
     readonly property Rectangle searchIconCircle: searchIconContainer
 
     height: parentHeight
-    color: "transparent"
     width: isSearchBarFocused ? t_metrics.width + Math.ceil(1.25 * units.largeSpacing) : 0
     anchors.bottom: parent.top
 
@@ -103,8 +102,8 @@ Rectangle { // Inspired by modern, cool, responsive search bars
         radius: width/2
 
         //color: "red" // for debugging purposes
-        color: Qt.rgba(theme.backgroundColor.r,theme.backgroundColor.g,theme.backgroundColor.b, 1)
-        border.color: Qt.rgba(theme.highlightColor.r,theme.highlightColor.g,theme.highlightColor.b, 1)
+        color: theme.backgroundColor
+        border.color: theme.highlightColor
         border.width: Math.floor(units.smallSpacing/2)
 
     }

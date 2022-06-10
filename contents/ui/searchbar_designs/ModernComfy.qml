@@ -8,6 +8,9 @@ import org.kde.kcoreaddons 1.0 as KCoreAddons
 
 Rectangle { // Inspired by modern, cool, responsive search bars
 
+    // expose important properties for launching our tests
+    readonly property Rectangle searchIconCircle: searchIconContainer
+
     height: parentHeight
     color: "transparent"
     width: isSearchBarFocused ? t_metrics.width + Math.ceil(1.25 * units.largeSpacing) : 0

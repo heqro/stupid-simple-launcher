@@ -39,7 +39,7 @@ Rectangle {
                     });
                 searchBar.anchors.centerIn = parent
 
-                verify(searchBar.placeholderText == "Some text", "placeholderText is equals to Some text for design " + searchBar.searchBarDesign)
+                verify(searchBar.placeholderText == searchBar.greetingText, "placeholderText is equals to Some text for design " + searchBar.searchBarDesign)
 
                 searchBar.writeSomething = false
 
@@ -89,6 +89,17 @@ Rectangle {
             verify(!searchBar.isSearchBarFocused, "SearchBar is not focused anymore")
             searchBar.toggleFocus()
             verify(searchBar.isSearchBarFocused, "SearchBar is focused again")
+
+            searchBar.toggleFocus()
+
+            // Design testing: searchIconContainer (now not focused)
+            mouseClick(searchBar.design.item.searchIconCircle)
+            verify(searchBar.isSearchBarFocused, "SearchBar is focused by clicking in the built-in design button")
+            wait(500) // wait because the test fucking blows up if we don't
+            mouseClick(searchBar.design.item.searchIconCircle)
+
+
+            verify(!searchBar.isSearchBarFocused, "SearchBar loses focus by clicking in the built-in design button")
 
             searchBar.destroy(0) // immediately destroy
 

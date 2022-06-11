@@ -74,4 +74,9 @@ PlasmaComponents.TextField { //searchbar
     function toggleFocus() { // this allows to clear the text within the config module
         designChooser.toggleFocus()
     }
+
+    function unfocus() {
+        focus = false
+        designChooser.parentText = ""
+    }
 }

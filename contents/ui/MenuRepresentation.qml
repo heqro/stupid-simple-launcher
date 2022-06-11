@@ -95,7 +95,7 @@ Kicker.DashboardWindow {
     onKeyEscapePressed: { // using escape for either closing the menu or stopping the search
 
         if (searchField.isSearchBarFocused) { // unfocus when escape key is pressed
-            searchField.toggleFocus()
+            searchField.unfocus()
         } else {
             root.toggle()
         }
@@ -118,9 +118,11 @@ Kicker.DashboardWindow {
     }
 
     onVisibleChanged: {
-        if (visible) // start fancy animation
+        if (visible) { // start fancy animation
             animationSearch.start()
+        }
         else { // only perform heavy calculations to return to last known state when menu is exited
+            searchField.unfocus()
             reset("visibleChanged -> false")
         }
     }
@@ -135,8 +137,6 @@ Kicker.DashboardWindow {
 
     function reset(reason) { // return everything to the last known state
         log("Resetting... "+reason)
-
-        searchField.toggleFocus()
 
         if (favoritesLoader.active)
             favoritesLoader.item.currentIndex = -1 // don't highlight current item on the favorites grid
@@ -401,7 +401,7 @@ Kicker.DashboardWindow {
                                 }
 
                                 function changeCategory(indexInRootModel, indexInCategoriesList) {
-                                    searchField.toggleFocus()
+                                    searchField.unfocus()
                                     appsGridLoader.item.changeCategory(indexInRootModel)
                                     appsGridLoader.item.highlightItemAt(0, 0)
                                     categoriesList.currentIndex = indexInCategoriesList

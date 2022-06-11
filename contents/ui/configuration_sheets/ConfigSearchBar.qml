@@ -124,7 +124,7 @@ Item {
 
             Layout.topMargin: units.mediumSpacing
 
-            onClicked: testSearchBar.toggleFocus()
+            onClicked: testSearchBar.unfocus()
         }
 
         PlasmaExtras.Heading {

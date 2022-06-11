@@ -23,7 +23,6 @@ Rectangle {
                 "",
                 "../ui/searchbar_designs/Underlining.qml",
                 "../ui/searchbar_designs/FullyFledged.qml",
-                "../ui/searchbar_designs/MaterialOutlined.qml",
             ]
 
             if (component.status == Component.Error)
@@ -55,6 +54,42 @@ Rectangle {
 
                 searchBar.destroy(0) // immediately destroy
             }
+        }
+
+        function test_materialOutlined() {
+            const greet = "Some text"
+            const component = Qt.createComponent("../contents/ui/SearchBar.qml");
+            const design = "../ui/searchbar_designs/MaterialOutlined.qml"
+
+            if (component.status == Component.Error)
+                fail(component.errorString())
+
+
+            let searchBar = component.createObject(parent,
+                {
+                    writeSomething: true,
+                    greetingText: "Some text",
+                    searchBarDesign: design,
+                    searchBarOpacity: 10,
+                });
+            searchBar.anchors.centerIn = parent
+
+            verify(searchBar.placeholderText == "", "placeholderText is empty" + searchBar.searchBarDesign)
+
+            searchBar.writeSomething = false
+
+            verify(searchBar.placeholderText == "", "placeholderText is still empty" + searchBar.searchBarDesign)
+
+            verify(!searchBar.isSearchBarFocused, "SearchBar is not focused")
+            mouseClick(searchBar)
+            verify(searchBar.isSearchBarFocused, "SearchBar is focused")
+            searchBar.toggleFocus()
+            verify(!searchBar.isSearchBarFocused, "SearchBar is not focused anymore")
+            searchBar.toggleFocus()
+            verify(searchBar.isSearchBarFocused, "SearchBar is focused again")
+
+            searchBar.destroy(0) // immediately destroy
+
         }
 
         function test_createModernComfy() {

@@ -9,7 +9,7 @@ import org.kde.kcoreaddons 1.0 as KCoreAddons
 Rectangle { // (CONCEPT) Inspired on https://material.io/components/text-fields
 
     height: parentHeight
-    color: Qt.rgba(theme.backgroundColor.r,theme.backgroundColor.g,theme.backgroundColor.b, 1)
+    color: theme.backgroundColor
 
     readonly property real linesWidth: Math.floor(units.smallSpacing / 2)
 
@@ -18,7 +18,7 @@ Rectangle { // (CONCEPT) Inspired on https://material.io/components/text-fields
 
     TextMetrics { // this elements allows us to read the width of the user's input text
         id: t_metrics
-        text: placeholderText
+        text: writeSomething ? greetingText : "Howdy, " + kuser.loginName + "! Type to start searching..."
         font.pointSize: theme.defaultFont.pointSize * 2 // account for the arbitrary font size chosen in the parent object.
     }
 
@@ -62,39 +62,60 @@ Rectangle { // (CONCEPT) Inspired on https://material.io/components/text-fields
     Rectangle { // North line (right side)
         id: northRightLine
         height: linesWidth
-        width: isSearchBarFocused ? parent.width - (upperSideMetrics.width * 1.25 + northLeftLine.width) : parent.width
+        width: isSearchBarFocused ? parent.width - (upperSideMetrics.width * 1.085 + northLeftLine.width) : parent.width
 
         anchors {
             bottom: parent.top
             right: parent.right
         }
 
-        Behavior on width { SmoothedAnimation { // Show and hide the upper label in the right time
-            velocity: 250
-            easing.type: Easing.OutQuad
-            onRunningChanged: {
-                if (isSearchBarFocused && !running)
-                    textOnFocus.opacity = 1
-                if (!isSearchBarFocused && running)
-                    textOnFocus.opacity = 0
-            }
-        } }
-
+        Behavior on width { SmoothedAnimation  {duration: 100} }
     }
 
     PlasmaComponents3.Label {
         id: textOnFocus
-        text: "Search"
+        text: writeSomething ? greetingText : "Howdy, " + kuser.loginName + "! Type to start searching..."
 
-        anchors.verticalCenter: northLeftLine.verticalCenter
-        anchors.left: northLeftLine.right
-        anchors.leftMargin: upperSideMetrics.width * 0.125
+        font.pointSize: isSearchBarFocused ? theme.defaultFont.pointSize : theme.defaultFont.pointSize * 2 // account for the arbitrary font size chosen in the parent object.
+        anchors.leftMargin: upperSideMetrics.width * 0.0275
+
+        Behavior on font.pointSize {
+            NumberAnimation {
+                duration: 150
+                easing.type: Easing.InQuad
+            }
+        }
+
+
     }
+
+    states: [
+        State {
+            name: "focused"
+            when: isSearchBarFocused
+            AnchorChanges {
+                target: textOnFocus
+                anchors.left: northLeftLine.right
+                anchors.verticalCenter: northLeftLine.verticalCenter
+            }
+        },
+        State {
+            name: "not focused"
+            when: !isSearchBarFocused
+            AnchorChanges {
+                target: textOnFocus
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+            }
+        }
+    ]
+
+    transitions: Transition { AnchorAnimation { duration: 80 } }
 
     TextMetrics {
         id: upperSideMetrics
-        text: textOnFocus.text
-        font.pointSize: PlasmaCore.Theme.defaultFont.pointSize
+        text: writeSomething ? greetingText : "Howdy, " + kuser.loginName + "! Type to start searching..."
+        font.pointSize: theme.defaultFont.pointSize
     }
 
     Connections {
@@ -121,16 +142,10 @@ Rectangle { // (CONCEPT) Inspired on https://material.io/components/text-fields
 
     // Send visual info to the SearchBar so as to customize it
     function getPlaceHolderText() {
-        var text = writeSomething ? greetingText : "Howdy, " + kuser.loginName + "! Type to start searching..."
-        return text
+        return ""
     }
 
     function getHorizontalAlignment() {
         return TextInput.AlignHCenter
     }
-
-    Component.onCompleted: {
-        textOnFocus.opacity = isSearchBarFocused
-    }
-
 }

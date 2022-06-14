@@ -9,7 +9,7 @@ import org.kde.plasma.components 2.0 as PlasmaComponents
 import QtQuick.Layouts 1.1
 
 
-Rectangle { // rectangle used for marking the bounds for the category button
+Item {
 
     id: containerForCategory
 
@@ -40,7 +40,6 @@ Rectangle { // rectangle used for marking the bounds for the category button
     property int categoriesListCurrentIndex
     property int indexInCategoriesList
 
-    color: "transparent"
     height: isButtonSizeSet ? buttonHeight : t_metrics.height * 2
     width:  isButtonSizeSet ? buttonWidth : t_metrics.width + 4 * units.smallSpacing
     opacity: categoriesListCurrentIndex == indexInCategoriesList || mouseArea.containsMouse ? 1 : 0.4

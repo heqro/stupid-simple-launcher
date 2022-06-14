@@ -31,13 +31,13 @@
         <default>0.6</default>
     </entry>
     <entry name="categoriesText" type="Bool">
-        <default>true</default>
+        <default>false</default>
     </entry>
     <entry name="categoriesIcon" type="Bool">
         <default>false</default>
     </entry>
     <entry name="categoriesIconAndText" type="Bool">
-        <default>false</default>
+        <default>true</default>
     </entry>
     <entry name="customizeCategoriesFontSize" type="Bool">
         <default>false</default>
@@ -46,7 +46,7 @@
         <default>15</default>
     </entry>
     <entry name="searchBarDesign" type="String">
-        <default></default>
+        <default>searchbar_designs/FullyFledged.qml</default>
     </entry>
     <entry name="clickToToggle" type="Bool">
       <default>true</default>

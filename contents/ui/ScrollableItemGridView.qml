@@ -500,9 +500,4 @@ FocusScope {
             }
         }
     }
-
-    Component.onCompleted: {
-        log("ScrollableItemGridView is ready -> Component.onCompleted()")
-    }
-
 }

@@ -166,7 +166,6 @@ Item {
                                 customizeCategoriesFontSize: customizeCategoriesFontSizeCheckbox.checked
                                 categoriesFontSize: categoriesFontSizeSpinbox.value
 
-                                isButtonSizeSet: true
                                 buttonHeight: myCategoryTemplateList.delegateButtonHeight
                                 buttonWidth: myCategoryTemplateList.delegateButtonWidth
 

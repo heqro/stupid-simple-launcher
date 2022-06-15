@@ -28,12 +28,9 @@ Item {
 
     // Given that the dimensions of the apps grid is calculated right after the menu is launched (because that's how Layouts work), we have to communicate that the grid needs to be updated (if it needs to). The right way to do it -I believe- is to listen for whether or not the number of rows/columns of the app grid are to be updated. Thus, we save up calling this function too many times.
     onNumberOfRowsChanged: {
-        // console.log("nrows changed")
         rootModel.pageSize = numberOfColumns * numberOfRows // only communicate updated pageSize to avoid resetting the entire menu (not thoroughly tested, but less processor heavy nonethelesss)
     }
     onNumberOfColumnsChanged: {
-        //console.log("ncols changed")
-//         resetAppsGrid()
         rootModel.pageSize = numberOfColumns * numberOfRows // only communicate updated pageSize to avoid resetting the entire menu (not thoroughly tested, but less processor heavy nonetheless)
     }
 
@@ -140,9 +137,10 @@ Item {
                     z: -1 // draw this element under the ItemGridView
                     anchors.fill:parent
                     color:Qt.rgba(theme.backgroundColor.r, theme.backgroundColor.g, theme.backgroundColor.b,  alphaValue * 0.6)
-                    border.color:Qt.rgba(theme.highlightColor.r, theme.highlightColor.g, theme.highlightColor.b,  1)
+                    border.color: theme.highlightColor
                     border.width: Math.floor(units.smallSpacing/2)
                     radius: units.smallSpacing
+                    visible: plasmoid.configuration.drawPaginationRectangle
 
                 }
 

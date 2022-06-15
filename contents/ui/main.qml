@@ -146,9 +146,9 @@ Item {
 
     Kicker.RunnerModel {
         id: runnerModel
-//         favoritesModel: globalFavorites
-        runners: ["desktopsession","services","baloosearch","calculator","dictionary","locations","shell"]
-//         runners: plasmoid.configuration.useExtraRunners ? new Array("services").concat(plasmoid.configuration.extraRunners) : "services"
+
+        runners: "services"
+//         runners: ["desktopsession","services","baloosearch","calculator","dictionary","locations","shell"]
         appletInterface: plasmoid
         deleteWhenEmpty: false
         mergeResults: true

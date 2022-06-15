@@ -9,7 +9,7 @@ import org.kde.plasma.components 2.0 as PlasmaComponents
 import QtQuick.Layouts 1.1
 
 
-Rectangle { // rectangle used for marking the bounds for the category button
+Item {
 
     id: containerForCategory
 
@@ -22,7 +22,6 @@ Rectangle { // rectangle used for marking the bounds for the category button
     required property int categoriesFontSize
 
     // button size related properties
-    required property bool isButtonSizeSet
     required property int buttonHeight
     required property int buttonWidth
 
@@ -40,19 +39,12 @@ Rectangle { // rectangle used for marking the bounds for the category button
     property int categoriesListCurrentIndex
     property int indexInCategoriesList
 
-    color: "transparent"
-    height: isButtonSizeSet ? buttonHeight : t_metrics.height * 2
-    width:  isButtonSizeSet ? buttonWidth : t_metrics.width + 4 * units.smallSpacing
+    height: buttonHeight
+    width: buttonWidth
+
     opacity: categoriesListCurrentIndex == indexInCategoriesList || mouseArea.containsMouse ? 1 : 0.4
 
     signal changeCategoryRequested(int appsGridModelKey, int indexInCategoriesList)
-
-
-    TextMetrics {
-        id: t_metrics
-        text: "Toutes les applications" // long-ass text for making sure most languages will have their applications tag visible out of the box.
-        font.pointSize: theme.defaultFont.pointSize * 1.2
-    }
 
     RowLayout {
         anchors.fill: parent

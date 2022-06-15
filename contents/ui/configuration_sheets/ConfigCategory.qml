@@ -7,8 +7,6 @@ import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 2.0 as PlasmaComponents
 import org.kde.plasma.extras 2.0 as PlasmaExtras
 
-import org.kde.kirigami 2.5 as Kirigami
-
 import org.kde.kquickcontrolsaddons 2.0 as KQuickAddons
 import org.kde.draganddrop 2.0 as DragDrop
 
@@ -198,7 +196,7 @@ Item {
                                     width: rulersSize
                                     height: rulersSize
                                     radius: rulersSize
-                                    color: Qt.rgba(theme.highlightColor.r,theme.highlightColor.g,theme.highlightColor.b, 1)
+                                    color: theme.highlightColor
                                     anchors.horizontalCenter: parent.right
                                     anchors.verticalCenter: parent.verticalCenter
 
@@ -207,10 +205,11 @@ Item {
                                         drag{ target: parent; axis: Drag.XAxis }
                                         onMouseXChanged: {
                                             if(drag.active){
-                                                myCategoryTemplate.width = myCategoryTemplate.width + mouseX
-                                                myCategoryTemplateList.delegateButtonWidth = myCategoryTemplate.width
-                                                if(myCategoryTemplate.width < units.iconSizes.huge)
+                                                if (myCategoryTemplate.width + mouseX < units.iconSizes.huge)
                                                     myCategoryTemplate.width = units.iconSizes.huge
+                                                else
+                                                    myCategoryTemplate.width = myCategoryTemplate.width + mouseX
+                                                myCategoryTemplateList.delegateButtonWidth = myCategoryTemplate.width
                                             }
                                         }
                                     }
@@ -221,7 +220,7 @@ Item {
                                     radius: rulersSize
 //                                     x: parent.x / 2
                                     //y: parent.y
-                                    color: Qt.rgba(theme.highlightColor.r,theme.highlightColor.g,theme.highlightColor.b, 1)
+                                    color: theme.highlightColor
                                     anchors.horizontalCenter: parent.horizontalCenter
                                     anchors.verticalCenter: parent.bottom
 

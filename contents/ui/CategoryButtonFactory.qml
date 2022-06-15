@@ -48,10 +48,6 @@ Item {
                 function() {
                     return plasmoid.configuration.categoriesFontSize
                 }),
-            isButtonSizeSet: Qt.binding(
-                function() {
-                    return plasmoid.configuration.customizeCategoriesButtonSize
-                }),
             buttonHeight: Qt.binding(
                 function() {
                     return plasmoid.configuration.categoriesButtonHeight

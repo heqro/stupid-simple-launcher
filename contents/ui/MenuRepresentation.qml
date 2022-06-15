@@ -205,9 +205,9 @@ Kicker.DashboardWindow {
 
                     Layout.alignment: Qt.AlignCenter
                     Layout.fillWidth: true
-                    Layout.topMargin: units.iconSizes.large
-                    Layout.bottomMargin: units.iconSizes.medium
-                    Layout.maximumWidth: searchField.usedSpace // expand the search field's width as much as the design requires space work with. Some designs are dynamic when it comes to their width, thus we need to account for this change.
+                    Layout.topMargin:       units.largeSpacing * 2
+                    Layout.bottomMargin:    units.largeSpacing
+                    Layout.maximumWidth:    searchField.usedSpace // expand the search field's width as much as the design requires space work with. Some designs are dynamic when it comes to their width, thus we need to account for this change.
 
                     Keys.onPressed: {
                         if (event.key == Qt.Key_Down || event.key == Qt.Key_Right) {
@@ -234,8 +234,7 @@ Kicker.DashboardWindow {
 
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    Layout.alignment: Qt.AlignCenter
-                    Layout.bottomMargin: units.iconSizes.large
+                    Layout.bottomMargin: units.largeSpacing
 
                     layoutDirection: showCategoriesOnTheRight ? Qt.LeftToRight : Qt.RightToLeft
 
@@ -244,25 +243,34 @@ Kicker.DashboardWindow {
 
                         Layout.fillWidth: true
                         Layout.fillHeight:true
+//                         Layout.maximumHeight: appsGridLoader.height + pageIndicatorLoader.usedHeight + favoritesLoader.usedHeight
+                        readonly property int totalHeight: parent.height
+//                         Layout.alignment: Qt.AlignCenter
+
                         Loader {
                             id: appsGridLoader
                             readonly property int allAppsIndex: rootModel.showRecentApps + rootModel.showRecentDocs
                             readonly property int startCategoryIndex: plasmoid.configuration.startOnFavorites ? -1 : allAppsIndex
+                            readonly property int availableHeight: parent.totalHeight - pageIndicatorLoader.usedHeight - favoritesLoader.usedHeight
 
-                            height: plasmoid.configuration.paginateGrid ? cellSize * Math.floor((parent.height - (favoritesLoader.height + units.largeSpacing) * favoritesLoader.active - (pageIndicatorLoader.height + units.largeSpacing) * pageIndicatorLoader.active) / cellSize) : parent.height - (favoritesLoader.height + units.largeSpacing) * favoritesLoader.active - pageIndicatorLoader.height * pageIndicatorLoader.active
+                            height: plasmoid.configuration.paginateGrid ? cellSize * Math.floor(availableHeight / cellSize) : availableHeight
+                            width: cellSize * Math.floor(parent.width / cellSize)
 
                             anchors.top: parent.top
-                            width: cellSize * Math.floor(parent.width / cellSize)
                             anchors.horizontalCenter: parent.horizontalCenter
+
                             source: plasmoid.configuration.paginateGrid ? "PaginatedApplicationsGrid.qml" : "ApplicationsGrid.qml"
 
                         }
+
                         Loader { // dots to show the current page and the amount of pages.
                             id: pageIndicatorLoader
                             active: plasmoid.configuration.paginateGrid
-                            anchors.top: appsGridLoader.bottom
 
-                            anchors.topMargin: units.largeSpacing
+                            readonly property int usedHeight: (height + anchors.topMargin) * active
+
+                            anchors.top: appsGridLoader.bottom
+                            anchors.topMargin: units.mediumSpacing * active
                             anchors.horizontalCenter: parent.horizontalCenter
 
                             sourceComponent: PageIndicator {
@@ -296,11 +304,18 @@ Kicker.DashboardWindow {
                             }
                         }
 
+
+
                         Loader { // we can get away with not setting this boys' width because the loaded item will give such info
                             id: favoritesLoader
                             active: showFavoritesInGrid
+
+                            readonly property int usedHeight: (height + anchors.topMargin) * active
+
+//                             anchors.bottom: parent.bottom
+                            anchors.topMargin: units.largeSpacing * active
                             anchors.bottom: parent.bottom
-                            anchors.topMargin: units.largeSpacing
+//                             anchors.top: pageIndicatorLoader.active ? pageIndicatorLoader.bottom : appsGridLoader.bottom
                             height: plasmoid.configuration.favoritesIconSize
                             anchors.horizontalCenter: parent.horizontalCenter
 
@@ -325,7 +340,6 @@ Kicker.DashboardWindow {
                                     border.color:Qt.rgba(theme.highlightColor.r, theme.highlightColor.g, theme.highlightColor.b,  1)
                                     border.width: Math.floor(units.smallSpacing/2)
                                     radius: units.smallSpacing
-
                                 }
                             }
 
@@ -339,15 +353,17 @@ Kicker.DashboardWindow {
 
                         Layout.fillHeight: true
                         Layout.fillWidth: true
+                        visible: categoriesModel.count > 0
 
-                        Layout.maximumWidth: categoriesModel.count == 0 ? 0 : (customizeCategoriesSidebarSize ? Math.ceil(categoriesSidebarWidth + units.iconSizes.medium) : Math.floor(widthScreen / 8 + units.iconSizes.medium)) // adding up a little bit of "artificial" size to let the category button breathe with respect to the sidebar's scrollbar.
+                        Layout.maximumWidth: Math.ceil(categoriesSidebarWidth + units.iconSizes.medium)  // adding up a little bit of "artificial" size to let the category button breathe with respect to the sidebar's scrollbar.
                         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
                         ListView {
 
                             id: categoriesList
 
-                            anchors.fill: parent
+                            width: categoriesSidebarWidth
+                            height: parent.height
 
                             model: ObjectModel {
                                 id: categoriesModel
@@ -448,7 +464,7 @@ Kicker.DashboardWindow {
                         showButtonTooltips: plasmoid.configuration.showSessionControlTooltips
                     }
                     Layout.alignment: Qt.AlignCenter | Qt.AlignBottom
-                    Layout.bottomMargin: units.iconSizes.smallMedium
+                    Layout.bottomMargin: active ? units.iconSizes.smallMedium : 0
                 }
             }
         }
@@ -457,12 +473,13 @@ Kicker.DashboardWindow {
         // Dummy query to preload runner model
         appsGridLoader.item.updateQuery("k")
         appsGridLoader.item.showSearchResults()
-        reset("MenuRepresentation is ready -> Component.onCompleted()")
         appsGridLoader.loaded.connect(function resetBecauseOfLoad() {reset("appsGridLoader loaded")})
         kicker.reset.connect(function resetBecauseOfKicker() {
             if (appsGridLoader.item) reset("Kicker reset")
             else log("Won't reset (Component is loading and will reset once it is done loading)")
         });
+        if (!plasmoid.configuration.paginateGrid)
+            rootModel.pageSize = -1 // this automatically triggers a reset on Kicker. Allows ApplicationsGrid.qml to properly work on first launch.
 
     }
 }

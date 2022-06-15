@@ -118,8 +118,10 @@ Kicker.DashboardWindow {
     }
 
     onVisibleChanged: {
-        if (visible) // start fancy animation
-            animationSearch.start()
+        if (visible) {
+            animationSearch.start() // start fancy animation
+            appsGridLoader.item.resetAppsGrid()
+        }
         else { // only perform heavy calculations to return to last known state when menu is exited
             reset("visibleChanged -> false")
         }
@@ -141,9 +143,7 @@ Kicker.DashboardWindow {
         if (favoritesLoader.active)
             favoritesLoader.item.currentIndex = -1 // don't highlight current item on the favorites grid
 
-        var startCategoryIndex = startOnFavorites ? - 1 : appsGridLoader.allAppsIndex
         appsGridLoader.item.resetAppsGrid()
-
         categoriesList.positionViewAtBeginning()
 
         if (startOnFavorites) {
@@ -243,9 +243,7 @@ Kicker.DashboardWindow {
 
                         Layout.fillWidth: true
                         Layout.fillHeight:true
-//                         Layout.maximumHeight: appsGridLoader.height + pageIndicatorLoader.usedHeight + favoritesLoader.usedHeight
                         readonly property int totalHeight: parent.height
-//                         Layout.alignment: Qt.AlignCenter
 
                         Loader {
                             id: appsGridLoader
@@ -270,8 +268,13 @@ Kicker.DashboardWindow {
                             readonly property int usedHeight: (height + anchors.topMargin) * active
 
                             anchors.top: appsGridLoader.bottom
-                            anchors.topMargin: units.mediumSpacing * active
+                            anchors.topMargin: units.smallSpacing * active
                             anchors.horizontalCenter: parent.horizontalCenter
+
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: mouse.accepted = true // prevent the menu from closing by misclicking in the space between the delegates
+                            }
 
                             sourceComponent: PageIndicator {
 
@@ -312,10 +315,8 @@ Kicker.DashboardWindow {
 
                             readonly property int usedHeight: (height + anchors.topMargin) * active
 
-//                             anchors.bottom: parent.bottom
-                            anchors.topMargin: units.largeSpacing * active
+                            anchors.topMargin: units.mediumSpacing * active
                             anchors.bottom: parent.bottom
-//                             anchors.top: pageIndicatorLoader.active ? pageIndicatorLoader.bottom : appsGridLoader.bottom
                             height: plasmoid.configuration.favoritesIconSize
                             anchors.horizontalCenter: parent.horizontalCenter
 
@@ -337,7 +338,7 @@ Kicker.DashboardWindow {
                                     height: parent.height
                                     width: parent.height * Math.floor(parent.width / parent.height)
                                     color:Qt.rgba(theme.backgroundColor.r, theme.backgroundColor.g, theme.backgroundColor.b,  alphaValue * 0.6)
-                                    border.color:Qt.rgba(theme.highlightColor.r, theme.highlightColor.g, theme.highlightColor.b,  1)
+                                    border.color: theme.highlightColor
                                     border.width: Math.floor(units.smallSpacing/2)
                                     radius: units.smallSpacing
                                 }
@@ -388,16 +389,6 @@ Kicker.DashboardWindow {
                                 function onCountChanged() { // make sure categories are only updated when rootModel really changes (to avoid repeating the same calculation when it's not needed)
                                     categoriesList.updateCategories()
                                 }
-
-                                function onShowRecentDocsChanged() {
-                                    categoriesList.updateCategories()
-                                    reset("showRecentDocsChanged")
-                                }
-
-                                function onShowRecentAppsChanged() {
-                                    categoriesList.updateCategories()
-                                    reset("showRecentAppsChanged")
-                                }
                             }
 
                             function updateCategories() { // build categoriesModel
@@ -426,8 +417,8 @@ Kicker.DashboardWindow {
                                 function addMetaCategoriesToModel() { // sui generis append function to add hard-coded categories (Favorites, Recent Docs, Recent Apps)
                                     if (rootModel.showRecentDocs)
                                         addToModel(rootModel.showRecentApps, -2)
-                                        if (rootModel.showRecentApps)
-                                            addToModel(0, -3)
+                                    if (rootModel.showRecentApps)
+                                        addToModel(0, -3)
                                 }
 
 
@@ -442,11 +433,11 @@ Kicker.DashboardWindow {
                                 addToModel(categoryStartIndex, categoryStartIndex) // manually add "All apps" category (to make sure the meta-categories & favorites are added right after it)
                                 addFavoritesToModel()
                                 addMetaCategoriesToModel()
-                                for (var i = categoryStartIndex + 1; i < categoryEndIndex; i++) // add the rest of "normal" categories
+                                for (let i = categoryStartIndex + 1; i < categoryEndIndex; i++) // add the rest of "normal" categories
                                     addToModel(i, i)
 
                                 // visual band-aid that corrects a way ListView could start visually collapsing items
-                                for(var step=0; step < categoriesList.count; step++) {
+                                for(let step=0; step < categoriesList.count; step++) {
                                     categoriesList.positionViewAtIndex(step, ListView.Visible)
                                 }
                                 categoriesList.positionViewAtBeginning()
@@ -473,9 +464,8 @@ Kicker.DashboardWindow {
         // Dummy query to preload runner model
         appsGridLoader.item.updateQuery("k")
         appsGridLoader.item.showSearchResults()
-        appsGridLoader.loaded.connect(function resetBecauseOfLoad() {reset("appsGridLoader loaded")})
         kicker.reset.connect(function resetBecauseOfKicker() {
-            if (appsGridLoader.item) reset("Kicker reset")
+            if (appsGridLoader.item) {categoriesList.updateCategories(); reset("Kicker reset")}
             else log("Won't reset (Component is loading and will reset once it is done loading)")
         });
         if (!plasmoid.configuration.paginateGrid)

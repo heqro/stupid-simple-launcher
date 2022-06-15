@@ -111,6 +111,9 @@
     <entry name="paginateGrid" type="Bool">
       <default>false</default>
     </entry>
+    <entry name="drawPaginationRectangle" type="Bool">
+      <default>true</default>
+    </entry>
     <entry name="hiddenApplicationsName" type="StringList">
         <default></default>
     </entry>

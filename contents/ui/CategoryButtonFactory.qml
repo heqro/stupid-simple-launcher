@@ -10,8 +10,6 @@ import org.kde.plasma.components 2.0 as PlasmaComponents
 // for using RowLayout
 import QtQuick.Layouts 1.1
 
-import QtQml.Models 2.4 as QM2
-
 Item {
     property Component component
 
@@ -36,7 +34,7 @@ Item {
 
     function createHandmadeCategoryButton(appsGridModelKey, categoryName, categoryIcon) { // function more difficult to operate - you want to use createCategoryButton unless you want to add the favorites category, which is not really a category per se and must always go through this route instead
         if (!component) createComponent()
-        var categoryButton =  component.createObject(parent,
+        const categoryButton =  component.createObject(parent,
         {
             appsGridModelKey: appsGridModelKey,
             categoryName: categoryName,

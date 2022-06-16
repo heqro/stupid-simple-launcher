@@ -45,7 +45,7 @@ Item {
     property QtObject globalFavorites: rootModel.favoritesModel
     property QtObject systemFavorites: rootModel.systemFavoritesModel
 
-    property bool debugEnabled: false
+    property bool debugEnabled: true
 
     function action_menuedit() {
         processRunner.runMenuEditor();
@@ -75,8 +75,12 @@ Item {
         paginate: true
         showAllApps: true
 //         showRecentApps: false
-        showRecentApps: plasmoid.configuration.showRecentAppsCategory
-        showRecentDocs: plasmoid.configuration.showRecentFilesCategory
+        //showRecentApps: plasmoid.configuration.showRecentAppsCategory
+        //showRecentDocs: plasmoid.configuration.showRecentFilesCategory
+
+        showRecentApps: true
+        showRecentDocs: true
+
         showRecentContacts: false
         showPowerSession: false
 

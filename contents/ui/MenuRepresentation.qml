@@ -139,10 +139,11 @@ Kicker.DashboardWindow {
     function reset(reason) { // return everything to the last known state
         log("Resetting... "+reason)
 
-        if (favoritesLoader.active)
+        if (favoritesLoader.active && favoritesLoader.state == Loader.Ready)
             favoritesLoader.item.currentIndex = -1 // don't highlight current item on the favorites grid
+        if (appsGridLoader.state == Loader.Ready)
+            appsGridLoader.item.resetAppsGrid()
 
-        appsGridLoader.item.resetAppsGrid()
         categoriesList.positionViewAtBeginning()
 
         if (startOnFavorites) {
@@ -370,7 +371,7 @@ Kicker.DashboardWindow {
                             }
 
                             // only add some fancy spacing between the buttons if they are only icons.
-                            spacing: showCategoriesIcon ? units.iconSizes.small : 0
+                            //spacing: showCategoriesIcon ? units.iconSizes.small : 0
 
                             // the following lines help maintaining consistency in highlighting with respect to whatever you have set in your Plasma Style. (This is taken from ItemGridDelegate.qml)
                             highlight: PlasmaComponents.Highlight {}
@@ -399,11 +400,10 @@ Kicker.DashboardWindow {
                                 }
 
                                 function addFavoritesToModel() {
-                                    if (plasmoid.configuration.showFavoritesCategory) { // manually create favorites category button (because this info cannot be reached with the rest of the tools)
-                                        const object = factory.createHandmadeCategoryButton(-1, i18n("Favorites"), "favorite")
-                                        categoriesModel.append(object)
-                                        object.changeCategoryRequested.connect(changeCategory)
-                                    }
+                                    // manually create favorites category button (because this info cannot be reached with the rest of the tools)
+                                    const object = factory.createHandmadeCategoryButton(-1, i18n("Favorites"), "favorite")
+                                    categoriesModel.append(object)
+                                    object.changeCategoryRequested.connect(changeCategory)
                                 }
 
                                 function changeCategory(indexInRootModel, indexInCategoriesList) {
@@ -414,10 +414,8 @@ Kicker.DashboardWindow {
                                 }
 
                                 function addMetaCategoriesToModel() { // sui generis append function to add hard-coded categories (Favorites, Recent Docs, Recent Apps)
-                                    if (rootModel.showRecentDocs)
-                                        addToModel(rootModel.showRecentApps, -2)
-                                    if (rootModel.showRecentApps)
-                                        addToModel(0, -3)
+                                    addToModel(1, -2) // add recent documents
+                                    addToModel(0, -3) // add recent applications
                                 }
 
 
@@ -464,7 +462,7 @@ Kicker.DashboardWindow {
         appsGridLoader.item.updateQuery("k")
         appsGridLoader.item.showSearchResults()
         kicker.reset.connect(function resetBecauseOfKicker() {
-            if (appsGridLoader.item) {categoriesList.updateCategories(); reset("Kicker reset")}
+            if (appsGridLoader.item) {reset("Kicker reset")}
             else log("Won't reset (Component is loading and will reset once it is done loading)")
         });
         if (!plasmoid.configuration.paginateGrid)

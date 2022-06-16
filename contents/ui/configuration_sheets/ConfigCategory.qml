@@ -229,8 +229,8 @@ Item {
                                         drag{ target: parent; axis: Drag.YAxis }
                                         onMouseYChanged: {
                                             if(drag.active){
-                                                if(myCategoryTemplate.height + mouseY < units.iconSizes.smallMedium)
-                                                    myCategoryTemplate.height = units.iconSizes.smallMedium
+                                                if(myCategoryTemplate.height + mouseY < units.iconSizes.huge)
+                                                    myCategoryTemplate.height = units.iconSizes.huge
                                                 else
                                                     myCategoryTemplate.height = myCategoryTemplate.height + mouseY
                                                 myCategoryTemplateList.delegateButtonHeight = myCategoryTemplate.height

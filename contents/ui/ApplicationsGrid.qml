@@ -28,11 +28,11 @@ Item {
                 break
             }
             case -2: { // Recent documents are hard-tagged as index -2
-                appsGrid.model = rootModel.modelForRow(rootModel.showRecentApps)
+                appsGrid.model = rootModel.modelForRow(1)
                 break
             }
             case -3: { // Recent Applications are hard-tagged as index -3
-                appsGrid.model = rootModel.modelForRow(!rootModel.showRecentApps)
+                appsGrid.model = rootModel.modelForRow(0)
                 break
             }
             case allAppsIndex: { // All Applications

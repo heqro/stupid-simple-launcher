@@ -72,11 +72,11 @@ Item {
                 break
             }
             case -2: { // Recent documents are hard-tagged as index -2
-                categoryIndexToDoStuffWith = rootModel.showRecentApps
+                categoryIndexToDoStuffWith = 1
                 break
             }
             case -3: { // Recent Applications are hard-tagged as index -3
-                categoryIndexToDoStuffWith = !rootModel.showRecentApps
+                categoryIndexToDoStuffWith = 0
                 break
             }
             default: { // Generic category or All applications

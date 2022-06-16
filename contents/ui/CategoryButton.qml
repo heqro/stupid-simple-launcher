@@ -39,8 +39,8 @@ Item {
     property int categoriesListCurrentIndex
     property int indexInCategoriesList
 
-    height: buttonHeight
-    width: buttonWidth
+    height: visible ? buttonHeight : 0
+    width:  buttonWidth
 
     opacity: categoriesListCurrentIndex == indexInCategoriesList || mouseArea.containsMouse ? 1 : 0.4
 
@@ -50,6 +50,8 @@ Item {
         anchors.fill: parent
         anchors.leftMargin: 2 * units.smallSpacing
         anchors.rightMargin: 2 * units.smallSpacing
+        anchors.topMargin: visible && showCategoriesIcon ? units.smallSpacing : 0
+        anchors.bottomMargin: visible && showCategoriesIcon ? units.smallSpacing : 0
 
         layoutDirection: showCategoriesOnTheRight ? Qt.RightToLeft : Qt.LeftToRight
 

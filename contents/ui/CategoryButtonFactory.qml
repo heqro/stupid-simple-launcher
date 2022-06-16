@@ -79,6 +79,16 @@ Item {
                     return categoriesList.currentIndex
                 }),
             indexInCategoriesList: categoriesModel.count,
+            visible: Qt.binding(
+                function() {
+                    switch(appsGridModelKey) {
+                        case -1: return plasmoid.configuration.showFavoritesCategory // Favorites are hard-tagged as index -1
+                        case -2: return plasmoid.configuration.showRecentAppsCategory // Recent documents are hard-tagged as index -2
+                        case -3: return plasmoid.configuration.showRecentFilesCategory // Recent Applications are hard-tagged as index -3
+                        default: return true // Generic category or All applications
+                    }
+                }
+            ),
         })
         categoryButton.setSourceIcon(categoryIcon)
         return categoryButton

@@ -45,7 +45,7 @@ Item {
     property QtObject globalFavorites: rootModel.favoritesModel
     property QtObject systemFavorites: rootModel.systemFavoritesModel
 
-    property bool debugEnabled: true
+    property bool debugEnabled: false
 
     function action_menuedit() {
         processRunner.runMenuEditor();

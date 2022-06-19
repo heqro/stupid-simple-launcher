@@ -19,7 +19,7 @@ Item {
 
     // font size related properties
     required property bool customizeCategoriesFontSize
-    required property int categoriesFontSize
+    property int categoriesFontSize
 
     // button size related properties
     required property int buttonHeight

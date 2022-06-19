@@ -33,7 +33,6 @@ Item {
 
     // behavior related properties
     required property bool showCategoriesTooltip
-    readonly property bool showToolTip: (categoryTextId.truncated || showCategoriesIcon) && showCategoriesTooltip
 
     // properties related to the list with the rest of the buttons
     property int categoriesListCurrentIndex
@@ -47,6 +46,9 @@ Item {
     signal changeCategoryRequested(int appsGridModelKey, int indexInCategoriesList)
 
     RowLayout {
+
+        id: rowLayout
+
         anchors.fill: parent
         anchors.leftMargin: 2 * units.smallSpacing
         anchors.rightMargin: 2 * units.smallSpacing
@@ -81,6 +83,7 @@ Item {
             PlasmaCore.ToolTipArea { // for showing the tooltip linked to this category's name
                 id: toolTip
                 mainText: categoryName
+                active: (categoryTextId.truncated || showCategoriesIcon) && showCategoriesTooltip
             }
 
             // collapsing text when needed
@@ -98,20 +101,31 @@ Item {
         onClicked: changeCategoryRequested(appsGridModelKey, indexInCategoriesList)
 
         onEntered: { // show tooltips if the user wanted to.
-            if (showToolTip) {
-                toolTip.showToolTip()
-            }
+            toolTip.showToolTip()
         }
 
         onExited: { // immediately hide tooltips if the user wanted them to be shown.
-            if (showToolTip) {
-                toolTip.hideToolTip()
-            }
-
+            toolTip.hideToolTip()
         }
     }
 
     function setSourceIcon(source) {
         categoryIconId.source = source
+    }
+
+    function isTooltipActive() {
+        return toolTip.active
+    }
+
+    function isIconVisible() {
+        return categoryIconId.visible
+    }
+
+    function isTextVisible() {
+        return categoryTextId.visible
+    }
+
+    function getLayoutDirection() {
+        return rowLayout.layoutDirection
     }
 }

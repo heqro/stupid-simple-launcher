@@ -96,6 +96,9 @@ Kicker.DashboardWindow {
 
         if (searchField.isSearchBarFocused) { // unfocus when escape key is pressed
             searchField.unfocus()
+            appsGridLoader.item.changeCategory(appsGridLoader.allAppsIndex)
+            appsGridLoader.item.highlightItemAt(0, 0)
+            categoriesList.currentIndex = 0
         } else {
             root.toggle()
         }

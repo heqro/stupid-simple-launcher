@@ -1,7 +1,5 @@
 import QtQuick 2.4
 
-import org.kde.plasma.plasmoid 2.0
-
 import org.kde.plasma.components 2.0 as PlasmaComponents
 import org.kde.plasma.components 3.0 as PlasmaComponents3
 

@@ -84,7 +84,6 @@ Item {
                         RadioButton {
                             id: categoriesShowTextCheckbox
                             text: i18n("Show categories' names only")
-                            checked: true
                             exclusiveGroup: categoriesCustomizationGroup
                         }
 
@@ -97,6 +96,7 @@ Item {
                         RadioButton {
                             id: categoriesShowTextAndIconCheckbox
                             text: i18n("Show categories' icons and names")
+                            checked: true
                             exclusiveGroup: categoriesCustomizationGroup
                         }
                     }

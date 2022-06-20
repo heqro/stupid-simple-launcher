@@ -1,7 +1,8 @@
 import QtQuick 2.4
 
-import org.kde.plasma.components 2.0 as PlasmaComponents
-import org.kde.plasma.components 3.0 as PlasmaComponents3
+import org.kde.plasma.components 2.0    as PlasmaComponents
+import org.kde.plasma.components 3.0    as PlasmaComponents3
+import org.kde.plasma.extras 2.0        as PlasmaExtras
 
 import QtQml.Models 2.4
 
@@ -24,7 +25,7 @@ PlasmaComponents3.ScrollView { // dedicated to storing the categories list
         //spacing: showCategoriesIcon ? units.iconSizes.small : 0
 
         // the following lines help maintaining consistency in highlighting with respect to whatever you have set in your Plasma Style. (This is taken from ItemGridDelegate.qml)
-        highlight: PlasmaComponents.Highlight {}
+        highlight: PlasmaExtras.Highlight {}
         highlightFollowsCurrentItem: true
         highlightMoveDuration: 0
 

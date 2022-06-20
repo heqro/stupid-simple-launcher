@@ -240,8 +240,7 @@ FocusScope {
                 showLabel: showLabels
             }
 
-            // Using PlasmaComponents' highlight.
-            highlight: PlasmaComponents.Highlight {}
+            highlight: PlasmaExtras.Highlight {}
             highlightFollowsCurrentItem: true
             highlightMoveDuration: 0
 

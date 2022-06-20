@@ -145,10 +145,6 @@ Kicker.DashboardWindow {
         reset("startOnFavorites changed: " + startOnFavorites)
     }
 
-    //onShowCategoriesChanged: {
-        //getCategoriesList().updateCategories()
-    //}
-
     function reset(reason) { // return everything to the last known state
         log("Resetting... "+reason)
 
@@ -157,7 +153,7 @@ Kicker.DashboardWindow {
         if (appsGridLoader.state == Loader.Ready)
             appsGridLoader.item.resetAppsGrid()
 
-        if (plasmoid.configuration.showFavoritesCategory && getCategoriesList().item)
+        if (plasmoid.configuration.showFavoritesCategory && showCategories && getCategoriesList().item)
             getCategoriesList().positionViewAtBeginning()
 
         if (startOnFavorites) {
@@ -180,7 +176,6 @@ Kicker.DashboardWindow {
         MouseArea {
 
             id: mainItemRoot
-//             anchors.fill: parent
 
             width: Screen.width
             height: Screen.height
@@ -307,6 +302,8 @@ Kicker.DashboardWindow {
                             appsGridLoader.item.updateQuery("k")
                             appsGridLoader.item.showSearchResults()
                             reset('appsGridLoader -> onLoaded')
+                            if (!plasmoid.configuration.paginateGrid)
+                                rootModel.pageSize = -1 // this automatically triggers a reset on Kicker. Allows ApplicationsGrid.qml to properly work on first launch.
                         }
 
                         Component.onCompleted: {
@@ -321,9 +318,11 @@ Kicker.DashboardWindow {
 
                         readonly property int usedHeight: (height + anchors.topMargin) * active
 
-                        anchors.top: appsGridLoader.bottom
-                        anchors.topMargin: units.smallSpacing * active
-                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors {
+                            top: appsGridLoader.bottom
+                            topMargin: units.smallSpacing * active
+                            horizontalCenter: parent.horizontalCenter
+                        }
 
                         MouseArea {
                             anchors.fill: parent
@@ -366,12 +365,15 @@ Kicker.DashboardWindow {
                         active: showFavoritesInGrid
 
                         readonly property int usedHeight: (height + anchors.topMargin) * active
+                        readonly property int parentWidth: parent.width
 
-                        anchors.topMargin: units.mediumSpacing * active
-                        anchors.bottom: parent.bottom
+                        anchors {
+                            topMargin: units.mediumSpacing * active
+                            bottom: parent.bottom
+                            horizontalCenter: parent.horizontalCenter
+                        }
+
                         height: plasmoid.configuration.favoritesIconSize
-
-                        width: active ? parent.width : 0
 
                         sourceComponent: ItemGridView {
                             model: globalFavorites
@@ -379,7 +381,7 @@ Kicker.DashboardWindow {
                             cellHeight: parent.height
                             showLabels: false
                             dragEnabled: true
-                            width: Math.min(globalFavorites.count * parent.height, cellWidth * Math.floor(parent.width / cellWidth)) // TODO - if the favorites is higher than the width then add an extra button to show all favorites!
+                            width: Math.min(cellWidth * globalFavorites.count, cellWidth * Math.floor(parentWidth / cellWidth)) // TODO - if the favorites is higher than the width then add an extra button to show all favorites!
                             anchors.horizontalCenter: parent.horizontalCenter
 
                             onKeyNavUp: {
@@ -397,53 +399,32 @@ Kicker.DashboardWindow {
                                 radius: units.smallSpacing
                             }
                         }
-
-
                     }
-
                 }
-
-
-
-
-
-                //CategoriesList {
-                    //id: categoriesList
-                    //anchors {
-                        //top: parent.top
-                        //bottom: parent.bottom
-                    //}
-                    //width: Math.ceil(categoriesSidebarWidth + units.iconSizes.medium)  // adding up a little bit of "artificial" size to let the category button breathe with respect to the sidebar's scrollbar.
-                    //ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-                //}
             }
 
-                Loader {
-                    id: sessionControlBarLoader
-                    visible: plasmoid.configuration.showSessionControlBar
-                    active: plasmoid.configuration.showSessionControlBar
-                    sourceComponent: SessionControlBar {
-                        showButtonTooltips: plasmoid.configuration.showSessionControlTooltips
-                    }
-                    anchors {
-                        horizontalCenter: parent.horizontalCenter
-                        bottom: parent.bottom
-                        bottomMargin: active ? units.iconSizes.smallMedium : 0
-                    }
+            Loader {
+                id: sessionControlBarLoader
+                visible: plasmoid.configuration.showSessionControlBar
+                active: plasmoid.configuration.showSessionControlBar
+                sourceComponent: SessionControlBar {
+                    showButtonTooltips: plasmoid.configuration.showSessionControlTooltips
                 }
+                anchors {
+                    horizontalCenter: parent.horizontalCenter
+                    bottom: parent.bottom
+                    bottomMargin: active ? units.iconSizes.smallMedium : 0
+                }
+            }
         }
 
     Component.onCompleted: {
         // Dummy query to preload runner model
         log('MenuRepresentation.qml onCompleted')
-//         appsGridLoader.item.updateQuery("k")
-//         appsGridLoader.item.showSearchResults()
         kicker.reset.connect(function resetBecauseOfKicker() {
             if (appsGridLoader.state == Loader.Ready && appsGridLoader.item) {reset("Kicker reset")}
             else log("Won't reset (Component is loading and will reset once it is done loading)")
         });
-        if (!plasmoid.configuration.paginateGrid)
-            rootModel.pageSize = -1 // this automatically triggers a reset on Kicker. Allows ApplicationsGrid.qml to properly work on first launch.
 
     }
 }

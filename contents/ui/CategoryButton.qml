@@ -45,26 +45,28 @@ Item {
 
     signal changeCategoryRequested(int appsGridModelKey, int indexInCategoriesList)
 
-    RowLayout {
+    Row {
 
         id: rowLayout
 
-        anchors.fill: parent
-        anchors.leftMargin: 2 * units.smallSpacing
-        anchors.rightMargin: 2 * units.smallSpacing
-        anchors.topMargin: visible && showCategoriesIcon ? units.smallSpacing : 0
-        anchors.bottomMargin: visible && showCategoriesIcon ? units.smallSpacing : 0
+        anchors {
+            fill: parent
+            leftMargin: 2 * units.smallSpacing
+            rightMargin: 2 * units.smallSpacing
+            topMargin: visible && showCategoriesIcon ? units.smallSpacing : 0
+            bottomMargin: visible && showCategoriesIcon ? units.smallSpacing : 0
+        }
 
         layoutDirection: showCategoriesOnTheRight ? Qt.RightToLeft : Qt.LeftToRight
 
+        spacing: units.mediumSpacing
 
         PlasmaCore.IconItem {
             id: categoryIconId
+            height: Math.floor(4 * parent.height / 5)
+            width: Math.floor(4 * parent.height / 5)
             visible: showCategoriesIcon || showCategoriesIconAndText
-
-            // arbitrary values because some icon packs cannot behave properly and need to be scaled down.
-            Layout.preferredHeight: Math.floor(4 * parent.height / 5)
-            Layout.preferredWidth: Math.floor(4 * parent.height / 5)
+            anchors.verticalCenter: parent.verticalCenter
         }
 
         PlasmaComponents.Label { // label showing the category name
@@ -76,8 +78,9 @@ Item {
             minimumPointSize: containerForCategory.height
 
             visible: showCategoriesText || showCategoriesIconAndText
-            Layout.preferredHeight: parent.height
-            Layout.fillWidth: true
+            height: parent.height
+            width: parent.width - categoryIconId.width
+            anchors.verticalCenter: parent.verticalCenter
             fontSizeMode: Text.VerticalFit
 
             PlasmaCore.ToolTipArea { // for showing the tooltip linked to this category's name
@@ -112,6 +115,8 @@ Item {
     function setSourceIcon(source) {
         categoryIconId.source = source
     }
+
+    // Debugging functions
 
     function isTooltipActive() {
         return toolTip.active

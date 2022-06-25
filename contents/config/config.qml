@@ -47,6 +47,12 @@ ConfigModel {
     }
 
     ConfigCategory {
+        name: i18n("Background image")
+        icon: "preferences-desktop-wallpaper"
+        source: "configuration_sheets/ConfigBackground.qml"
+    }
+
+    ConfigCategory {
         name: i18n("Hidden apps management")
         icon: "applications-all"
         source: "configuration_sheets/ConfigHiddenApps.qml"

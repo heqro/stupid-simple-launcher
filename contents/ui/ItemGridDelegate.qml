@@ -86,10 +86,9 @@ Item {
         width: active ? parent.width : 0
         anchors.top: icon.bottom
 
-        sourceComponent: Rectangle {
+        sourceComponent: Item {
 
             id: labelBoundary
-            color: 'transparent'
             anchors.fill: parent
             PlasmaComponents.Label {
 

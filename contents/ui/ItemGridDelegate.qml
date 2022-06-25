@@ -86,10 +86,9 @@ Item {
         width: active ? parent.width : 0
         anchors.top: icon.bottom
 
-        sourceComponent: Rectangle {
+        sourceComponent: Item {
 
             id: labelBoundary
-            color: "transparent"
             anchors.fill: parent
             PlasmaComponents.Label {
 
@@ -109,8 +108,18 @@ Item {
                 maximumLineCount: 2
 
                 text: model.display != undefined ? model.display : ""
-            }
 
+                Rectangle {
+                    z: -1
+                    width: Math.min(label.contentWidth + units.smallSpacing * 2, item.width)
+                    height: label.implicitHeight
+                    anchors.centerIn: parent
+                    color: Qt.rgba(theme.backgroundColor.r, theme.backgroundColor.g, theme.backgroundColor.b,  plasmoid.configuration.labelTransparency)
+                    visible: plasmoid.configuration.showLabelBackground
+                    radius: 4
+                }
+
+            }
         }
 
         TextMetrics { // tool get font's height so as to define rectangle's height

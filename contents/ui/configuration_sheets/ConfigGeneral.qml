@@ -39,6 +39,9 @@ Item {
     property alias cfg_iconSize:      iconSize.value
     property alias cfg_favoritesIconSize: favoritesIconSize.value
 
+    property alias cfg_isBackgroundImageSet: setBackgroundImageCheckbox.checked
+    property alias cfg_backgroundImage: fileDialog.chosenPath
+
     property alias cfg_showLabelBackground: showBackgroundLabelCheckbox.checked
     property alias cfg_labelTransparency: labelAlphaValue.value
 
@@ -95,6 +98,53 @@ Item {
 
         PlasmaExtras.Heading {
             text: "Background and labels"
+        }
+
+        RowLayout{
+
+            Row{
+                spacing: units.smallSpacing
+                CheckBox {
+                    id: setBackgroundImageCheckbox
+                    checked: false
+                    text: i18n("Image background:")
+                }
+
+                Label {
+                    id: backgroundImage
+                    text: "Select image:"
+                }
+
+                Button {
+                    id: imageButton
+                    implicitWidth: height
+                    PlasmaCore.IconItem {
+                        anchors.fill: parent
+                        source: "document-open-folder"
+                        PlasmaCore.ToolTipArea {
+                            anchors.fill: parent
+                            subText: "Select image"
+                        }
+                    }
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {fileDialog.open() }
+                    }
+                }
+                FileDialog {
+                    id: fileDialog
+
+                    property string chosenPath
+
+                    selectMultiple : false
+                    title: "Pick a image file"
+                    nameFilters: [ "Image files (*.jpg *.png *.jpeg)", "All files (*)" ]
+                    onAccepted: {
+                        chosenPath = fileDialog.fileUrls[0]
+//                         cfg_backgroundImage = backgroundImage.text
+                    }
+                }
+            }
         }
 
         RowLayout {

@@ -197,7 +197,15 @@ Kicker.DashboardWindow {
                     root.toggle();
             }
 
+            Image {
+                visible: plasmoid.configuration.isBackgroundImageSet
+                anchors.fill: parent;
+                source: plasmoid.configuration.backgroundImage
+                fillMode: Image.PreserveAspectCrop;
+            }
+
             Rectangle{
+                visible: !plasmoid.configuration.isBackgroundImageSet
                 anchors.fill: parent
                 color:Qt.rgba(theme.backgroundColor.r, theme.backgroundColor.g, theme.backgroundColor.b,  alphaValue)
             }

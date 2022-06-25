@@ -121,7 +121,7 @@ Item {
 
         anchors.fill: parent
         clip: true
-        spacing: 150
+        spacing: units.largeSpacing * 5
 
         Repeater {
 

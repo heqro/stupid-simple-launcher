@@ -265,7 +265,15 @@ Kicker.DashboardWindow {
                         bottom: parent.bottom
                     }
                     width: active ? Math.ceil(categoriesSidebarWidth + units.iconSizes.medium) : 0
-                    sourceComponent: CategoriesList {ScrollBar.horizontal.policy: ScrollBar.AlwaysOff}
+                    sourceComponent: CategoriesList {
+                        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+                        Rectangle {
+                            height: parent.height
+                            width: categoriesSidebarWidth
+                            color: Qt.rgba(theme.backgroundColor.r, theme.backgroundColor.g, theme.backgroundColor.b,  plasmoid.configuration.categoriesTransparency)
+                            visible: plasmoid.configuration.showCategoriesBackground
+                        }
+                    }
                     onLoaded: item.updateCategories()
                 }
 
@@ -278,7 +286,15 @@ Kicker.DashboardWindow {
                         bottom: parent.bottom
                     }
                     width: active ? Math.ceil(categoriesSidebarWidth + units.iconSizes.medium) : 0
-                    sourceComponent: CategoriesList {ScrollBar.horizontal.policy: ScrollBar.AlwaysOff}
+                    sourceComponent: CategoriesList {
+                        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+                        Rectangle {
+                            height: parent.height
+                            width: categoriesSidebarWidth
+                            color: Qt.rgba(theme.backgroundColor.r, theme.backgroundColor.g, theme.backgroundColor.b,  plasmoid.configuration.categoriesTransparency)
+                            visible: plasmoid.configuration.showCategoriesBackground
+                        }
+                    }
                     onLoaded: item.updateCategories()
                 }
 

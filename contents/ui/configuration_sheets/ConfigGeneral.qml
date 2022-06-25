@@ -104,15 +104,17 @@ Item {
 
             Row{
                 spacing: units.smallSpacing
+
                 CheckBox {
                     id: setBackgroundImageCheckbox
                     checked: false
                     text: i18n("Image background:")
                 }
 
-                Label {
-                    id: backgroundImage
-                    text: "Select image:"
+                TextField {
+                    text: fileDialog.chosenPath
+                    readOnly: true
+                    visible: fileDialog.chosenPath != ''
                 }
 
                 Button {
@@ -131,6 +133,7 @@ Item {
                         onClicked: {fileDialog.open() }
                     }
                 }
+
                 FileDialog {
                     id: fileDialog
 
@@ -141,7 +144,6 @@ Item {
                     nameFilters: [ "Image files (*.jpg *.png *.jpeg)", "All files (*)" ]
                     onAccepted: {
                         chosenPath = fileDialog.fileUrls[0]
-//                         cfg_backgroundImage = backgroundImage.text
                     }
                 }
             }

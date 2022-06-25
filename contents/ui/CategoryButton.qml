@@ -51,8 +51,8 @@ Item {
 
         anchors {
             fill: parent
-            leftMargin: 2 * units.smallSpacing
-            rightMargin: 2 * units.smallSpacing
+            leftMargin: units.largeSpacing
+            rightMargin: units.largeSpacing
             topMargin: visible && showCategoriesIcon ? units.smallSpacing : 0
             bottomMargin: visible && showCategoriesIcon ? units.smallSpacing : 0
         }

@@ -74,21 +74,21 @@ PlasmaComponents3.ScrollView { // dedicated to storing the categories list
 
             if (!showCategories) return
 
-                var categoryStartIndex = rootModel.showRecentDocs + rootModel.showRecentApps // rootModel adds recent docs and recent apps to the very start of it. We skip these metacategories (if they are to be present) to add them right after "All applications".
-                var categoryEndIndex = rootModel.count
+            var categoryStartIndex = rootModel.showRecentDocs + rootModel.showRecentApps // rootModel adds recent docs and recent apps to the very start of it. We skip these metacategories (if they are to be present) to add them right after "All applications".
+            var categoryEndIndex = rootModel.count
 
 
-                addToModel(categoryStartIndex, categoryStartIndex) // manually add "All apps" category (to make sure the meta-categories & favorites are added right after it)
-                addFavoritesToModel()
-                addMetaCategoriesToModel()
-                for (let i = categoryStartIndex + 1; i < categoryEndIndex; i++) // add the rest of "normal" categories
-                    addToModel(i, i)
+            addToModel(categoryStartIndex, categoryStartIndex) // manually add "All apps" category (to make sure the meta-categories & favorites are added right after it)
+            addFavoritesToModel()
+            addMetaCategoriesToModel()
+            for (let i = categoryStartIndex + 1; i < categoryEndIndex; i++) // add the rest of "normal" categories
+                addToModel(i, i)
 
-                    // visual band-aid that corrects a way ListView could start visually collapsing items
-                    for(let step=0; step < categoriesList.count; step++) {
-                        categoriesList.positionViewAtIndex(step, ListView.Visible)
-                    }
-                    categoriesList.positionViewAtBeginning()
+            // visual band-aid that corrects a way ListView could start visually collapsing items
+            for(let step=0; step < categoriesList.count; step++) {
+                categoriesList.positionViewAtIndex(step, ListView.Visible)
+            }
+            categoriesList.positionViewAtBeginning()
         }
 
     }

@@ -198,6 +198,7 @@ Kicker.DashboardWindow {
             }
 
             Image {
+                id: backgroundImageLoader
                 visible: plasmoid.configuration.isBackgroundImageSet
                 anchors.fill: parent;
                 source: plasmoid.configuration.backgroundImage
@@ -205,7 +206,7 @@ Kicker.DashboardWindow {
             }
 
             Rectangle{
-                visible: !plasmoid.configuration.isBackgroundImageSet
+                visible: !plasmoid.configuration.isBackgroundImageSet || backgroundImageLoader.status != Image.Ready
                 anchors.fill: parent
                 color:Qt.rgba(theme.backgroundColor.r, theme.backgroundColor.g, theme.backgroundColor.b,  alphaValue)
             }

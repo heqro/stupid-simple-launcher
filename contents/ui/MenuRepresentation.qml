@@ -41,6 +41,9 @@ import QtQml.Models 2.4
 // for vanilla scrollview
 import QtQuick.Controls 2.2
 
+// GaussianBlur
+import QtGraphicalEffects 1.0
+
 Kicker.DashboardWindow {
     
     id: root
@@ -214,6 +217,7 @@ Kicker.DashboardWindow {
             SearchBar {
 
                 id: searchField
+                z: 1 // show above the blur effect
 
                 writeSomething:  plasmoid.configuration.writeSomething
                 greetingText:    plasmoid.configuration.greetingText
@@ -243,9 +247,114 @@ Kicker.DashboardWindow {
                 }
             }
 
+            ShaderEffectSource {
+                id: backgroundShader
+                sourceItem: backgroundImageLoader
+                height: parent.height
+                width: parent.width
+                sourceRect: Qt.rect(x,y,width,height)
+                visible: plasmoid.configuration.isBackgroundImageSet && plasmoid.configuration.isBlurEnabled && plasmoid.configuration.isWallpaperBlurred
+            }
+
+            GaussianBlur {
+                visible: plasmoid.configuration.isBackgroundImageSet && plasmoid.configuration.isBlurEnabled && plasmoid.configuration.isWallpaperBlurred
+                source: backgroundShader
+                anchors.fill: backgroundShader
+                radius: plasmoid.configuration.blurRadius
+                samples:plasmoid.configuration.blurSamples
+            }
+
+            ShaderEffectSource {
+                visible: plasmoid.configuration.isBackgroundImageSet && plasmoid.configuration.isBlurEnabled && !plasmoid.configuration.isWallpaperBlurred
+                id: appsGridShader
+                sourceItem: backgroundImageLoader
+                height:appsGridLoader.height
+                width: appsGridLoader.width
+                anchors.top: appsGridPlusCategories.top
+                sourceRect: Qt.rect(x,y,width,height)
+            }
+
+            GaussianBlur {
+                visible: plasmoid.configuration.isBackgroundImageSet && plasmoid.configuration.isBlurEnabled && !plasmoid.configuration.isWallpaperBlurred
+                anchors.fill: appsGridShader
+                source: appsGridShader
+                radius: plasmoid.configuration.blurRadius
+                samples:plasmoid.configuration.blurSamples
+            }
+
+            ShaderEffectSource {
+                visible: plasmoid.configuration.isBackgroundImageSet && plasmoid.configuration.isBlurEnabled && !plasmoid.configuration.isWallpaperBlurred
+                id: categoriesListShaderLeft
+                sourceItem: backgroundImageLoader
+                height: showCategories && !showCategoriesOnTheRight && leftSideCategories.height
+                width: showCategories ? leftSideCategories.width : 0
+                anchors.top: appsGridPlusCategories.top
+                anchors.left: appsGridPlusCategories.left
+                sourceRect: Qt.rect(x,y,width,height)
+            }
+
+            GaussianBlur {
+                visible: plasmoid.configuration.isBackgroundImageSet && plasmoid.configuration.isBlurEnabled && !plasmoid.configuration.isWallpaperBlurred
+                anchors.fill: categoriesListShaderLeft
+                source: categoriesListShaderLeft
+                radius: plasmoid.configuration.blurRadius
+                samples:plasmoid.configuration.blurSamples
+            }
+
+            ShaderEffectSource {
+                visible: plasmoid.configuration.isBackgroundImageSet && plasmoid.configuration.isBlurEnabled && !plasmoid.configuration.isWallpaperBlurred
+                id: categoriesListShaderRight
+                sourceItem: backgroundImageLoader
+                height: showCategories && showCategoriesOnTheRight && rightSideCategories.height
+                width: showCategories ? rightSideCategories.width : 0
+                anchors.top: appsGridPlusCategories.top
+                anchors.right: appsGridPlusCategories.right
+                sourceRect: Qt.rect(x,y,width,height)
+            }
+
+            GaussianBlur {
+                visible: plasmoid.configuration.isBackgroundImageSet && plasmoid.configuration.isBlurEnabled && !plasmoid.configuration.isWallpaperBlurred
+                anchors.fill: categoriesListShaderRight
+                source: categoriesListShaderRight
+                radius: plasmoid.configuration.blurRadius
+                samples:plasmoid.configuration.blurSamples
+            }
+
+            ShaderEffectSource {
+                visible: plasmoid.configuration.isBackgroundImageSet && plasmoid.configuration.isBlurEnabled && !plasmoid.configuration.isWallpaperBlurred
+                id: favoritesShader
+                sourceItem: backgroundImageLoader
+                height: favoritesLoader.height
+                width: favoritesLoader.width
+                x: favoritesLoader.x
+                y: favoritesLoader.y + favoritesLoader.usedHeight
+                sourceRect: Qt.rect(x,y,width,height)
+            }
+
+            ShaderEffectSource {
+                id: sessionControlBarShader
+                visible: plasmoid.configuration.isBackgroundImageSet && plasmoid.configuration.isBlurEnabled && !plasmoid.configuration.isWallpaperBlurred
+                sourceItem: backgroundImageLoader
+                height: sessionControlBarLoader.height
+                width: sessionControlBarLoader.width
+                anchors.bottom: sessionControlBarLoader.bottom
+                anchors.left: sessionControlBarLoader.left
+                sourceRect: Qt.rect(x,y,width,height)
+            }
+
+            GaussianBlur {
+                visible: plasmoid.configuration.isBackgroundImageSet && plasmoid.configuration.isBlurEnabled && !plasmoid.configuration.isWallpaperBlurred
+                anchors.fill: sessionControlBarShader
+                source: sessionControlBarShader
+                radius: plasmoid.configuration.blurRadius
+                samples:plasmoid.configuration.blurSamples
+            }
+
             Item {
 
                 id: appsGridPlusCategories
+
+
 
                 anchors {
                     top: searchField.bottom
@@ -398,6 +507,15 @@ Kicker.DashboardWindow {
                             horizontalCenter: parent.horizontalCenter
                         }
 
+                        GaussianBlur {
+                            visible: plasmoid.configuration.isBackgroundImageSet && plasmoid.configuration.isBlurEnabled && !plasmoid.configuration.isWallpaperBlurred
+                            width: favoritesShader.width * favoritesLoader.active
+                            height: favoritesShader.height * favoritesLoader.active
+                            source: favoritesShader
+                            radius: plasmoid.configuration.blurRadius
+                            samples:plasmoid.configuration.blurSamples
+                        }
+
                         height: plasmoid.configuration.favoritesIconSize
 
                         sourceComponent: ItemGridView {
@@ -418,8 +536,8 @@ Kicker.DashboardWindow {
                                 z: -1 // draw this element under the ItemGridView
                                 height: parent.height
                                 width: parent.height * Math.floor(parent.width / parent.height)
-                                color:Qt.rgba(theme.backgroundColor.r, theme.backgroundColor.g, theme.backgroundColor.b,  alphaValue * 0.6)
-                                border.color: theme.highlightColor
+                                color:Qt.rgba(theme.backgroundColor.r, theme.backgroundColor.g, theme.backgroundColor.b,  plasmoid.configuration.showItemGridBackground * plasmoid.configuration.itemGridTransparency)
+                                border.color: Qt.rgba(theme.highlightColor.r,theme.highlightColor.g,theme.highlightColor.b,plasmoid.configuration.showItemGridBackground * plasmoid.configuration.itemGridTransparency)
                                 border.width: Math.floor(units.smallSpacing/2)
                                 radius: units.smallSpacing
                             }
@@ -439,6 +557,16 @@ Kicker.DashboardWindow {
                     horizontalCenter: parent.horizontalCenter
                     bottom: parent.bottom
                     bottomMargin: active ? units.iconSizes.smallMedium : 0
+                }
+
+                Rectangle {
+                    z: -1 // draw this element under the ItemGridView
+                    height: parent.height
+                    width: parent.width
+                    color:Qt.rgba(theme.backgroundColor.r, theme.backgroundColor.g, theme.backgroundColor.b,  plasmoid.configuration.showSessionControlBackground * plasmoid.configuration.sessionControlTransparency)
+                    border.color: Qt.rgba(theme.highlightColor.r,theme.highlightColor.g,theme.highlightColor.b,plasmoid.configuration.showSessionControlBackground * plasmoid.configuration.sessionControlTransparency)
+                    border.width: Math.floor(units.smallSpacing/2)
+                    radius: units.smallSpacing
                 }
             }
         }

@@ -47,7 +47,7 @@ ConfigModel {
     }
 
     ConfigCategory {
-        name: i18n("Background image")
+        name: i18n("Background, opacity, blur")
         icon: "preferences-desktop-wallpaper"
         source: "configuration_sheets/ConfigBackground.qml"
     }

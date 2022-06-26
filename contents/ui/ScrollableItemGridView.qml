@@ -19,6 +19,8 @@
 
 import QtQuick 2.4
 
+import org.kde.plasma.plasmoid 2.0
+
 import org.kde.plasma.components 2.0 as PlasmaComponents
 import org.kde.plasma.extras 2.0 as PlasmaExtras
 import org.kde.kquickcontrolsaddons 2.0
@@ -248,6 +250,16 @@ FocusScope {
 
             delegate: ItemGridDelegate {
                 showLabel: showLabels
+            }
+
+            Rectangle {
+                z: -1 // draw this element under the ItemGridView
+                height: parent.height
+                width: parent.width
+                color:Qt.rgba(theme.backgroundColor.r, theme.backgroundColor.g, theme.backgroundColor.b,  plasmoid.configuration.showItemGridBackground * plasmoid.configuration.itemGridTransparency)
+                border.color: Qt.rgba(theme.highlightColor.r,theme.highlightColor.g,theme.highlightColor.b,plasmoid.configuration.showItemGridBackground * plasmoid.configuration.itemGridTransparency)
+                border.width: Math.floor(units.smallSpacing/2)
+                radius: units.smallSpacing
             }
 
             highlight: PlasmaExtras.Highlight {}

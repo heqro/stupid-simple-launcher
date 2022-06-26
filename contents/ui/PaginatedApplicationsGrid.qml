@@ -133,15 +133,15 @@ Item {
                 id: appsGridPage
                 cellWidth:  cellSize
                 cellHeight: cellSize
-                Rectangle { // We could start having cool designs for stuff. This is just a mock-up of drawing a rectangle.
+
+                Rectangle {
                     z: -1 // draw this element under the ItemGridView
-                    anchors.fill:parent
-                    color:Qt.rgba(theme.backgroundColor.r, theme.backgroundColor.g, theme.backgroundColor.b,  alphaValue * 0.6)
-                    border.color: theme.highlightColor
+                    height: parent.height
+                    width: parent.width
+                    color:Qt.rgba(theme.backgroundColor.r, theme.backgroundColor.g, theme.backgroundColor.b,  plasmoid.configuration.showItemGridBackground * plasmoid.configuration.itemGridTransparency)
+                    border.color: Qt.rgba(theme.highlightColor.r,theme.highlightColor.g,theme.highlightColor.b,plasmoid.configuration.showItemGridBackground * plasmoid.configuration.itemGridTransparency)
                     border.width: Math.floor(units.smallSpacing/2)
                     radius: units.smallSpacing
-                    visible: plasmoid.configuration.drawPaginationRectangle
-
                 }
 
                 onKeyNavUp: {

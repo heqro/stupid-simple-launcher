@@ -42,12 +42,40 @@
     <entry name="categoriesTransparency" type="Double">
       <default>0.6</default>
     </entry>
+    <entry name="showItemGridBackground" type="Bool">
+      <default>false</default>
+    </entry>
+    <entry name="itemGridTransparency" type="Double">
+      <default>0.6</default>
+    </entry>
+    <entry name="showSessionControlBackground" type="Bool">
+      <default>false</default>
+    </entry>
+    <entry name="sessionControlTransparency" type="Double">
+      <default>0.6</default>
+    </entry>
     <entry name="isBackgroundImageSet" type="Bool">
       <default>false</default>
     </entry>
     <entry name="backgroundImage" type="String">
       <label>The path to the file indicating the background image.</label>
       <default></default>
+    </entry>
+    <entry name="blurSamples" type="Int">
+      <label>Samples input for the gaussian blur.</label>
+      <default>9</default>
+    </entry>
+    <entry name="blurRadius" type="Int">
+      <label>Radius input for the gaussian blur.</label>
+      <default>4</default>
+    </entry>
+    <entry name="isBlurEnabled" type="Bool">
+      <label></label>
+      <default>false</default>
+    </entry>
+    <entry name="isWallpaperBlurred" type="Bool">
+      <label>When blur is enabled, determine whether or not to blur the user's wallpaper image.</label>
+      <default>false</default>
     </entry>
     <entry name="categoriesText" type="Bool">
         <default>false</default>
@@ -129,9 +157,6 @@
     </entry>
     <entry name="paginateGrid" type="Bool">
       <default>false</default>
-    </entry>
-    <entry name="drawPaginationRectangle" type="Bool">
-      <default>true</default>
     </entry>
     <entry name="hiddenApplicationsName" type="StringList">
         <default></default>

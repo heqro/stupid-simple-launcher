@@ -11,6 +11,20 @@ Rectangle { // (CONCEPT) line under search field. This should be loaded on deman
     anchors.top: parent.bottom
     color: isSearchBarFocused ? theme.buttonFocusColor : theme.highlightColor
 
+    Rectangle {
+        height: parentHeight
+        anchors.bottom: parent.top
+        radius: 2
+        width: parent.width
+        color: Qt.rgba(theme.backgroundColor.r,theme.backgroundColor.g,theme.backgroundColor.b,searchBarOpacity)
+    }
+
+    TextMetrics { // dummy metrics to help keep the height of the search bar
+        id: dummyMetrics
+        text: 'Dummy text'
+        font.pointSize: theme.defaultFont.pointSize * 2 // account for the arbitrary font size chosen in the parent object.
+    }
+
 
     TextMetrics { // this elements allows us to read the width of the user's input text
         id: t_metrics

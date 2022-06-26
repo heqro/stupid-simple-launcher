@@ -9,11 +9,10 @@ import org.kde.kcoreaddons 1.0 as KCoreAddons
 Rectangle { // (CONCEPT) Inspired on https://material.io/components/text-fields
 
     height: parentHeight
-    color: theme.backgroundColor
+    color: Qt.rgba(theme.backgroundColor.r,theme.backgroundColor.g,theme.backgroundColor.b,searchBarOpacity)
 
     readonly property real linesWidth: Math.floor(units.smallSpacing / 2)
 
-    radius: Math.ceil(1.75 * units.smallSpacing)
     width: t_metrics.width + Math.ceil(1.25 * units.largeSpacing)
 
     TextMetrics { // this elements allows us to read the width of the user's input text

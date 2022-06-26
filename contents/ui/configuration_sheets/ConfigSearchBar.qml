@@ -139,11 +139,11 @@ Item {
             Layout.fillWidth: true
             id: opacitySetter
             text: i18n("Select the search bar's opacity")
-            visible: designFullyFledged.checked
+            visible: !designNull.checked
         }
 
         RowLayout {
-            visible: designFullyFledged.checked
+            visible: !designNull.checked
             Layout.fillWidth: true
 
             PlasmaComponents.Slider {

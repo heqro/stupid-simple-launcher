@@ -51,7 +51,6 @@ Item {
     property alias cfg_startOnFavorites: startOnFavorites.checked
 
     property alias cfg_paginateGrid: paginateGrid.checked
-    property alias cfg_drawPaginationRectangle: drawPaginationRectangle.checked
 
     ColumnLayout {
         anchors.horizontalCenter: parent.horizontalCenter
@@ -142,14 +141,6 @@ Item {
             Layout.leftMargin: units.smallSpacing
             id: paginateGrid
             text: i18n("Paginate the applications grid")
-        }
-
-        CheckBox {
-            Layout.fillWidth: true
-            Layout.leftMargin: units.smallSpacing
-            id: drawPaginationRectangle
-            text: i18n("Draw rectangle around the applications grid")
-            visible: paginateGrid.checked
         }
 
         RowLayout {

@@ -17,11 +17,26 @@ Item {
     property alias cfg_isBackgroundImageSet: setBackgroundImageCheckbox.checked
     property alias cfg_backgroundImage: fileDialog.chosenPath
 
+    // Background properties
     property alias cfg_showLabelBackground: showBackgroundLabelCheckbox.checked
     property alias cfg_labelTransparency: labelAlphaValue.value
 
     property alias cfg_showCategoriesBackground: showBackgroundCategoriesCheckbox.checked
     property alias cfg_categoriesTransparency: categoriesListAlphaValue.value
+
+    property alias cfg_showItemGridBackground: itemGridCheckbox.checked
+    property alias cfg_itemGridTransparency: appsGridAlphaValue.value
+
+    property alias cfg_showSessionControlBackground: sessionControlCheckbox.checked
+    property alias cfg_sessionControlTransparency: sessionControlAlphaValue.value
+
+    // Blur properties
+    property alias cfg_blurSamples: samplesSpinbox.value
+    property alias cfg_blurRadius: radiusSpinbox.value
+
+    property alias cfg_isBlurEnabled: menuBlurCheckbox.checked
+    property alias cfg_isWallpaperBlurred: blurBackgroundRButton.checked
+
 
     ColumnLayout {
         anchors.horizontalCenter: parent.horizontalCenter
@@ -101,7 +116,6 @@ Item {
             }
 
             PlasmaComponents.Label {
-                id: labelAlphaValueText
                 text: Math.floor(labelAlphaValue.value * 100) + "%"
                 visible: showBackgroundLabelCheckbox.checked
             }
@@ -127,14 +141,108 @@ Item {
             }
 
             PlasmaComponents.Label {
-                id: categoriesListAlphaValueText
                 text: Math.floor(categoriesListAlphaValue.value * 100) + "%"
                 visible: showBackgroundCategoriesCheckbox.checked
             }
         }
 
-        PlasmaExtras.Heading {
-            text: i18n("Blur")
+        CheckBox {
+            id: itemGridCheckbox
+            text: i18n("Add background to applications grid and favorites grid")
+        }
+
+        RowLayout {
+            Layout.fillWidth: true
+
+            PlasmaComponents.Slider {
+                id: appsGridAlphaValue
+                enabled: itemGridCheckbox.checked
+            }
+
+            PlasmaComponents.Label {
+                text: Math.floor(appsGridAlphaValue.value * 100) + "%"
+                visible: itemGridCheckbox.checked
+            }
+        }
+
+        CheckBox {
+            id: sessionControlCheckbox
+            text: i18n("Add background to the session control bar")
+            visible: plasmoid.configuration.showSessionControlBar
+        }
+
+        RowLayout {
+            visible: plasmoid.configuration.showSessionControlBar
+            Layout.fillWidth: true
+
+            PlasmaComponents.Slider {
+                id: sessionControlAlphaValue
+                enabled: sessionControlCheckbox.checked
+            }
+
+            PlasmaComponents.Label {
+                text: Math.floor(sessionControlAlphaValue.value * 100) + "%"
+                visible: sessionControlCheckbox.checked
+            }
+        }
+
+        Row {
+            CheckBox { id: menuBlurCheckbox }
+            PlasmaExtras.Heading {
+                text: i18n("Blur")
+            }
+        }
+
+        Row {
+            visible: menuBlurCheckbox.checked
+            PlasmaComponents.Label {
+                text: i18n('Samples: ')
+                PlasmaCore.ToolTipArea {
+                    mainText: i18n('Blur quality')
+                    subText: i18n('The higher the better, at the cost of performance')
+                    anchors.centerIn: parent
+                    anchors.fill: parent
+                }
+            }
+            SpinBox {
+                id: samplesSpinbox
+            }
+        }
+
+
+        Row {
+            visible: menuBlurCheckbox.checked
+            PlasmaComponents.Label {
+                text: i18n('Radius: ')
+                PlasmaCore.ToolTipArea {
+                    mainText: i18n('Influence of a pixel on its neighboring pixels')
+                    subText: i18n('The higher, the bigger blur effect')
+                    anchors.centerIn: parent
+                    anchors.fill: parent
+                }
+            }
+
+            SpinBox {
+                id: radiusSpinbox
+            }
+        }
+
+        GroupBox {
+            visible: menuBlurCheckbox.checked
+            Column {
+                PlasmaComponents.Label {
+                    text: i18n('Apply blur...')
+                }
+                RadioButton {
+                    id: blurItemsRButton
+                    text: i18n('to the menu\'s items')
+                    checked: true
+                }
+                RadioButton {
+                    id: blurBackgroundRButton
+                    text: i18n('to the wallpaper image')
+                }
+            }
         }
 
     }

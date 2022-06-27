@@ -19,7 +19,7 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
-import QtQuick 2.4
+import QtQuick 2.7
 
 // for using RowLayout
 import QtQuick.Layouts 1.1
@@ -107,15 +107,10 @@ Kicker.DashboardWindow {
             searchField.unfocus()
             appsGridLoader.item.changeCategory(appsGridLoader.allAppsIndex)
             appsGridLoader.item.highlightItemAt(0, 0)
-//             categoriesList.currentIndex = 0
             getCategoriesList().setCurrentIndex(0)
         } else {
             root.toggle()
         }
-    }
-
-    onHiddenAppsChanged: {
-        rootModel.refresh()
     }
 
     onSearchingChanged: {
@@ -354,8 +349,6 @@ Kicker.DashboardWindow {
 
                 id: appsGridPlusCategories
 
-
-
                 anchors {
                     top: searchField.bottom
                     bottom: sessionControlBarLoader.active ? sessionControlBarLoader.top : parent.bottom
@@ -442,6 +435,16 @@ Kicker.DashboardWindow {
 
                         Component.onCompleted: {
                             source = Qt.binding(function() {return plasmoid.configuration.paginateGrid ? "PaginatedApplicationsGrid.qml" : "ApplicationsGrid.qml"}) // load the component only after knowing the screen real estate we will have
+                        }
+
+                        Connections {
+                            id: hiddenAppsListener
+                            target: root
+                            enabled: false
+                            function onHiddenAppsChanged() {
+                                rootModel.refresh()
+                                appsGridLoader.item.resetAppsGrid()
+                            }
                         }
 
                     }
@@ -575,9 +578,10 @@ Kicker.DashboardWindow {
         // Dummy query to preload runner model
         log('MenuRepresentation.qml onCompleted')
         kicker.reset.connect(function resetBecauseOfKicker() {
-            if (appsGridLoader.state == Loader.Ready && appsGridLoader.item) {reset("Kicker reset")}
+            if (appsGridLoader.state == Loader.Ready) {reset("Kicker reset")}
             else log("Won't reset (Component is loading and will reset once it is done loading)")
         });
+        hiddenAppsListener.enabled = true // reduce first launch penalty by explicitly enabling the signal listener once the menu is finished loading
 
     }
 }

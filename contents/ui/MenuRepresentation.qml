@@ -241,6 +241,7 @@ Kicker.DashboardWindow {
                 }
             }
 
+            // Wallpaper blur
             ShaderEffectSource {
                 id: backgroundShader
                 sourceItem: backgroundImageLoader
@@ -258,6 +259,7 @@ Kicker.DashboardWindow {
                 samples:plasmoid.configuration.blurSamples
             }
 
+            // Items blur
             ShaderEffectSource {
                 visible: plasmoid.configuration.isBackgroundImageSet && plasmoid.configuration.isBlurEnabled && !plasmoid.configuration.isWallpaperBlurred
                 id: appsGridShader
@@ -280,8 +282,8 @@ Kicker.DashboardWindow {
                 visible: plasmoid.configuration.isBackgroundImageSet && plasmoid.configuration.isBlurEnabled && !plasmoid.configuration.isWallpaperBlurred
                 id: categoriesListShader
                 sourceItem: backgroundImageLoader
-                height: showCategories && categoriesLoader.height
-                width: showCategories && categoriesLoader.width
+                height: showCategories * categoriesLoader.height
+                width: showCategories * categoriesLoader.width
                 anchors.top: appsGridPlusCategories.top
                 anchors.left: appsGridPlusCategories.left
                 sourceRect: Qt.rect(x,y,width,height)
@@ -344,7 +346,7 @@ Kicker.DashboardWindow {
                     active: showCategories
 
                     height: parent.height
-                    width: active ? Math.ceil(categoriesSidebarWidth + units.iconSizes.medium) : 0
+                    width: active * Math.ceil(categoriesSidebarWidth + units.iconSizes.medium)
 
                     sourceComponent: CategoriesList {
                         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
@@ -433,8 +435,10 @@ Kicker.DashboardWindow {
                             delegate: Rectangle {
 
                                 color: theme.headerTextColor
+                                border.color: index === currentPageIndicator.currentIndex ? theme.buttonFocusColor : theme.highlightColor
+                                border.width: Math.floor(0.7 * units.smallSpacing)
                                 opacity: index === currentPageIndicator.currentIndex ? 0.75 : (indicatorMouseArea.containsMouse ? 0.5 : 0.35)
-                                height: index === currentPageIndicator.currentIndex ? units.iconSizes.smallMedium : units.iconSizes.small
+                                height: index === currentPageIndicator.currentIndex ? units.iconSizes.medium : units.iconSizes.smallMedium
                                 width:  height
                                 radius: height / 2
                                 anchors.verticalCenter: parent.verticalCenter // align all indicators

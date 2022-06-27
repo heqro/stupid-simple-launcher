@@ -97,8 +97,7 @@ Kicker.DashboardWindow {
 
     function getCategoriesList() {
         if (!showCategories) return
-        if (showCategoriesOnTheRight && rightSideCategories.item) return rightSideCategories.item
-        if (!showCategoriesOnTheRight && leftSideCategories.item) return leftSideCategories.item
+        if (categoriesLoader.item) return categoriesLoader.item
     }
 
     onKeyEscapePressed: { // using escape for either closing the menu or stopping the search
@@ -279,10 +278,10 @@ Kicker.DashboardWindow {
 
             ShaderEffectSource {
                 visible: plasmoid.configuration.isBackgroundImageSet && plasmoid.configuration.isBlurEnabled && !plasmoid.configuration.isWallpaperBlurred
-                id: categoriesListShaderLeft
+                id: categoriesListShader
                 sourceItem: backgroundImageLoader
-                height: showCategories && !showCategoriesOnTheRight && leftSideCategories.height
-                width: showCategories ? leftSideCategories.width : 0
+                height: showCategories && categoriesLoader.height
+                width: showCategories && categoriesLoader.width
                 anchors.top: appsGridPlusCategories.top
                 anchors.left: appsGridPlusCategories.left
                 sourceRect: Qt.rect(x,y,width,height)
@@ -290,27 +289,8 @@ Kicker.DashboardWindow {
 
             GaussianBlur {
                 visible: plasmoid.configuration.isBackgroundImageSet && plasmoid.configuration.isBlurEnabled && !plasmoid.configuration.isWallpaperBlurred
-                anchors.fill: categoriesListShaderLeft
-                source: categoriesListShaderLeft
-                radius: plasmoid.configuration.blurRadius
-                samples:plasmoid.configuration.blurSamples
-            }
-
-            ShaderEffectSource {
-                visible: plasmoid.configuration.isBackgroundImageSet && plasmoid.configuration.isBlurEnabled && !plasmoid.configuration.isWallpaperBlurred
-                id: categoriesListShaderRight
-                sourceItem: backgroundImageLoader
-                height: showCategories && showCategoriesOnTheRight && rightSideCategories.height
-                width: showCategories ? rightSideCategories.width : 0
-                anchors.top: appsGridPlusCategories.top
-                anchors.right: appsGridPlusCategories.right
-                sourceRect: Qt.rect(x,y,width,height)
-            }
-
-            GaussianBlur {
-                visible: plasmoid.configuration.isBackgroundImageSet && plasmoid.configuration.isBlurEnabled && !plasmoid.configuration.isWallpaperBlurred
-                anchors.fill: categoriesListShaderRight
-                source: categoriesListShaderRight
+                anchors.fill: categoriesListShader
+                source: categoriesListShader
                 radius: plasmoid.configuration.blurRadius
                 samples:plasmoid.configuration.blurSamples
             }
@@ -345,9 +325,10 @@ Kicker.DashboardWindow {
                 samples:plasmoid.configuration.blurSamples
             }
 
-            Item {
+            Row {
 
                 id: appsGridPlusCategories
+                layoutDirection: showCategories && showCategoriesOnTheRight ? Qt.RightToLeft : Qt.LeftToRight
 
                 anchors {
                     top: searchField.bottom
@@ -359,35 +340,12 @@ Kicker.DashboardWindow {
                 }
 
                 Loader {
-                    id: leftSideCategories
-                    active: showCategories && !showCategoriesOnTheRight
-                    anchors {
-                        top: parent.top
-                        left: parent.left
-                        bottom: parent.bottom
-                    }
-                    width: active ? Math.ceil(categoriesSidebarWidth + units.iconSizes.medium) : 0
-                    sourceComponent: CategoriesList {
-                        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-                        Rectangle {
-                            height: parent.height
-                            width: categoriesSidebarWidth
-                            color: Qt.rgba(theme.backgroundColor.r, theme.backgroundColor.g, theme.backgroundColor.b,  plasmoid.configuration.categoriesTransparency)
-                            visible: plasmoid.configuration.showCategoriesBackground
-                        }
-                    }
-                    onLoaded: item.updateCategories()
-                }
+                    id: categoriesLoader
+                    active: showCategories
 
-                Loader {
-                    id: rightSideCategories
-                    active: showCategories && showCategoriesOnTheRight
-                    anchors {
-                        top: parent.top
-                        right: parent.right
-                        bottom: parent.bottom
-                    }
+                    height: parent.height
                     width: active ? Math.ceil(categoriesSidebarWidth + units.iconSizes.medium) : 0
+
                     sourceComponent: CategoriesList {
                         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
                         Rectangle {
@@ -401,13 +359,10 @@ Kicker.DashboardWindow {
                 }
 
                 Item {
+
                     id: appsGrid
-                    anchors {
-                        top: parent.top
-                        bottom: parent.bottom
-                        left: leftSideCategories.right
-                        right: rightSideCategories.left
-                    }
+                    height: parent.height
+                    width: parent.width - categoriesLoader.width
 
                     Loader {
 

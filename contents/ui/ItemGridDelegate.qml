@@ -1,4 +1,4 @@
-import QtQuick 2.4
+import QtQuick 2.6
 
 import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
@@ -67,73 +67,85 @@ Item {
         }
     }
 
+    Column {
+        anchors.fill: parent
+//         leftPadding: units.largeSpacing
+        bottomPadding: units.largeSpacing
+//         padding: units.largeSpacing
+//         rightPadding: units.largeSpacing
+        topPadding: units.largeSpacing
 
-    PlasmaCore.IconItem {
-        id: icon
-        animated: false
-        usesPlasmaTheme: item.GridView.view.usesPlasmaTheme
-        source: model.decoration
-        height: parent.height - labelLoader.height * labelLoader.active
-        width: parent.height
-        anchors.top: parent.top
+        PlasmaCore.IconItem {
+            id: icon
+            animated: false
+            usesPlasmaTheme: item.GridView.view.usesPlasmaTheme
+            source: model.decoration
+            height: parent.height - parent.topPadding - parent.bottomPadding - labelLoader.height * labelLoader.active
+//             height: parent.height - labelLoader.height * labelLoader.active - topPadding - bottomPadding
+            width: height
+//             anchors.top: parent.top
+            anchors.horizontalCenter: parent.horizontalCenter
 
-    }
+        }
 
-    Loader {
-        id: labelLoader
-        active: showLabel
-        height: active ? t_metrics.height * 2 + units.smallSpacing/3 : 0// allow a maximum of three
-        width: active ? parent.width : 0
-        anchors.top: icon.bottom
+        Loader {
+            id: labelLoader
+            active: showLabel
+            height: active ? t_metrics.height * 2 + units.smallSpacing/3 : 0// allow a maximum of three
+            width: active ? parent.width - units.largeSpacing : 0
+            anchors.horizontalCenter: parent.horizontalCenter
+            //anchors.top: icon.bottom
 
-        sourceComponent: Item {
+            sourceComponent: Item {
 
-            id: labelBoundary
-            anchors.fill: parent
-            PlasmaComponents.Label {
-
-                id: label
-                visible: showLabel
-
+                id: labelBoundary
                 anchors.fill: parent
-                anchors.leftMargin:     units.smallSpacing/2
-                anchors.rightMargin:    units.smallSpacing/2
-                anchors.bottomMargin:   units.smallSpacing/3
+                PlasmaComponents.Label {
+
+                    id: label
+                    visible: showLabel
+
+                    anchors.fill: parent
+                    anchors.leftMargin:     units.smallSpacing/2
+                    anchors.rightMargin:    units.smallSpacing/2
+                    anchors.bottomMargin:   units.smallSpacing/3
 
 
-                horizontalAlignment: Text.AlignHCenter
+                    horizontalAlignment: Text.AlignHCenter
 
-                elide: Text.ElideRight
-                wrapMode: Text.WordWrap
-                maximumLineCount: 2
+                    elide: Text.ElideRight
+                    wrapMode: Text.WordWrap
+                    maximumLineCount: 2
 
-                text: model.display != undefined ? model.display : ""
+                    text: model.display != undefined ? model.display : ""
 
-                Rectangle {
-                    z: -1
-                    width: Math.min(label.contentWidth + units.smallSpacing * 2, item.width)
-                    height: label.implicitHeight
-                    anchors.centerIn: parent
-                    color: Qt.rgba(theme.backgroundColor.r, theme.backgroundColor.g, theme.backgroundColor.b,  plasmoid.configuration.labelTransparency)
-                    visible: plasmoid.configuration.showLabelBackground
-                    radius: 4
+                    Rectangle {
+                        z: -1
+                        width: Math.min(label.contentWidth + units.smallSpacing * 2, item.width)
+                        height: label.implicitHeight
+                        anchors.centerIn: parent
+                        color: Qt.rgba(theme.backgroundColor.r, theme.backgroundColor.g, theme.backgroundColor.b,  plasmoid.configuration.labelTransparency)
+                        visible: plasmoid.configuration.showLabelBackground
+                        radius: 4
+                    }
+
                 }
+            }
 
+            TextMetrics { // tool get font's height so as to define rectangle's height
+                id: t_metrics
+                text: model.display != undefined ? model.display : "" // use a text long enough to hold a meaningful query
             }
         }
 
-        TextMetrics { // tool get font's height so as to define rectangle's height
-            id: t_metrics
-            text: model.display != undefined ? model.display : "" // use a text long enough to hold a meaningful query
+        PlasmaCore.ToolTipArea {
+            id: delegateTooltip
+            mainText: model.display != undefined ? model.display : ""
+            subText: model.description != undefined ? model.description : ""
+            //subText: model.url != undefined ? model.url : "" // debugging option for future stuff.
+            interactive: false
         }
-    }
 
-    PlasmaCore.ToolTipArea {
-        id: delegateTooltip
-        mainText: model.display != undefined ? model.display : ""
-        subText: model.description != undefined ? model.description : ""
-        //subText: model.url != undefined ? model.url : "" // debugging option for future stuff.
-        interactive: false
     }
 
     Keys.onPressed: {

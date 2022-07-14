@@ -35,6 +35,7 @@ Item {
     property string cfg_icon: plasmoid.configuration.icon
 
     property alias cfg_iconSize:      iconSize.value
+    property alias cfg_labelLines: labelLines.value
     property alias cfg_favoritesIconSize: favoritesIconSize.value
 
     property alias cfg_tooltipsInGrid: tooltipsInGrid.checked
@@ -84,6 +85,20 @@ Item {
                 from: 24
                 to: 256
                 stepSize: 4
+            }
+        }
+
+        RowLayout{
+            Layout.fillWidth: true
+            Label {
+                Layout.leftMargin: units.smallSpacing
+                text: i18n("Number of lines in labels")
+            }
+            SpinBox{
+                id: labelLines
+                from: 1
+                to: 3
+                stepSize: 1
             }
         }
 

@@ -7,6 +7,7 @@ import org.kde.kquickcontrolsaddons 2.0
 
 // for using ColumnLayout
 import QtQuick.Layouts 1.1
+import QtQuick.Controls 2.0
 
 import "../code/tools.js" as Tools
 
@@ -69,10 +70,7 @@ Item {
 
     Column {
         anchors.fill: parent
-//         leftPadding: units.largeSpacing
         bottomPadding: units.largeSpacing
-//         padding: units.largeSpacing
-//         rightPadding: units.largeSpacing
         topPadding: units.largeSpacing
 
         PlasmaCore.IconItem {
@@ -81,48 +79,46 @@ Item {
             usesPlasmaTheme: item.GridView.view.usesPlasmaTheme
             source: model.decoration
             height: parent.height - parent.topPadding - parent.bottomPadding - labelLoader.height * labelLoader.active
-//             height: parent.height - labelLoader.height * labelLoader.active - topPadding - bottomPadding
             width: height
-//             anchors.top: parent.top
             anchors.horizontalCenter: parent.horizontalCenter
-
         }
 
         Loader {
             id: labelLoader
             active: showLabel
-            height: active ? t_metrics.height * 2 + units.smallSpacing/3 : 0// allow a maximum of three
+            height: active ? t_metrics.height * plasmoid.configuration.labelLines : 0
             width: active ? parent.width - units.largeSpacing : 0
             anchors.horizontalCenter: parent.horizontalCenter
-            //anchors.top: icon.bottom
 
             sourceComponent: Item {
 
                 id: labelBoundary
                 anchors.fill: parent
-                PlasmaComponents.Label {
+
+                Label {
 
                     id: label
                     visible: showLabel
 
-                    anchors.fill: parent
+                    anchors.centerIn: parent
                     anchors.leftMargin:     units.smallSpacing/2
                     anchors.rightMargin:    units.smallSpacing/2
                     anchors.bottomMargin:   units.smallSpacing/3
-
+                    width: parent.width
 
                     horizontalAlignment: Text.AlignHCenter
 
                     elide: Text.ElideRight
                     wrapMode: Text.WordWrap
-                    maximumLineCount: 2
+                    maximumLineCount: plasmoid.configuration.labelLines
 
                     text: model.display != undefined ? model.display : ""
+                    padding: units.smallSpacing * 2
 
-                    Rectangle {
+                    background: Rectangle {
                         z: -1
-                        width: Math.min(label.contentWidth + units.smallSpacing * 2, item.width)
-                        height: label.implicitHeight
+                        width: parent.contentWidth + units.largeSpacing
+                        height: parent.contentHeight + units.smallSpacing
                         anchors.centerIn: parent
                         color: Qt.rgba(theme.backgroundColor.r, theme.backgroundColor.g, theme.backgroundColor.b,  plasmoid.configuration.labelTransparency)
                         visible: plasmoid.configuration.showLabelBackground

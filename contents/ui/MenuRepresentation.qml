@@ -375,7 +375,7 @@ Kicker.DashboardWindow {
                         readonly property int availableHeight: parent.height - pageIndicatorLoader.usedHeight - favoritesLoader.usedHeight
 
                         height: plasmoid.configuration.paginateGrid ? cellSize * Math.floor(availableHeight / cellSize) : availableHeight
-                        width: cellSize * Math.floor(parent.width / cellSize)
+                        width: cellSize * Math.floor((parent.width - !plasmoid.configuration.paginateGrid * 50) / cellSize) // 50 is a little bit higher than the usual scrollbar width. We are implicitly making room for it with this expression (when we are using the scrollable version).
 
                         anchors {
                             top: parent.top

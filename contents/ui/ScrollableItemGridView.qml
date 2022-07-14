@@ -189,20 +189,29 @@ FocusScope {
             }
         }
 
-        ScrollView {
-            id: scrollArea
-            ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-            ScrollBar.vertical.policy: ScrollBar.AlwaysOff
-            anchors.fill: parent
-
+        ScrollBar {
+            id: bar
+            active: true
+            anchors {
+                left:   gridView.right
+                top:    gridView.top
+                bottom: gridView.bottom
+            }
+        }
 
         GridView {
             //this defines how the icons will look like in our menu
             id: gridView
 //             parent: plasmoid.configuration.paginateGrid ? dropArea : scrollArea
-            anchors.fill: parent
+            height: parent.height
+            width: parent.width
+            anchors.top: parent.top
+            anchors.left: parent.left
+//             anchors.fill: parent
 //             interactive: !plasmoid.configuration.paginateGrid
             clip: true
+
+            ScrollBar.vertical: bar
 
 
             property bool usesPlasmaTheme: false
@@ -340,7 +349,7 @@ FocusScope {
                 }
             }
 
-        }
+        //}
 
         }
 

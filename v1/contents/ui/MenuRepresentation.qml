@@ -19,7 +19,7 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
-import QtQuick 2.4
+import QtQuick 2.7
 
 // for using RowLayout
 import QtQuick.Layouts 1.1
@@ -97,8 +97,7 @@ Kicker.DashboardWindow {
 
     function getCategoriesList() {
         if (!showCategories) return
-        if (showCategoriesOnTheRight && rightSideCategories.item) return rightSideCategories.item
-        if (!showCategoriesOnTheRight && leftSideCategories.item) return leftSideCategories.item
+        if (categoriesLoader.item) return categoriesLoader.item
     }
 
     onKeyEscapePressed: { // using escape for either closing the menu or stopping the search
@@ -107,15 +106,10 @@ Kicker.DashboardWindow {
             searchField.unfocus()
             appsGridLoader.item.changeCategory(appsGridLoader.allAppsIndex)
             appsGridLoader.item.highlightItemAt(0, 0)
-//             categoriesList.currentIndex = 0
             getCategoriesList().setCurrentIndex(0)
         } else {
             root.toggle()
         }
-    }
-
-    onHiddenAppsChanged: {
-        rootModel.refresh()
     }
 
     onSearchingChanged: {
@@ -247,6 +241,7 @@ Kicker.DashboardWindow {
                 }
             }
 
+            // Wallpaper blur
             ShaderEffectSource {
                 id: backgroundShader
                 sourceItem: backgroundImageLoader
@@ -264,6 +259,7 @@ Kicker.DashboardWindow {
                 samples:plasmoid.configuration.blurSamples
             }
 
+            // Items blur
             ShaderEffectSource {
                 visible: plasmoid.configuration.isBackgroundImageSet && plasmoid.configuration.isBlurEnabled && !plasmoid.configuration.isWallpaperBlurred
                 id: appsGridShader
@@ -284,10 +280,10 @@ Kicker.DashboardWindow {
 
             ShaderEffectSource {
                 visible: plasmoid.configuration.isBackgroundImageSet && plasmoid.configuration.isBlurEnabled && !plasmoid.configuration.isWallpaperBlurred
-                id: categoriesListShaderLeft
+                id: categoriesListShader
                 sourceItem: backgroundImageLoader
-                height: showCategories && !showCategoriesOnTheRight && leftSideCategories.height
-                width: showCategories ? leftSideCategories.width : 0
+                height: showCategories * categoriesLoader.height
+                width: showCategories * categoriesLoader.width
                 anchors.top: appsGridPlusCategories.top
                 anchors.left: appsGridPlusCategories.left
                 sourceRect: Qt.rect(x,y,width,height)
@@ -295,27 +291,8 @@ Kicker.DashboardWindow {
 
             GaussianBlur {
                 visible: plasmoid.configuration.isBackgroundImageSet && plasmoid.configuration.isBlurEnabled && !plasmoid.configuration.isWallpaperBlurred
-                anchors.fill: categoriesListShaderLeft
-                source: categoriesListShaderLeft
-                radius: plasmoid.configuration.blurRadius
-                samples:plasmoid.configuration.blurSamples
-            }
-
-            ShaderEffectSource {
-                visible: plasmoid.configuration.isBackgroundImageSet && plasmoid.configuration.isBlurEnabled && !plasmoid.configuration.isWallpaperBlurred
-                id: categoriesListShaderRight
-                sourceItem: backgroundImageLoader
-                height: showCategories && showCategoriesOnTheRight && rightSideCategories.height
-                width: showCategories ? rightSideCategories.width : 0
-                anchors.top: appsGridPlusCategories.top
-                anchors.right: appsGridPlusCategories.right
-                sourceRect: Qt.rect(x,y,width,height)
-            }
-
-            GaussianBlur {
-                visible: plasmoid.configuration.isBackgroundImageSet && plasmoid.configuration.isBlurEnabled && !plasmoid.configuration.isWallpaperBlurred
-                anchors.fill: categoriesListShaderRight
-                source: categoriesListShaderRight
+                anchors.fill: categoriesListShader
+                source: categoriesListShader
                 radius: plasmoid.configuration.blurRadius
                 samples:plasmoid.configuration.blurSamples
             }
@@ -350,11 +327,10 @@ Kicker.DashboardWindow {
                 samples:plasmoid.configuration.blurSamples
             }
 
-            Item {
+            Row {
 
                 id: appsGridPlusCategories
-
-
+                layoutDirection: showCategories && showCategoriesOnTheRight ? Qt.RightToLeft : Qt.LeftToRight
 
                 anchors {
                     top: searchField.bottom
@@ -366,35 +342,12 @@ Kicker.DashboardWindow {
                 }
 
                 Loader {
-                    id: leftSideCategories
-                    active: showCategories && !showCategoriesOnTheRight
-                    anchors {
-                        top: parent.top
-                        left: parent.left
-                        bottom: parent.bottom
-                    }
-                    width: active ? Math.ceil(categoriesSidebarWidth + units.iconSizes.medium) : 0
-                    sourceComponent: CategoriesList {
-                        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-                        Rectangle {
-                            height: parent.height
-                            width: categoriesSidebarWidth
-                            color: Qt.rgba(theme.backgroundColor.r, theme.backgroundColor.g, theme.backgroundColor.b,  plasmoid.configuration.categoriesTransparency)
-                            visible: plasmoid.configuration.showCategoriesBackground
-                        }
-                    }
-                    onLoaded: item.updateCategories()
-                }
+                    id: categoriesLoader
+                    active: showCategories
 
-                Loader {
-                    id: rightSideCategories
-                    active: showCategories && showCategoriesOnTheRight
-                    anchors {
-                        top: parent.top
-                        right: parent.right
-                        bottom: parent.bottom
-                    }
-                    width: active ? Math.ceil(categoriesSidebarWidth + units.iconSizes.medium) : 0
+                    height: parent.height
+                    width: active * Math.ceil(categoriesSidebarWidth + units.iconSizes.medium)
+
                     sourceComponent: CategoriesList {
                         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
                         Rectangle {
@@ -408,13 +361,10 @@ Kicker.DashboardWindow {
                 }
 
                 Item {
+
                     id: appsGrid
-                    anchors {
-                        top: parent.top
-                        bottom: parent.bottom
-                        left: leftSideCategories.right
-                        right: rightSideCategories.left
-                    }
+                    height: parent.height
+                    width: parent.width - categoriesLoader.width
 
                     Loader {
 
@@ -425,7 +375,7 @@ Kicker.DashboardWindow {
                         readonly property int availableHeight: parent.height - pageIndicatorLoader.usedHeight - favoritesLoader.usedHeight
 
                         height: plasmoid.configuration.paginateGrid ? cellSize * Math.floor(availableHeight / cellSize) : availableHeight
-                        width: cellSize * Math.floor(parent.width / cellSize)
+                        width: cellSize * Math.floor((parent.width - !plasmoid.configuration.paginateGrid * 50) / cellSize) // 50 is a little bit higher than the usual scrollbar width. We are implicitly making room for it with this expression (when we are using the scrollable version).
 
                         anchors {
                             top: parent.top
@@ -442,6 +392,16 @@ Kicker.DashboardWindow {
 
                         Component.onCompleted: {
                             source = Qt.binding(function() {return plasmoid.configuration.paginateGrid ? "PaginatedApplicationsGrid.qml" : "ApplicationsGrid.qml"}) // load the component only after knowing the screen real estate we will have
+                        }
+
+                        Connections {
+                            id: hiddenAppsListener
+                            target: root
+                            enabled: false
+                            function onHiddenAppsChanged() {
+                                rootModel.refresh()
+                                appsGridLoader.item.resetAppsGrid()
+                            }
                         }
 
                     }
@@ -475,8 +435,10 @@ Kicker.DashboardWindow {
                             delegate: Rectangle {
 
                                 color: theme.headerTextColor
+                                border.color: index === currentPageIndicator.currentIndex ? theme.buttonFocusColor : theme.highlightColor
+                                border.width: Math.floor(0.7 * units.smallSpacing)
                                 opacity: index === currentPageIndicator.currentIndex ? 0.75 : (indicatorMouseArea.containsMouse ? 0.5 : 0.35)
-                                height: index === currentPageIndicator.currentIndex ? units.iconSizes.smallMedium : units.iconSizes.small
+                                height: index === currentPageIndicator.currentIndex ? units.iconSizes.medium : units.iconSizes.smallMedium
                                 width:  height
                                 radius: height / 2
                                 anchors.verticalCenter: parent.verticalCenter // align all indicators
@@ -575,9 +537,10 @@ Kicker.DashboardWindow {
         // Dummy query to preload runner model
         log('MenuRepresentation.qml onCompleted')
         kicker.reset.connect(function resetBecauseOfKicker() {
-            if (appsGridLoader.state == Loader.Ready && appsGridLoader.item) {reset("Kicker reset")}
+            if (appsGridLoader.state == Loader.Ready) {reset("Kicker reset")}
             else log("Won't reset (Component is loading and will reset once it is done loading)")
         });
+        hiddenAppsListener.enabled = true // reduce first launch penalty by explicitly enabling the signal listener once the menu is finished loading
 
     }
 }

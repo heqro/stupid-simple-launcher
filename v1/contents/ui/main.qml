@@ -151,8 +151,7 @@ Item {
     Kicker.RunnerModel {
         id: runnerModel
 
-        runners: "services"
-//         runners: ["desktopsession","services","baloosearch","calculator","dictionary","locations","shell"]
+        runners: ["desktopsession","services","baloosearch","calculator","dictionary","locations"]
         appletInterface: plasmoid
         deleteWhenEmpty: false
         mergeResults: true

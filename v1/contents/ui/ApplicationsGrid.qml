@@ -58,6 +58,13 @@ Item {
         appsGrid.tryActivate(row, column)
     }
 
+    function triggerFirstEntry() {
+        if (appsGrid.model.count > 0) {
+            appsGrid.model.trigger(0, "", null);
+            root.toggle()
+        }
+    }
+
     id: artifactForProperlyDisplayingEverythingInANiceWay
     anchors.fill: parent
 

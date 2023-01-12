@@ -231,12 +231,8 @@ Kicker.DashboardWindow {
                         event.accepted = true
                         appsGridLoader.item.highlightItemAt(0, 0)
                     } else if (event.key == Qt.Key_Return || event.key == Qt.Key_Enter) {
-                        if (searching && runnerModel.count >= 1) {
-                            event.accepted = true
-                            appsGridLoader.item.highlightItemAt(0,0)
-                            appsGridLoader.item.itemGrid.model.trigger(0, "", null);
-                            root.toggle()
-                        }
+                        event.accepted = true
+                        appsGridLoader.item.triggerFirstEntry()
                     }
                 }
             }

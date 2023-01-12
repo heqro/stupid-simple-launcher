@@ -22,7 +22,7 @@ Item {
     readonly property int numberOfColumns: Math.floor(parent.width / cellSize)
     readonly property int numberOfRows: Math.floor(parent.height / cellSize)
 
-    id: artifactForProperlyDisplayingEverythingInANiceWay
+    id: itemGrid
 
     anchors.fill: parent
 
@@ -105,6 +105,10 @@ Item {
         appsSwipeview.tryActivateItemAt(row, column)
     }
 
+    function triggerFirstEntry() {
+        appsSwipeview.triggerFirstEntry()
+    }
+
     function changePage(pageNumber) {
         log("Change page from"+ appsSwipeview.currentIndex+ "to"+pageNumber)
         appsSwipeview.setCurrentIndex(pageNumber)
@@ -118,6 +122,7 @@ Item {
         signal updateGridModel(int myCategoryIndex, bool isFavorite)
         signal changeToSearchModel()
         signal tryActivateItemAt(int row, int column)
+        signal triggerFirstEntry()
 
         anchors.fill: parent
         clip: true
@@ -195,7 +200,13 @@ Item {
                     function onTryActivateItemAt(row,column) { // highlight item at coordinates (row, column) in the visible grid
                         if (appsSwipeview.currentIndex == index)
                             appsGridPage.tryActivate(row, column)
-                            
+                    }
+
+                    function onTriggerFirstEntry() {
+                        if (appsSwipeview.currentIndex == index && appsGridPage.model.count > 0) {
+                            appsGridPage.model.trigger(0, "", null);
+                            root.toggle()
+                        }
                     }
                 }
             }

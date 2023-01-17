@@ -114,7 +114,7 @@ Item {
 
         CategoryButton {
             id: myCategoryTemplate
-            readonly property int rulersSize: 18
+            readonly property int rulersSize: units.iconSizes.small
 
             categoryName: "I am a category. Customize my size"
 
@@ -141,15 +141,17 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
 
                 MouseArea {
+                    readonly property int minimumWidth: units.iconSizes.huge
                     anchors.fill: parent
                     drag { target: parent; axis: Drag.XAxis }
                     onMouseXChanged: {
-                        if (drag.active) {
-                            if (myCategoryTemplate.width + mouseX < units.iconSizes.huge)
-                                myCategoryTemplate.width = units.iconSizes.huge
-                            else
-                                myCategoryTemplate.width = myCategoryTemplate.width + mouseX
+                        if (drag.active && validWidthRequested(mouseX)) {
+                            myCategoryTemplate.width = myCategoryTemplate.width + mouseX
                         }
+                    }
+
+                    function validWidthRequested(variation) {
+                        return myCategoryTemplate.width + variation >= minimumWidth
                     }
                 }
             }
@@ -163,15 +165,17 @@ Item {
                 anchors.verticalCenter: parent.bottom
 
                 MouseArea {
+                    readonly property int minimumHeight: units.iconSizes.medium
                     anchors.fill: parent
                     drag { target: parent; axis: Drag.YAxis }
                     onMouseYChanged: {
-                        if (drag.active) {
-                            if(myCategoryTemplate.height + mouseY < units.iconSizes.medium)
-                                myCategoryTemplate.height = units.iconSizes.medium
-                            else
-                                myCategoryTemplate.height = myCategoryTemplate.height + mouseY
+                        if (drag.active && validHeightRequested(mouseY)) {
+                            myCategoryTemplate.height = myCategoryTemplate.height + mouseY
                         }
+                    }
+
+                    function validHeightRequested(variation) {
+                        return myCategoryTemplate.height + variation >= minimumHeight
                     }
                 }
             }

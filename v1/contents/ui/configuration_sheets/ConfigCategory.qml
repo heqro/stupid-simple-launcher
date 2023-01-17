@@ -17,9 +17,6 @@ import ".."
 Item {
     id: configCategory
 
-    //width: childrenRect.width
-    //height: childrenRect.height
-
     property alias cfg_categoriesText: categoriesShowTextCheckbox.checked
     property alias cfg_categoriesIcon: categoriesShowIconCheckbox.checked
     property alias cfg_categoriesIconAndText: categoriesShowTextAndIconCheckbox.checked
@@ -34,272 +31,194 @@ Item {
     property alias cfg_categoriesFontSize: categoriesFontSizeSpinbox.value
 
     property alias cfg_customizeCategoriesButtonSize: customizeCategoriesSize.checked
-    property alias cfg_categoriesButtonHeight: myCategoryTemplateList.delegateButtonHeight
-    property alias cfg_categoriesButtonWidth: myCategoryTemplateList.delegateButtonWidth
+    property alias cfg_categoriesButtonHeight: myCategoryTemplate.height
+    property alias cfg_categoriesButtonWidth: myCategoryTemplate.width
 
     property alias cfg_showFavoritesCategory: showFavoritesCategory.checked
     property alias cfg_showRecentFilesCategory: showRecentFilesCategory.checked
     property alias cfg_showRecentAppsCategory: showRecentAppsCategory.checked
 
-    ColumnLayout {
-        RowLayout {
-            Layout.fillWidth: true
+    Column {
+        spacing: units.smallSpacing
+        anchors.horizontalCenter: parent.horizontalCenter
+        CheckBox {
+            id: showCategories
+            text: i18n("Show the categories sidebar")
+        }
 
-            ColumnLayout {
+        PlasmaExtras.Heading {
+            text: "Appearance"
+            visible: showCategories.checked
+        }
 
-                // if I don't use QtQuick Controls 1.0 this whole thing crashes.
-                // As a consequence, I have to use ExclusiveGroup as defined in
-                // https://doc.qt.io/qt-5/qml-qtquick-controls-radiobutton.html#details
+        CheckBox {
+            id: categoriesOnTheRight
+            visible: showCategories.checked
+            text: i18n("Show the categories sidebar at the right side of the menu")
+        }
 
-                RowLayout {
-                    Layout.fillWidth: true
-                    CheckBox {
-                        Layout.leftMargin: units.smallSpacing
-                        id: showCategories
-                        text: i18n("Show the categories sidebar")
-                    }
+        GroupBox {
+
+            visible: showCategories.checked
+            ExclusiveGroup { id: categoriesCustomizationGroup}
+
+            Column {
+                RadioButton {
+                    id: categoriesShowTextCheckbox
+                    text: i18n("Show categories' names only")
+                    exclusiveGroup: categoriesCustomizationGroup
                 }
 
-                PlasmaExtras.Heading {
-                    text: "Appearance"
-                    visible: showCategories.checked
+                RadioButton {
+                    id: categoriesShowIconCheckbox
+                    text: i18n("Show categories' icons only")
+                    exclusiveGroup: categoriesCustomizationGroup
                 }
 
-                RowLayout {
-                    Layout.fillWidth: true
-                    visible: showCategories.checked
-                    CheckBox {
-                        Layout.leftMargin: units.smallSpacing
-                        id: categoriesOnTheRight
-                        text: i18n("Show the categories sidebar at the right side of the menu")
-                    }
+                RadioButton {
+                    id: categoriesShowTextAndIconCheckbox
+                    text: i18n("Show categories' icons and names")
+                    checked: true
+                    exclusiveGroup: categoriesCustomizationGroup
                 }
+            }
+        }
 
-                GroupBox {
+        Row {
+            visible: showCategories.checked && (categoriesShowTextCheckbox.checked || categoriesShowTextAndIconCheckbox.checked)
 
-                    visible: showCategories.checked
-                    ExclusiveGroup { id: categoriesCustomizationGroup}
+            CheckBox {
+                id: customizeCategoriesFontSizeCheckbox
+                text: i18n("Customize categories' font size")
+            }
 
-                    ColumnLayout {
-                        RadioButton {
-                            id: categoriesShowTextCheckbox
-                            text: i18n("Show categories' names only")
-                            exclusiveGroup: categoriesCustomizationGroup
-                        }
+            SpinBox {
+                id: categoriesFontSizeSpinbox
+                minimumValue: 4
+                maximumValue: 128
+                stepSize: 1
+                enabled: customizeCategoriesFontSizeCheckbox.checked
+            }
+        }
 
-                        RadioButton {
-                            id: categoriesShowIconCheckbox
-                            text: i18n("Show categories' icons only")
-                            exclusiveGroup: categoriesCustomizationGroup
-                        }
+        CheckBox {
+            id: customizeCategoriesSize
+            text: i18n("Customize categories' size")
+            visible: showCategories.checked
+        }
 
-                        RadioButton {
-                            id: categoriesShowTextAndIconCheckbox
-                            text: i18n("Show categories' icons and names")
-                            checked: true
-                            exclusiveGroup: categoriesCustomizationGroup
-                        }
-                    }
-                }
+        Item { // artificial spacer
+            width: 1
+            height: units.smallSpacing * 2
+        }
 
-                RowLayout {
-                    Layout.fillWidth: true
-                    visible: showCategories.checked && (categoriesShowTextCheckbox.checked || categoriesShowTextAndIconCheckbox.checked)
+        CategoryButton {
+            id: myCategoryTemplate
+            readonly property int rulersSize: 18
 
-                    CheckBox {
-                        Layout.leftMargin: units.smallSpacing
-                        id: customizeCategoriesFontSizeCheckbox
-                        text: i18n("Customize categories' font size")
-                    }
-                    SpinBox{
-                        id: categoriesFontSizeSpinbox
-                        minimumValue: 4
-                        maximumValue: 128
-                        stepSize: 1
-                        enabled: customizeCategoriesFontSizeCheckbox.checked
-                    }
+            categoryName: "I am a category. Customize my size"
 
-                }
+            customizeCategoriesFontSize: customizeCategoriesFontSizeCheckbox.checked
+            categoriesFontSize: categoriesFontSizeSpinbox.value
 
-                RowLayout {
-                    Layout.fillWidth: true
+            buttonHeight: plasmoid.configuration.categoriesButtonHeight
+            buttonWidth: plasmoid.configuration.categoriesButtonWidth
+            visible: showCategories.checked && customizeCategoriesSize.checked
 
-                    ColumnLayout {
-                        Layout.fillWidth: true
-                        CheckBox {
-                            Layout.leftMargin: units.smallSpacing
-                            id: customizeCategoriesSize
-                            text: i18n("Customize categories' size")
-                            visible: showCategories.checked
-                            Layout.fillWidth: true
-                        }
+            showCategoriesIcon: categoriesShowIconCheckbox.checked
+            showCategoriesText: categoriesShowTextCheckbox.checked
+            showCategoriesIconAndText: categoriesShowTextAndIconCheckbox.checked
+            showCategoriesOnTheRight: categoriesOnTheRight.checked
 
-                        ListView {
-                            id: myCategoryTemplateList
-                            currentIndex: 0
+            showCategoriesTooltip: categoriesTooltip.checked
 
-                            Layout.fillWidth: true
-                            Layout.minimumHeight: (plasmoid.configuration.categoriesButtonHeight > 0) ? contentHeight : 0
+            Rectangle {
+                width: parent.rulersSize
+                height: parent.rulersSize
+                radius: parent.rulersSize
+                color: theme.highlightColor
+                anchors.horizontalCenter: parent.right
+                anchors.verticalCenter: parent.verticalCenter
 
-
-                            Layout.fillHeight: true
-                            Layout.minimumWidth: (plasmoid.configuration.categoriesButtonWidth > 0) ? plasmoid.configuration.categoriesButtonWidth : units.iconSizes.huge
-                            visible: showCategories.checked && customizeCategoriesSize.checked
-
-                            property int delegateButtonWidth: width
-                            property int delegateButtonHeight: height
-
-                            highlight: PlasmaExtras.Highlight {}
-                            highlightFollowsCurrentItem: true
-                            highlightMoveDuration: 0
-
-                            delegate: CategoryButton {
-
-                                id: myCategoryTemplate
-
-                                property int rulersSize: 18
-
-                                categoryName: "I am a category. Customize my size"
-
-                                customizeCategoriesFontSize: customizeCategoriesFontSizeCheckbox.checked
-                                categoriesFontSize: categoriesFontSizeSpinbox.value
-
-                                buttonHeight: myCategoryTemplateList.delegateButtonHeight
-                                buttonWidth: myCategoryTemplateList.delegateButtonWidth
-
-                                showCategoriesIcon: categoriesShowIconCheckbox.checked
-                                showCategoriesText: categoriesShowTextCheckbox.checked
-                                showCategoriesIconAndText: categoriesShowTextAndIconCheckbox.checked
-                                showCategoriesOnTheRight: categoriesOnTheRight.checked
-
-                                showCategoriesTooltip: categoriesTooltip.checked
-
-                                MouseArea {
-                                    property bool clicked: false
-                                    anchors.fill: parent
-
-                                    drag{
-                                        target: parent
-                                        minimumX: 0
-                                        minimumY: 0
-                                        maximumX: parent.parent.width - parent.width
-                                        maximumY: parent.parent.height - parent.height
-                                        smoothed: true
-                                    }
-
-                                    onClicked: {
-                                        myCategoryTemplateList.currentIndex = (myCategoryTemplateList.currentIndex == 0) ? -1 : 0
-                                    }
-                                }
-
-                                Rectangle {
-                                    width: rulersSize
-                                    height: rulersSize
-                                    radius: rulersSize
-                                    color: theme.highlightColor
-                                    anchors.horizontalCenter: parent.right
-                                    anchors.verticalCenter: parent.verticalCenter
-
-                                    MouseArea {
-                                        anchors.fill: parent
-                                        drag{ target: parent; axis: Drag.XAxis }
-                                        onMouseXChanged: {
-                                            if(drag.active){
-                                                if (myCategoryTemplate.width + mouseX < units.iconSizes.huge)
-                                                    myCategoryTemplate.width = units.iconSizes.huge
-                                                else
-                                                    myCategoryTemplate.width = myCategoryTemplate.width + mouseX
-                                                myCategoryTemplateList.delegateButtonWidth = myCategoryTemplate.width
-                                            }
-                                        }
-                                    }
-                                }
-                                Rectangle {
-                                    width: rulersSize
-                                    height: rulersSize
-                                    radius: rulersSize
-//                                     x: parent.x / 2
-                                    //y: parent.y
-                                    color: theme.highlightColor
-                                    anchors.horizontalCenter: parent.horizontalCenter
-                                    anchors.verticalCenter: parent.bottom
-
-                                    MouseArea {
-                                        anchors.fill: parent
-                                        drag{ target: parent; axis: Drag.YAxis }
-                                        onMouseYChanged: {
-                                            if(drag.active){
-                                                if(myCategoryTemplate.height + mouseY < units.iconSizes.huge)
-                                                    myCategoryTemplate.height = units.iconSizes.huge
-                                                else
-                                                    myCategoryTemplate.height = myCategoryTemplate.height + mouseY
-                                                myCategoryTemplateList.delegateButtonHeight = myCategoryTemplate.height
-                                            }
-                                        }
-                                    }
-                                }
-
-                                Component.onCompleted: {
-                                    setSourceIcon("emblem-favorite")
-                                }
-                            }
-                            model: ListModel {
-                                ListElement {}
-                            }
+                MouseArea {
+                    anchors.fill: parent
+                    drag { target: parent; axis: Drag.XAxis }
+                    onMouseXChanged: {
+                        if (drag.active) {
+                            if (myCategoryTemplate.width + mouseX < units.iconSizes.huge)
+                                myCategoryTemplate.width = units.iconSizes.huge
+                            else
+                                myCategoryTemplate.width = myCategoryTemplate.width + mouseX
                         }
                     }
-
                 }
+            }
 
-                PlasmaExtras.Heading {
-                    text: "Behavior"
-                    visible: showCategories.checked
-                }
+            Rectangle {
+                width:  parent.rulersSize
+                height: parent.rulersSize
+                radius: parent.rulersSize
+                color: theme.highlightColor
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.bottom
 
-                RowLayout {
-                    Layout.fillWidth: true
-                    visible: showCategories.checked
-                    CheckBox {
-                        Layout.leftMargin: units.smallSpacing
-                        id: categoriesTooltip
-                        text: i18n("Show categories' names in a tooltip when the text is elided or when using icons-only menu")
+                MouseArea {
+                    anchors.fill: parent
+                    drag { target: parent; axis: Drag.YAxis }
+                    onMouseYChanged: {
+                        if (drag.active) {
+                            if(myCategoryTemplate.height + mouseY < units.iconSizes.medium)
+                                myCategoryTemplate.height = units.iconSizes.medium
+                            else
+                                myCategoryTemplate.height = myCategoryTemplate.height + mouseY
+                        }
                     }
                 }
+            }
 
-                PlasmaExtras.Heading {
-                    text: "Extra categories"
-                    visible: showCategories.checked
-                }
+            Component.onCompleted: {
+                setSourceIcon("emblem-favorite")
+            }
+        }
 
-                ColumnLayout {
-                    Layout.fillWidth: true
-                    visible: showCategories.checked
+        Item { // artificial spacer
+            width: 1
+            height: units.smallSpacing * 2
+        }
 
-                    CheckBox {
-                        Layout.fillWidth: true
-                        Layout.leftMargin: units.smallSpacing
-                        id: showFavoritesCategory
-                        text: i18n("Show the 'Favorites' category")
-                    }
+        PlasmaExtras.Heading {
+            text: "Behavior"
+            visible: showCategories.checked
+        }
 
-                    CheckBox {
-                        Layout.fillWidth: true
-                        Layout.leftMargin: units.smallSpacing
-                        id: showRecentFilesCategory
-                        text: i18n("Show the 'Recent Files' category")
-                    }
+        CheckBox {
+            visible: showCategories.checked
+            id: categoriesTooltip
+            text: i18n("Show tooltip on hover")
+        }
 
-                    CheckBox {
-                        Layout.fillWidth: true
-                        Layout.leftMargin: units.smallSpacing
-                        id: showRecentAppsCategory
-                        text: i18n("Show the 'Recent Applications' category")
-                    }
-                }
+        PlasmaExtras.Heading {
+            text: "Extra categories"
+            visible: showCategories.checked
+        }
 
+        Column {
+            visible: showCategories.checked
 
+            CheckBox {
+                id: showFavoritesCategory
+                text: i18n("Show Favorites")
+            }
+
+            CheckBox {
+                id: showRecentFilesCategory
+                text: i18n("Show Recent Files")
+            }
+
+            CheckBox {
+                id: showRecentAppsCategory
+                text: i18n("Show Recent Applications")
             }
         }
     }
-
 }

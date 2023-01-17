@@ -180,6 +180,14 @@ Item {
                 }
             }
 
+            Rectangle {
+                anchors.fill: parent
+                color: "transparent"
+                radius: units.smallSpacing
+                border.color: theme.highlightColor
+                border.width: Math.floor(units.smallSpacing / 2)
+            }
+
             Component.onCompleted: {
                 setSourceIcon("emblem-favorite")
             }

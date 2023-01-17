@@ -165,7 +165,7 @@ Item {
                 anchors.verticalCenter: parent.bottom
 
                 MouseArea {
-                    readonly property int minimumHeight: units.iconSizes.medium
+                    readonly property int minimumHeight: units.iconSizes.smallMedium
                     anchors.fill: parent
                     drag { target: parent; axis: Drag.YAxis }
                     onMouseYChanged: {

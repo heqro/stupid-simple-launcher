@@ -29,8 +29,8 @@ ConfigModel {
     }
 
     ConfigCategory {
-        name: i18n("Application design")
-        icon: "color-picker"
+        name: i18n("App entries design")
+        icon: "start-here-kde"
         source: "configuration_sheets/ConfigApplication.qml"
     }
 

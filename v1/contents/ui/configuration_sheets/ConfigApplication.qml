@@ -16,11 +16,6 @@ Item {
 
     readonly property int rulersSize: units.iconSizes.small
 
-    PlasmaExtras.Heading {
-        id: appGridCustomizationHeader
-        text: "Application grid customization"
-    }
-
     Rectangle { // line around the app
         anchors.fill: applicationButton
         color: "transparent"
@@ -93,7 +88,6 @@ Item {
 
         anchors {
             horizontalCenter: parent.horizontalCenter
-            top: appGridCustomizationHeader.bottom
             topMargin: units.smallSpacing * 2
         }
     }
@@ -122,10 +116,6 @@ Item {
                 to: 3
                 stepSize: 1
             }
-        }
-
-        PlasmaExtras.Heading {
-            text: "Layout"
         }
 
         CheckBox {

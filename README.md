@@ -9,7 +9,7 @@
   * [Session control bar](#session-control-bar)
 - [Gallery](#gallery)
 
-![alt text](./previews/AllApplicationsBackground.png)
+![alt text](./v1/previews/AllApplicationsBackground.png)
 
 Simple launcher for your applications as well as session management (logout, lock, shutdown, reboot), search and favorite applications support. Under heavy development.
 
@@ -51,6 +51,6 @@ The menu is made up of four different modules: an applications grid, a search ba
 
 # Gallery
 
-![alt text](./previews/DarkAllCategoriesRight.png)
-![alt text](./previews/LightAllCategoriesRight.png)
-![alt text](./previews/NoCategoriesSidebar.png)
+![alt text](./v1/previews/DarkAllCategoriesRight.png)
+![alt text](./v1/previews/LightAllCategoriesRight.png)
+![alt text](./v1/previews/NoCategoriesSidebar.png)

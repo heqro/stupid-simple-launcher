@@ -23,9 +23,15 @@ import org.kde.plasma.configuration 2.0
 
 ConfigModel {
     ConfigCategory {
-         name: i18n("General")
-         icon: "kde"
-         source: "configuration_sheets/ConfigGeneral.qml"
+        name: i18n("General")
+        icon: "kde"
+        source: "configuration_sheets/ConfigGeneral.qml"
+    }
+
+    ConfigCategory {
+        name: i18n("Application design")
+        icon: "color-picker"
+        source: "configuration_sheets/ConfigApplication.qml"
     }
 
     ConfigCategory {

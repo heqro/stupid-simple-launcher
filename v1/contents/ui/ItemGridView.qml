@@ -39,8 +39,6 @@ FocusScope {
     property bool showLabels: true
     property alias usesPlasmaTheme: gridView.usesPlasmaTheme
 
-    property int iconSize: root.iconSize
-
     property alias currentIndex: gridView.currentIndex
     property alias currentItem: gridView.currentItem
     property alias contentItem: gridView.contentItem

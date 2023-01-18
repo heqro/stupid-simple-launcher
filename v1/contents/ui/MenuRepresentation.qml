@@ -48,23 +48,17 @@ Kicker.DashboardWindow {
     
     id: root
 
-    property int iconSize:    plasmoid.configuration.iconSize // if iconSize == 48 then the icons' size will be 48x48. Enormous will make them look decent (in my screen, that is! :-) )
-
-    property int cellSize: iconSize + Math.floor(1.5 * PlasmaCore.Theme.mSize(PlasmaCore.Theme.defaultFont).height)
-        + (2 * PlasmaCore.Units.smallSpacing)
-        + (2 * Math.max(highlightItemSvg.margins.top + highlightItemSvg.margins.bottom,
-                        highlightItemSvg.margins.left + highlightItemSvg.margins.right))
-
+    property int applicationButtonHeight: plasmoid.configuration.applicationButtonHeight
+    property int applicationButtonWidth: plasmoid.configuration.applicationButtonWidth
 
     backgroundColor: "transparent"
 
     // whenever a key is pressed that is not "grabbed" by anything with focus by our application, the search field will react to it
     keyEventProxy: searchField
 
+    property int columns: Math.floor(0.8 * Math.ceil(width / applicationButtonWidth))
 
-    property int columns: Math.floor(0.8 * Math.ceil(width / cellSize))
-
-    property int widthScreen:  columns * cellSize
+    property int widthScreen:  columns * applicationButtonWidth
 
     // this property is exposed because it will determine the behavior of the grid - whenever we are searching, we will have only a grid dedicated to it. However, when we aren't, we may have two (if favorites support is enabled). It also determines which model we feed to the applications grid.
     property bool searching: searchField.text != ""
@@ -123,7 +117,6 @@ Kicker.DashboardWindow {
             appsGridLoader.item.showSearchResults()
         } else {
             appsGridLoader.item.resetAppsGrid()
-            //reset('searchTextChanged -> Empty text')
         }
     }
 
@@ -160,7 +153,6 @@ Kicker.DashboardWindow {
                 else
                     getCategoriesList().setCurrentIndex(-1)
             }
-
         } else {
             if (showCategories) {
                 getCategoriesList().setCurrentIndex(0) // highlight first category on the list (always will be "All applications")
@@ -370,8 +362,8 @@ Kicker.DashboardWindow {
                         readonly property int startCategoryIndex: plasmoid.configuration.startOnFavorites ? -1 : allAppsIndex
                         readonly property int availableHeight: parent.height - pageIndicatorLoader.usedHeight - favoritesLoader.usedHeight
 
-                        height: plasmoid.configuration.paginateGrid ? cellSize * Math.floor(availableHeight / cellSize) : availableHeight
-                        width: cellSize * Math.floor((parent.width - !plasmoid.configuration.paginateGrid * 50) / cellSize) // 50 is a little bit higher than the usual scrollbar width. We are implicitly making room for it with this expression (when we are using the scrollable version).
+                        height: plasmoid.configuration.paginateGrid ? applicationButtonHeight * Math.floor(availableHeight / applicationButtonHeight) : availableHeight
+                        width: applicationButtonWidth * Math.floor((parent.width - !plasmoid.configuration.paginateGrid * 50) / applicationButtonWidth) // 50 is a little bit higher than the usual scrollbar width. We are implicitly making room for it with this expression (when we are using the scrollable version).
 
                         anchors {
                             top: parent.top

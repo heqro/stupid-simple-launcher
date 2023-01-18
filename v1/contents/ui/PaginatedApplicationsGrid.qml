@@ -19,8 +19,8 @@ Item {
 
     property int pageCount
     readonly property int currentIndex: appsSwipeview.currentIndex
-    readonly property int numberOfColumns: Math.floor(parent.width / cellSize)
-    readonly property int numberOfRows: Math.floor(parent.height / cellSize)
+    readonly property int numberOfColumns: Math.floor(parent.width / applicationButtonWidth)
+    readonly property int numberOfRows: Math.floor(parent.height / applicationButtonHeight)
 
     id: itemGrid
 
@@ -136,8 +136,8 @@ Item {
             ItemGridView {
 
                 id: appsGridPage
-                cellWidth:  cellSize
-                cellHeight: cellSize
+                cellWidth:  applicationButtonWidth
+                cellHeight: applicationButtonHeight
 
                 Rectangle {
                     z: -1 // draw this element under the ItemGridView

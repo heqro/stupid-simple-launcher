@@ -34,11 +34,7 @@ Item {
 
     property string cfg_icon: plasmoid.configuration.icon
 
-    property alias cfg_iconSize:      iconSize.value
-    property alias cfg_labelLines: labelLines.value
     property alias cfg_favoritesIconSize: favoritesIconSize.value
-
-    property alias cfg_tooltipsInGrid: tooltipsInGrid.checked
 
     property alias cfg_favoritesInGrid: favoritesInGrid.checked
     property alias cfg_writeSomething: writeSomething.checked
@@ -71,47 +67,6 @@ Item {
                 currentIcon: cfg_icon
                 defaultIcon: "start-here-kde"
                 onIconChanged: cfg_icon = iconName
-            }
-        }
-
-        RowLayout{
-            Layout.fillWidth: true
-            Label {
-                Layout.leftMargin: units.smallSpacing
-                text: i18n("Size of icons")
-            }
-            SpinBox{
-                id: iconSize
-                from: 24
-                to: 256
-                stepSize: 4
-            }
-        }
-
-        RowLayout{
-            Layout.fillWidth: true
-            Label {
-                Layout.leftMargin: units.smallSpacing
-                text: i18n("Number of lines in labels")
-            }
-            SpinBox{
-                id: labelLines
-                from: 1
-                to: 3
-                stepSize: 1
-            }
-        }
-
-        PlasmaExtras.Heading {
-            text: "Layout"
-        }
-
-        RowLayout {
-            Layout.fillWidth: true
-            Layout.leftMargin: units.smallSpacing
-            CheckBox{
-                id: tooltipsInGrid
-                text: i18n("Show tooltips when hovering on an application")
             }
         }
 

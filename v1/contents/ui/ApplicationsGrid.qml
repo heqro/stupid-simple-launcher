@@ -76,8 +76,8 @@ Item {
         id: appsGrid
         anchors.fill: parent
 
-        cellWidth:  cellSize
-        cellHeight: cellSize
+        cellWidth:  applicationButtonWidth
+        cellHeight: applicationButtonHeight
 
         onKeyNavUp: {
             currentIndex = -1;

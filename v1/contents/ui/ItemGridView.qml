@@ -113,10 +113,6 @@ FocusScope {
         onActionClicked: {
             var whoActed = visualParent.actionTriggered(actionId, actionArgument)
 
-//             console.log(actionId)
-//
-//             console.log(whoActed["name"], whoActed["description"], whoActed["url"], whoActed["icon"])
-
             if (actionId == "hideApplication") {
 
                 var addName = plasmoid.configuration.hiddenApplicationsName
@@ -136,6 +132,10 @@ FocusScope {
                 plasmoid.configuration.hiddenApplicationsIcon = addIcon
 
 //                 itemGrid.menuUpdated
+            }
+
+            if (actionId == "editApplication" || actionId == "_kicker_jumpListAction" || actionId == "_kicker_recentDocument" || actionId == "runnerAction") {
+                root.toggle()
             }
         }
     }

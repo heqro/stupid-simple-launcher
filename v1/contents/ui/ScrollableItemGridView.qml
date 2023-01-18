@@ -143,6 +143,10 @@ FocusScope {
 
                 //                 itemGrid.menuUpdated
             }
+
+            if (actionId == "editApplication" || actionId == "_kicker_jumpListAction" || actionId == "_kicker_recentDocument" || actionId == "runnerAction") {
+                root.toggle()
+            }
         }
     }
 

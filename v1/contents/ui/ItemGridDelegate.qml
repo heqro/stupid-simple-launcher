@@ -55,93 +55,21 @@ Item {
     }
 
     function showDelegateToolTip(show, now) {
-        if (showToolTips) {
-            if (show) {
-                delegateTooltip.showToolTip()
-            } else {
-                if (now) {
-                    delegateTooltip.hideImmediately()
-                } else {
-                    delegateTooltip.hideToolTip()
-                }
-            }
-        }
+        applicationButton.showDelegateToolTip(show, now)
     }
 
-    Column {
+    ApplicationButton {
+        id: applicationButton
+        applicationName: model.display
+        applicationIcon: model.decoration
+        applicationDescription: model.description
+
+        showBackground: plasmoid.configuration.showLabelBackground
+        backgroundOpacity: plasmoid.configuration.labelTransparency
+        maximumLineCountForName: plasmoid.configuration.labelLines
+        showLabel: true
+
         anchors.fill: parent
-        bottomPadding: units.largeSpacing
-        topPadding: units.largeSpacing
-
-        PlasmaCore.IconItem {
-            id: icon
-            animated: false
-            usesPlasmaTheme: item.GridView.view.usesPlasmaTheme
-            source: model.decoration
-            height: parent.height - parent.topPadding - parent.bottomPadding - labelLoader.height * labelLoader.active
-            width: height
-            anchors.horizontalCenter: parent.horizontalCenter
-        }
-
-        Loader {
-            id: labelLoader
-            active: showLabel
-            height: active ? t_metrics.height * plasmoid.configuration.labelLines : 0
-            width: active ? parent.width - units.largeSpacing : 0
-            anchors.horizontalCenter: parent.horizontalCenter
-
-            sourceComponent: Item {
-
-                id: labelBoundary
-                anchors.fill: parent
-
-                Label {
-
-                    id: label
-                    visible: showLabel
-
-                    anchors.centerIn: parent
-                    anchors.leftMargin:     units.smallSpacing/2
-                    anchors.rightMargin:    units.smallSpacing/2
-                    anchors.bottomMargin:   units.smallSpacing/3
-                    width: parent.width
-
-                    horizontalAlignment: Text.AlignHCenter
-
-                    elide: Text.ElideRight
-                    wrapMode: Text.WordWrap
-                    maximumLineCount: plasmoid.configuration.labelLines
-
-                    text: model.display != undefined ? model.display : ""
-                    padding: units.smallSpacing * 2
-
-                    background: Rectangle {
-                        z: -1
-                        width: parent.contentWidth + units.largeSpacing
-                        height: parent.contentHeight + units.smallSpacing
-                        anchors.centerIn: parent
-                        color: Qt.rgba(theme.backgroundColor.r, theme.backgroundColor.g, theme.backgroundColor.b,  plasmoid.configuration.labelTransparency)
-                        visible: plasmoid.configuration.showLabelBackground
-                        radius: 4
-                    }
-
-                }
-            }
-
-            TextMetrics { // tool get font's height so as to define rectangle's height
-                id: t_metrics
-                text: model.display != undefined ? model.display : "" // use a text long enough to hold a meaningful query
-            }
-        }
-
-        PlasmaCore.ToolTipArea {
-            id: delegateTooltip
-            mainText: model.display != undefined ? model.display : ""
-            subText: model.description != undefined ? model.description : ""
-            //subText: model.url != undefined ? model.url : "" // debugging option for future stuff.
-            interactive: false
-        }
-
     }
 
     Keys.onPressed: {

@@ -50,9 +50,6 @@ FocusScope {
     property alias cellWidth: gridView.cellWidth
     property alias cellHeight: gridView.cellHeight
 
-//     property alias horizontalScrollBarPolicy: scrollArea.horizontalScrollBarPolicy
-    //property alias verticalScrollBarPolicy: scrollArea.verticalScrollBarPolicy
-
     property bool rootVisible: root.visible
 
     readonly property int columns: Math.floor(width / cellWidth)

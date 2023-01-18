@@ -468,28 +468,21 @@ Kicker.DashboardWindow {
 
                         height: plasmoid.configuration.favoritesIconSize
 
-                        sourceComponent: ItemGridView {
+                        sourceComponent: ScrollableItemGridView {
+                            id: favoritesGridView
                             model: globalFavorites
-                            cellWidth: parent.height
-                            cellHeight: parent.height
+                            cellWidth: plasmoid.configuration.favoritesIconSize
+                            cellHeight: plasmoid.configuration.favoritesIconSize
                             showLabels: false
                             dragEnabled: true
-                            width: Math.min(cellWidth * globalFavorites.count, cellWidth * Math.floor(parentWidth / cellWidth)) // TODO - if the favorites is higher than the width then add an extra button to show all favorites!
+                            width: Math.min(cellWidth * Math.floor(parentWidth / cellWidth), cellWidth * globalFavorites.count)
+                            height: cellHeight
                             anchors.horizontalCenter: parent.horizontalCenter
+                            isFlowVertical: false
 
                             onKeyNavUp: {
                                 currentIndex = -1
                                 appsGridLoader.item.highlightItemAt(0,0)
-                            }
-
-                            Rectangle {
-                                z: -1 // draw this element under the ItemGridView
-                                height: parent.height
-                                width: parent.height * Math.floor(parent.width / parent.height)
-                                color:Qt.rgba(theme.backgroundColor.r, theme.backgroundColor.g, theme.backgroundColor.b,  plasmoid.configuration.showItemGridBackground * plasmoid.configuration.itemGridTransparency)
-                                border.color: Qt.rgba(theme.highlightColor.r,theme.highlightColor.g,theme.highlightColor.b,plasmoid.configuration.showItemGridBackground * plasmoid.configuration.itemGridTransparency)
-                                border.width: Math.floor(units.smallSpacing/2)
-                                radius: units.smallSpacing
                             }
                         }
                     }

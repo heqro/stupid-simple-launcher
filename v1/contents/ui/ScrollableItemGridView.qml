@@ -43,8 +43,6 @@ FocusScope {
     property bool showLabels: true
     property alias usesPlasmaTheme: gridView.usesPlasmaTheme
 
-    property int iconSize: root.iconSize
-
     property alias currentIndex: gridView.currentIndex
     property alias currentItem: gridView.currentItem
     property alias contentItem: gridView.contentItem
@@ -56,10 +54,9 @@ FocusScope {
     property alias cellWidth: gridView.cellWidth
     property alias cellHeight: gridView.cellHeight
 
-    //     property alias horizontalScrollBarPolicy: scrollArea.horizontalScrollBarPolicy
-    //property alias verticalScrollBarPolicy: scrollArea.verticalScrollBarPolicy
-
     property bool rootVisible: root.visible
+
+    default property bool isFlowVertical: true
 
     onRootVisibleChanged: {
         // This makes sure that the application tooltip is hidden when the user leaves the menu. We can determine they has left leaves because the root visibility is changed.
@@ -118,10 +115,6 @@ FocusScope {
 
         onActionClicked: {
             var whoActed = visualParent.actionTriggered(actionId, actionArgument)
-
-            //             console.log(actionId)
-            //
-            //             console.log(whoActed["name"], whoActed["description"], whoActed["url"], whoActed["icon"])
 
             if (actionId == "hideApplication") {
 
@@ -194,8 +187,8 @@ FocusScope {
         }
 
         ScrollBar {
-            id: bar
-            active: true
+            id: verticalBar
+            active: isFlowVertical
             anchors {
                 left:   gridView.right
                 top:    gridView.top
@@ -203,20 +196,29 @@ FocusScope {
             }
         }
 
+        ScrollBar {
+            id: horizontalBar
+            active: !isFlowVertical
+            anchors {
+                left:   gridView.left
+                right:  gridView.right
+                top:    gridView.bottom
+            }
+        }
+
         GridView {
             //this defines how the icons will look like in our menu
             id: gridView
-//             parent: plasmoid.configuration.paginateGrid ? dropArea : scrollArea
             height: parent.height
             width: parent.width
             anchors.top: parent.top
             anchors.left: parent.left
-//             anchors.fill: parent
-//             interactive: !plasmoid.configuration.paginateGrid
             clip: true
 
-            ScrollBar.vertical: bar
+            ScrollBar.vertical: isFlowVertical ? verticalBar : null
+            ScrollBar.horizontal: isFlowVertical ? null : horizontalBar
 
+            flow: isFlowVertical ? GridView.FlowLeftToRight : GridView.FlowTopToBottom
 
             property bool usesPlasmaTheme: false
 
@@ -410,6 +412,10 @@ FocusScope {
                 wheel.accepted = false // prevents scrollArea from breaking.
                 if (currentIndex != -1 && currentItem) {
                     currentItem.showDelegateToolTip(false, true)
+                }
+                if (wheel.angleDelta.x == 0) {
+                    if (wheel.angleDelta.y < 0) horizontalBar.increase()
+                    else horizontalBar.decrease()
                 }
             }
 

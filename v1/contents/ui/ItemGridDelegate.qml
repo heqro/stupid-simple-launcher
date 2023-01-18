@@ -67,7 +67,7 @@ Item {
         showBackground: plasmoid.configuration.showLabelBackground
         backgroundOpacity: plasmoid.configuration.labelTransparency
         maximumLineCountForName: plasmoid.configuration.labelLines
-        showLabel: true
+        showLabel: parent.showLabel
 
         anchors.fill: parent
     }
